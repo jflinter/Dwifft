@@ -1,5 +1,3 @@
-[![Travis](https://img.shields.io/travis/jflinter/dwifft/master.svg?style=flat)](https://travis-ci.org/jflinter/dwifft)
-
 Dwifft!
 ===
 
