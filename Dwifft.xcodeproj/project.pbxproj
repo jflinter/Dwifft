@@ -1,0 +1,426 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		041EBB981B89679200E113B3 /* Dwifft.h in Headers */ = {isa = PBXBuildFile; fileRef = 041EBB971B89679200E113B3 /* Dwifft.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		041EBB9E1B89679200E113B3 /* Dwifft.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 041EBB921B89679200E113B3 /* Dwifft.framework */; };
+		041EBBA51B89679200E113B3 /* DwifftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBA41B89679200E113B3 /* DwifftTests.swift */; };
+		041EBBB01B8967C300E113B3 /* LCS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* LCS.swift */; };
+		041EBBB11B8967C300E113B3 /* LCS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* LCS.swift */; };
+		041EBBB21B8967C300E113B3 /* TableViewDiffCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAF1B8967C300E113B3 /* TableViewDiffCalculator.swift */; };
+		041EBBB31B8967C300E113B3 /* TableViewDiffCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAF1B8967C300E113B3 /* TableViewDiffCalculator.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		041EBB9F1B89679200E113B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 041EBB891B89679200E113B3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 041EBB911B89679200E113B3;
+			remoteInfo = Dwifft;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		041EBB921B89679200E113B3 /* Dwifft.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dwifft.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		041EBB961B89679200E113B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		041EBB971B89679200E113B3 /* Dwifft.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Dwifft.h; sourceTree = "<group>"; };
+		041EBB9D1B89679200E113B3 /* DwifftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DwifftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		041EBBA31B89679200E113B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		041EBBA41B89679200E113B3 /* DwifftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DwifftTests.swift; sourceTree = "<group>"; };
+		041EBBAE1B8967C300E113B3 /* LCS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LCS.swift; sourceTree = "<group>"; };
+		041EBBAF1B8967C300E113B3 /* TableViewDiffCalculator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewDiffCalculator.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		041EBB8E1B89679200E113B3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		041EBB9A1B89679200E113B3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				041EBB9E1B89679200E113B3 /* Dwifft.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		041EBB881B89679200E113B3 = {
+			isa = PBXGroup;
+			children = (
+				041EBB941B89679200E113B3 /* Dwifft */,
+				041EBBA11B89679200E113B3 /* DwifftTests */,
+				041EBB931B89679200E113B3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		041EBB931B89679200E113B3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				041EBB921B89679200E113B3 /* Dwifft.framework */,
+				041EBB9D1B89679200E113B3 /* DwifftTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		041EBB941B89679200E113B3 /* Dwifft */ = {
+			isa = PBXGroup;
+			children = (
+				041EBB971B89679200E113B3 /* Dwifft.h */,
+				041EBBAE1B8967C300E113B3 /* LCS.swift */,
+				041EBBAF1B8967C300E113B3 /* TableViewDiffCalculator.swift */,
+				041EBB951B89679200E113B3 /* Supporting Files */,
+			);
+			path = Dwifft;
+			sourceTree = "<group>";
+		};
+		041EBB951B89679200E113B3 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				041EBB961B89679200E113B3 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		041EBBA11B89679200E113B3 /* DwifftTests */ = {
+			isa = PBXGroup;
+			children = (
+				041EBBA41B89679200E113B3 /* DwifftTests.swift */,
+				041EBBA21B89679200E113B3 /* Supporting Files */,
+			);
+			path = DwifftTests;
+			sourceTree = "<group>";
+		};
+		041EBBA21B89679200E113B3 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				041EBBA31B89679200E113B3 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		041EBB8F1B89679200E113B3 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				041EBB981B89679200E113B3 /* Dwifft.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		041EBB911B89679200E113B3 /* Dwifft */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 041EBBA81B89679200E113B3 /* Build configuration list for PBXNativeTarget "Dwifft" */;
+			buildPhases = (
+				041EBB8D1B89679200E113B3 /* Sources */,
+				041EBB8E1B89679200E113B3 /* Frameworks */,
+				041EBB8F1B89679200E113B3 /* Headers */,
+				041EBB901B89679200E113B3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Dwifft;
+			productName = Dwifft;
+			productReference = 041EBB921B89679200E113B3 /* Dwifft.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		041EBB9C1B89679200E113B3 /* DwifftTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 041EBBAB1B89679200E113B3 /* Build configuration list for PBXNativeTarget "DwifftTests" */;
+			buildPhases = (
+				041EBB991B89679200E113B3 /* Sources */,
+				041EBB9A1B89679200E113B3 /* Frameworks */,
+				041EBB9B1B89679200E113B3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				041EBBA01B89679200E113B3 /* PBXTargetDependency */,
+			);
+			name = DwifftTests;
+			productName = DwifftTests;
+			productReference = 041EBB9D1B89679200E113B3 /* DwifftTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		041EBB891B89679200E113B3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0640;
+				ORGANIZATIONNAME = jflinter;
+				TargetAttributes = {
+					041EBB911B89679200E113B3 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+					041EBB9C1B89679200E113B3 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+				};
+			};
+			buildConfigurationList = 041EBB8C1B89679200E113B3 /* Build configuration list for PBXProject "Dwifft" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 041EBB881B89679200E113B3;
+			productRefGroup = 041EBB931B89679200E113B3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				041EBB911B89679200E113B3 /* Dwifft */,
+				041EBB9C1B89679200E113B3 /* DwifftTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		041EBB901B89679200E113B3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		041EBB9B1B89679200E113B3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		041EBB8D1B89679200E113B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				041EBBB21B8967C300E113B3 /* TableViewDiffCalculator.swift in Sources */,
+				041EBBB01B8967C300E113B3 /* LCS.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		041EBB991B89679200E113B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				041EBBB11B8967C300E113B3 /* LCS.swift in Sources */,
+				041EBBA51B89679200E113B3 /* DwifftTests.swift in Sources */,
+				041EBBB31B8967C300E113B3 /* TableViewDiffCalculator.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		041EBBA01B89679200E113B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 041EBB911B89679200E113B3 /* Dwifft */;
+			targetProxy = 041EBB9F1B89679200E113B3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		041EBBA61B89679200E113B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		041EBBA71B89679200E113B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		041EBBA91B89679200E113B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Dwifft/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		041EBBAA1B89679200E113B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = Dwifft/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		041EBBAC1B89679200E113B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = DwifftTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		041EBBAD1B89679200E113B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = DwifftTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		041EBB8C1B89679200E113B3 /* Build configuration list for PBXProject "Dwifft" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				041EBBA61B89679200E113B3 /* Debug */,
+				041EBBA71B89679200E113B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		041EBBA81B89679200E113B3 /* Build configuration list for PBXNativeTarget "Dwifft" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				041EBBA91B89679200E113B3 /* Debug */,
+				041EBBAA1B89679200E113B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		041EBBAB1B89679200E113B3 /* Build configuration list for PBXNativeTarget "DwifftTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				041EBBAC1B89679200E113B3 /* Debug */,
+				041EBBAD1B89679200E113B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 041EBB891B89679200E113B3 /* Project object */;
+}
