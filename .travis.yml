@@ -1,4 +1,4 @@
 osx_image: xcode6.4
 language: objective-c
 xcode_project: Dwifft.xcodeproj
-xcode_scheme: DwifftTests
+xcode_scheme: Dwifft
