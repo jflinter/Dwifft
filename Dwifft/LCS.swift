@@ -12,12 +12,28 @@ import UIKit
 enum ArrayDiffResult : DebugPrintable {
     case Insert(Int)
     case Delete(Int)
+    var isInsertion: Bool {
+        switch(self) {
+        case .Insert(let i):
+            return true
+        case .Delete(let i):
+            return false
+        }
+    }
     var debugDescription: String {
         switch(self) {
         case .Insert(let i):
             return "+\(i)"
         case .Delete(let i):
             return "-\(i)"
+        }
+    }
+    var idx: Int {
+        switch(self) {
+        case .Insert(let i):
+            return i
+        case .Delete(let i):
+            return i
         }
     }
 }

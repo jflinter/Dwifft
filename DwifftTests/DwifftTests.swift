@@ -65,14 +65,18 @@ class DwifftTests: XCTestCase {
             
             private override func insertRowsAtIndexPaths(indexPaths: [AnyObject], withRowAnimation animation: UITableViewRowAnimation) {
                 XCTAssertEqual(animation, .Left, "incorrect insertion animation")
-                let idx = indexPaths[0].row!
-                self.insertionExpectations[idx]!.fulfill()
+                let nsIndexPaths = indexPaths as! [NSIndexPath]
+                for indexPath in nsIndexPaths {
+                    self.insertionExpectations[indexPath.row]!.fulfill()
+                }
             }
             
             private override func deleteRowsAtIndexPaths(indexPaths: [AnyObject], withRowAnimation animation: UITableViewRowAnimation) {
                 XCTAssertEqual(animation, .Right, "incorrect insertion animation")
-                let idx = indexPaths[0].row!
-                self.deletionExpectations[idx]!.fulfill()
+                let nsIndexPaths = indexPaths as! [NSIndexPath]
+                for indexPath in nsIndexPaths {
+                    self.deletionExpectations[indexPath.row]!.fulfill()
+                }
             }
             
         }
