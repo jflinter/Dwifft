@@ -29,7 +29,7 @@ public class TableViewDiffCalculator<T: Equatable> {
             
             let oldRows = oldValue
             let newRows = self.rows
-            let changes = LCS(oldRows, newRows).diff()
+            let changes = Diff.calculate(oldRows, newRows)
             if (changes.count > 0) {
                 tableView?.beginUpdates()
                 

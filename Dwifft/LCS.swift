@@ -8,7 +8,7 @@
 
 import UIKit
 
-
+/// These get returned from calls to LCS.diff(). They represent insertions or deletions that need to happen to transform array a into array b.
 enum ArrayDiffResult : DebugPrintable {
     case Insert(Int)
     case Delete(Int)
@@ -38,18 +38,63 @@ enum ArrayDiffResult : DebugPrintable {
     }
 }
 
+struct Diff<T: Equatable> {
+    
+    /// Returns the sequence of ArrayDiffResults required to transform one array into another.
+    static func calculate(x: [T], _ y: [T]) -> [ArrayDiffResult] {
+        let table = MemoizedSequenceComparison.buildTable(x, y, x.count, y.count)
+        return diffFromIndices(table, x.count, y.count)
+    }
+    
+    /// Walks back through the generated table to generate the diff.
+    private static func diffFromIndices(table: [[Int]], _ i: Int, _ j: Int) -> [ArrayDiffResult] {
+        if i == 0 && j == 0 {
+            return []
+        } else if i == 0 {
+            return diffFromIndices(table, i, j-1) + [ArrayDiffResult.Insert(j-1)]
+        } else if j == 0 {
+            return diffFromIndices(table, i - 1, j) + [ArrayDiffResult.Delete(i-1)]
+        } else if table[i][j] == table[i][j-1] {
+            return diffFromIndices(table, i, j-1) + [ArrayDiffResult.Insert(j-1)]
+        } else if table[i][j] == table[i-1][j] {
+            return diffFromIndices(table, i - 1, j) + [ArrayDiffResult.Delete(i-1)]
+        } else {
+            return diffFromIndices(table, i-1, j-1)
+        }
+    }
+    
+}
+
 struct LCS<T: Equatable> {
     
-    private let x, y : [T]
-    private let n, m : Int
-    private var table : [[Int]]
+    /// Returns the longest common subsequence between two arrays.
+    static func calculate(x: [T], _ y: [T]) -> [T] {
+        let table = MemoizedSequenceComparison.buildTable(x, y, x.count, y.count)
+        return lcsFromIndices(table, x, y, x.count, y.count)
+    }
     
-    init(_ x: [T], _ y: [T]) {
-        self.x = x
-        self.y = y
-        self.n = x.count
-        self.m = y.count
-        self.table = Array(count: self.n + 1, repeatedValue: Array(count: self.m + 1, repeatedValue: 0))
+    /// Walks back through the generated table to generate the LCS.
+    private static func lcsFromIndices(table: [[Int]], _ x: [T], _ y: [T], _ i: Int, _ j: Int) -> [T] {
+        if i == 0 && j == 0 {
+            return []
+        } else if i == 0 {
+            return lcsFromIndices(table, x, y, i, j - 1)
+        } else if j == 0 {
+            return lcsFromIndices(table, x, y, i - 1, j)
+        } else if x[i-1] == y[j-1] {
+            return lcsFromIndices(table, x, y, i - 1, j - 1) + [x[i - 1]]
+        } else if table[i-1][j] > table[i][j-1] {
+            return lcsFromIndices(table, x, y, i - 1, j)
+        } else {
+            return lcsFromIndices(table, x, y, i, j - 1)
+        }
+    }
+    
+}
+
+internal struct MemoizedSequenceComparison<T: Equatable> {
+    static func buildTable(x: [T], _ y: [T], _ n: Int, _ m: Int) -> [[Int]] {
+        var table = Array(count: n + 1, repeatedValue: Array(count: m + 1, repeatedValue: 0))
         for i in 0...n {
             for j in 0...m {
                 if (i == 0 || j == 0) {
@@ -62,46 +107,6 @@ struct LCS<T: Equatable> {
                 }
             }
         }
+        return table
     }
-    
-    func lcs() -> [T] {
-        return LCSFromIndices(n, j: m)
-    }
-    
-    func diff() -> [ArrayDiffResult] {
-        return diffFromIndices(n, j: m)
-    }
-    
-    private func LCSFromIndices(i: Int, j: Int) -> [T] {
-        if i == 0 && j == 0 {
-            return []
-        } else if i == 0 {
-            return LCSFromIndices(i, j: j - 1)
-        } else if j == 0 {
-            return LCSFromIndices(i - 1, j: j)
-        } else if x[i-1] == y[j-1] {
-            return LCSFromIndices(i - 1, j: j - 1) + [x[i - 1]]
-        } else if table[i-1][j] > table[i][j-1] {
-            return LCSFromIndices(i-1, j: j)
-        } else {
-            return LCSFromIndices(i, j: j-1)
-        }
-    }
-    
-    private func diffFromIndices(i: Int, j: Int) -> [ArrayDiffResult] {
-        if i == 0 && j == 0 {
-            return []
-        } else if i == 0 {
-            return diffFromIndices(i, j: j-1) + [ArrayDiffResult.Insert(j-1)]
-        } else if j == 0 {
-            return diffFromIndices(i - 1, j: j) + [ArrayDiffResult.Delete(i-1)]
-        } else if table[i][j] == table[i][j-1] {
-            return diffFromIndices(i, j: j-1) + [ArrayDiffResult.Insert(j-1)]
-        } else if table[i][j] == table[i-1][j] {
-            return diffFromIndices(i - 1, j: j) + [ArrayDiffResult.Delete(i-1)]
-        } else {
-            return diffFromIndices(i-1, j: j-1)
-        }
-    }
-    
 }
