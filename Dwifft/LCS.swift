@@ -9,7 +9,7 @@
 import UIKit
 
 /// These get returned from calls to LCS.diff(). They represent insertions or deletions that need to happen to transform array a into array b.
-enum ArrayDiffResult : DebugPrintable {
+public enum ArrayDiffResult : DebugPrintable {
     case Insert(Int)
     case Delete(Int)
     var isInsertion: Bool {
@@ -20,7 +20,7 @@ enum ArrayDiffResult : DebugPrintable {
             return false
         }
     }
-    var debugDescription: String {
+    public var debugDescription: String {
         switch(self) {
         case .Insert(let i):
             return "+\(i)"
@@ -38,10 +38,10 @@ enum ArrayDiffResult : DebugPrintable {
     }
 }
 
-struct Diff<T: Equatable> {
+public class Diff<T: Equatable> {
     
     /// Returns the sequence of ArrayDiffResults required to transform one array into another.
-    static func calculate(x: [T], _ y: [T]) -> [ArrayDiffResult] {
+    public static func calculate(x: [T], _ y: [T]) -> [ArrayDiffResult] {
         let table = MemoizedSequenceComparison.buildTable(x, y, x.count, y.count)
         return diffFromIndices(table, x.count, y.count)
     }
@@ -65,10 +65,10 @@ struct Diff<T: Equatable> {
     
 }
 
-struct LCS<T: Equatable> {
+public class LCS<T: Equatable> {
     
     /// Returns the longest common subsequence between two arrays.
-    static func calculate(x: [T], _ y: [T]) -> [T] {
+    public static func calculate(x: [T], _ y: [T]) -> [T] {
         let table = MemoizedSequenceComparison.buildTable(x, y, x.count, y.count)
         return lcsFromIndices(table, x, y, x.count, y.count)
     }
