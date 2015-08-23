@@ -9,7 +9,7 @@ The second thing (found in `TableViewDiffCalculator.swift`) is, well, a diff cal
 
 When you wire up a `TableViewDiffCalculator` to your `UITableView`, it'll _automatically_ calculate diffs and trigger the necessary animations on it whenever you change its `rows` property. Neat, right? Usually, this `rows` object will be the same thing you're using in your `UITableViewDataSource` methods. The only constraint is that the items in that `rows` array have to conform to `Equatable`, because, you know, how else could you compare them?
 
-This makes slightly more sense in code, so check out the tests (which show `LCS`/`Diff` in action) and the example app (which demonstrates the use of `TableViewDiffCalculator` if you're interested!
+This makes slightly more sense in code, so check out the tests (which show `LCS`/`Diff` in action) and the example app (which demonstrates the use of `TableViewDiffCalculator` if you're interested! You can quickly run the example with `pod try Dwifft`.
 
 Thanks for reading! PRs and such are of course welcome, but I want to keep this pretty tightly-scoped, so I'd politely request you open an issue before going off and implementing any new functionality so we can talk things over first.
 
@@ -18,5 +18,5 @@ Happy dwiffing!
 Oh right, how to install
 ---
 
-Cocoapods or Carthage.
+Cocoapods or Carthage. You'll need to use cocoapods frameworks because Swift.
 
