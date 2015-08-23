@@ -1,0 +1,394 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		045501F91B898C3200F5614D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045501F81B898C3200F5614D /* AppDelegate.swift */; };
+		045501FE1B898C3200F5614D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 045501FC1B898C3200F5614D /* Main.storyboard */; };
+		045502001B898C3200F5614D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 045501FF1B898C3200F5614D /* Images.xcassets */; };
+		045502031B898C3200F5614D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 045502011B898C3200F5614D /* LaunchScreen.xib */; };
+		045502231B898C6600F5614D /* Dwifft.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0455021E1B898C5400F5614D /* Dwifft.framework */; };
+		045502241B898C6600F5614D /* Dwifft.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0455021E1B898C5400F5614D /* Dwifft.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0455022B1B898CF000F5614D /* StuffTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0455022A1B898CF000F5614D /* StuffTableViewController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0455021D1B898C5400F5614D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 045502181B898C5400F5614D /* Dwifft.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 041EBB921B89679200E113B3;
+			remoteInfo = Dwifft;
+		};
+		0455021F1B898C5400F5614D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 045502181B898C5400F5614D /* Dwifft.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 041EBB9D1B89679200E113B3;
+			remoteInfo = DwifftTests;
+		};
+		045502211B898C5E00F5614D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 045502181B898C5400F5614D /* Dwifft.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 041EBB911B89679200E113B3;
+			remoteInfo = Dwifft;
+		};
+		045502251B898C6600F5614D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 045502181B898C5400F5614D /* Dwifft.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 041EBB911B89679200E113B3;
+			remoteInfo = Dwifft;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		045502271B898C6600F5614D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				045502241B898C6600F5614D /* Dwifft.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		045501F31B898C3200F5614D /* DwifftExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DwifftExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		045501F71B898C3200F5614D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		045501F81B898C3200F5614D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		045501FD1B898C3200F5614D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		045501FF1B898C3200F5614D /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		045502021B898C3200F5614D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		045502181B898C5400F5614D /* Dwifft.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Dwifft.xcodeproj; path = ../Dwifft.xcodeproj; sourceTree = "<group>"; };
+		0455022A1B898CF000F5614D /* StuffTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StuffTableViewController.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		045501F01B898C3200F5614D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				045502231B898C6600F5614D /* Dwifft.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		045501EA1B898C3200F5614D = {
+			isa = PBXGroup;
+			children = (
+				045502181B898C5400F5614D /* Dwifft.xcodeproj */,
+				045501F51B898C3200F5614D /* DwifftExample */,
+				045501F41B898C3200F5614D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		045501F41B898C3200F5614D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				045501F31B898C3200F5614D /* DwifftExample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		045501F51B898C3200F5614D /* DwifftExample */ = {
+			isa = PBXGroup;
+			children = (
+				045501F81B898C3200F5614D /* AppDelegate.swift */,
+				0455022A1B898CF000F5614D /* StuffTableViewController.swift */,
+				045501FC1B898C3200F5614D /* Main.storyboard */,
+				045501FF1B898C3200F5614D /* Images.xcassets */,
+				045502011B898C3200F5614D /* LaunchScreen.xib */,
+				045501F61B898C3200F5614D /* Supporting Files */,
+			);
+			path = DwifftExample;
+			sourceTree = "<group>";
+		};
+		045501F61B898C3200F5614D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				045501F71B898C3200F5614D /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		045502191B898C5400F5614D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0455021E1B898C5400F5614D /* Dwifft.framework */,
+				045502201B898C5400F5614D /* DwifftTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		045501F21B898C3200F5614D /* DwifftExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 045502121B898C3200F5614D /* Build configuration list for PBXNativeTarget "DwifftExample" */;
+			buildPhases = (
+				045501EF1B898C3200F5614D /* Sources */,
+				045501F01B898C3200F5614D /* Frameworks */,
+				045501F11B898C3200F5614D /* Resources */,
+				045502271B898C6600F5614D /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				045502221B898C5E00F5614D /* PBXTargetDependency */,
+				045502261B898C6600F5614D /* PBXTargetDependency */,
+			);
+			name = DwifftExample;
+			productName = DwifftExample;
+			productReference = 045501F31B898C3200F5614D /* DwifftExample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		045501EB1B898C3200F5614D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0640;
+				ORGANIZATIONNAME = jflinter;
+				TargetAttributes = {
+					045501F21B898C3200F5614D = {
+						CreatedOnToolsVersion = 6.4;
+					};
+				};
+			};
+			buildConfigurationList = 045501EE1B898C3200F5614D /* Build configuration list for PBXProject "DwifftExample" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 045501EA1B898C3200F5614D;
+			productRefGroup = 045501F41B898C3200F5614D /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 045502191B898C5400F5614D /* Products */;
+					ProjectRef = 045502181B898C5400F5614D /* Dwifft.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				045501F21B898C3200F5614D /* DwifftExample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		0455021E1B898C5400F5614D /* Dwifft.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Dwifft.framework;
+			remoteRef = 0455021D1B898C5400F5614D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		045502201B898C5400F5614D /* DwifftTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DwifftTests.xctest;
+			remoteRef = 0455021F1B898C5400F5614D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		045501F11B898C3200F5614D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				045501FE1B898C3200F5614D /* Main.storyboard in Resources */,
+				045502031B898C3200F5614D /* LaunchScreen.xib in Resources */,
+				045502001B898C3200F5614D /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		045501EF1B898C3200F5614D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				045501F91B898C3200F5614D /* AppDelegate.swift in Sources */,
+				0455022B1B898CF000F5614D /* StuffTableViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		045502221B898C5E00F5614D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Dwifft;
+			targetProxy = 045502211B898C5E00F5614D /* PBXContainerItemProxy */;
+		};
+		045502261B898C6600F5614D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Dwifft;
+			targetProxy = 045502251B898C6600F5614D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		045501FC1B898C3200F5614D /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				045501FD1B898C3200F5614D /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		045502011B898C3200F5614D /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				045502021B898C3200F5614D /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		045502101B898C3200F5614D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		045502111B898C3200F5614D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		045502131B898C3200F5614D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = DwifftExample/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		045502141B898C3200F5614D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = DwifftExample/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		045501EE1B898C3200F5614D /* Build configuration list for PBXProject "DwifftExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				045502101B898C3200F5614D /* Debug */,
+				045502111B898C3200F5614D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		045502121B898C3200F5614D /* Build configuration list for PBXNativeTarget "DwifftExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				045502131B898C3200F5614D /* Debug */,
+				045502141B898C3200F5614D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 045501EB1B898C3200F5614D /* Project object */;
+}
