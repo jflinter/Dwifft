@@ -19,9 +19,9 @@ class DwifftTests: XCTestCase {
             let expectedLCS: [Character]
             let expectedDiff: String
             init(_ a: String, _ b: String, _ expected: String, _ expectedDiff: String) {
-                self.array1 = Array(a)
-                self.array2 = Array(b)
-                self.expectedLCS = Array(expected)
+                self.array1 = a.characters.map { $0 }
+                self.array2 = b.characters.map { $0 }
+                self.expectedLCS = expected.characters.map { $0 }
                 self.expectedDiff = expectedDiff
             }
         }
@@ -63,17 +63,17 @@ class DwifftTests: XCTestCase {
                 fatalError("not implemented")
             }
             
-            private override func insertRowsAtIndexPaths(indexPaths: [AnyObject], withRowAnimation animation: UITableViewRowAnimation) {
-                XCTAssertEqual(animation, .Left, "incorrect insertion animation")
-                let nsIndexPaths = indexPaths as! [NSIndexPath]
+            private override func insertRowsAtIndexPaths(indexPaths: [NSIndexPath], withRowAnimation animation: UITableViewRowAnimation) {
+                XCTAssertEqual(animation, UITableViewRowAnimation.Left, "incorrect insertion animation")
+                let nsIndexPaths = indexPaths
                 for indexPath in nsIndexPaths {
                     self.insertionExpectations[indexPath.row]!.fulfill()
                 }
             }
             
-            private override func deleteRowsAtIndexPaths(indexPaths: [AnyObject], withRowAnimation animation: UITableViewRowAnimation) {
-                XCTAssertEqual(animation, .Right, "incorrect insertion animation")
-                let nsIndexPaths = indexPaths as! [NSIndexPath]
+            private override func deleteRowsAtIndexPaths(indexPaths: [NSIndexPath], withRowAnimation animation: UITableViewRowAnimation) {
+                XCTAssertEqual(animation, UITableViewRowAnimation.Right, "incorrect insertion animation")
+                let nsIndexPaths = indexPaths
                 for indexPath in nsIndexPaths {
                     self.deletionExpectations[indexPath.row]!.fulfill()
                 }
