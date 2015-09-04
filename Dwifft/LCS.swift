@@ -14,9 +14,9 @@ public enum ArrayDiffResult : CustomDebugStringConvertible {
     case Delete(Int)
     var isInsertion: Bool {
         switch(self) {
-        case .Insert(let i):
+        case .Insert:
             return true
-        case .Delete(let i):
+        case .Delete:
             return false
         }
     }
