@@ -8,7 +8,7 @@
 
 import UIKit
 
-/// These get returned from calls to LCS.diff(). They represent insertions or deletions that need to happen to transform array a into array b.
+/// These get returned from calls to Array.diff(). They represent insertions or deletions that need to happen to transform array a into array b.
 public enum ArrayDiffResult : CustomDebugStringConvertible {
     case Insert(Int)
     case Delete(Int)
