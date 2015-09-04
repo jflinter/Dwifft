@@ -65,16 +65,16 @@ public class Diff<T: Equatable> {
     
 }
 
-public class LCS<T: Equatable> {
+public extension Array where Element: Equatable {
     
     /// Returns the longest common subsequence between two arrays.
-    public static func calculate(x: [T], _ y: [T]) -> [T] {
-        let table = MemoizedSequenceComparison.buildTable(x, y, x.count, y.count)
-        return lcsFromIndices(table, x, y, x.count, y.count)
+    public func LCS(other: [Element]) -> [Element] {
+        let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
+        return Array.lcsFromIndices(table, self, other, self.count, other.count)
     }
     
     /// Walks back through the generated table to generate the LCS.
-    private static func lcsFromIndices(table: [[Int]], _ x: [T], _ y: [T], _ i: Int, _ j: Int) -> [T] {
+    private static func lcsFromIndices(table: [[Int]], _ x: [Element], _ y: [Element], _ i: Int, _ j: Int) -> [Element] {
         if i == 0 && j == 0 {
             return []
         } else if i == 0 {
