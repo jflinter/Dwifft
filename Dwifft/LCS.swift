@@ -38,12 +38,12 @@ public enum ArrayDiffResult : CustomDebugStringConvertible {
     }
 }
 
-public class Diff<T: Equatable> {
+public extension Array where Element: Equatable {
     
     /// Returns the sequence of ArrayDiffResults required to transform one array into another.
-    public static func calculate(x: [T], _ y: [T]) -> [ArrayDiffResult] {
-        let table = MemoizedSequenceComparison.buildTable(x, y, x.count, y.count)
-        return diffFromIndices(table, x.count, y.count)
+    public func diff(other: [Element]) -> [ArrayDiffResult] {
+        let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
+        return Array.diffFromIndices(table, self.count, other.count)
     }
     
     /// Walks back through the generated table to generate the diff.

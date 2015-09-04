@@ -39,7 +39,7 @@ class DwifftTests: XCTestCase {
 
             XCTAssertEqual(test.array1.LCS(test.array2), test.expectedLCS, "incorrect LCS")
             
-            let diff = Diff.calculate(test.array1, test.array2)
+            let diff = test.array1.diff(test.array2)
             let printableDiff = diff.map({ $0.debugDescription }).joinWithSeparator("")
             XCTAssertEqual(printableDiff, test.expectedDiff, "incorrect diff")
         }
