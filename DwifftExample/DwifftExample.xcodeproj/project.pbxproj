@@ -160,6 +160,7 @@
 		045501EB1B898C3200F5614D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = jflinter;
 				TargetAttributes = {
@@ -387,6 +388,7 @@
 				045502141B898C3200F5614D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

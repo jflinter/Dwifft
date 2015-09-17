@@ -7,14 +7,14 @@
 //
 
 /// These get returned from calls to LCS.diff(). They represent insertions or deletions that need to happen to transform array a into array b.
-public enum ArrayDiffResult : DebugPrintable {
+public enum ArrayDiffResult : CustomDebugStringConvertible {
     case Insert(Int)
     case Delete(Int)
     var isInsertion: Bool {
         switch(self) {
-        case .Insert(let i):
+        case .Insert:
             return true
-        case .Delete(let i):
+        case .Delete:
             return false
         }
     }
