@@ -8,6 +8,12 @@
 
 public struct Diff<T> {
     let results: [DiffStep<T>]
+    var insertions: [DiffStep<T>] {
+        return results.filter({ $0.isInsertion }).sort { $0.idx < $1.idx }
+    }
+    var deletions: [DiffStep<T>] {
+        return results.filter({ !$0.isInsertion }).sort { $0.idx > $1.idx }
+    }
     func reversed() -> Diff<T> {
         let reversedResults = self.results.reverse().map { (result: DiffStep<T>) -> DiffStep<T> in
             switch result {
@@ -92,12 +98,10 @@ public extension Array where Element: Equatable {
     /// Given x: [T], y: [T], x.apply(x.diff(y)) == y
     public func apply(diff: Diff<Element>) -> Array<Element> {
         var copy = self
-        let insertions = diff.results.filter({ $0.isInsertion }).sort { $0.idx < $1.idx }
-        let deletions = diff.results.filter({ !$0.isInsertion }).sort { $0.idx > $1.idx }
-        for result in deletions {
+        for result in diff.deletions {
             copy.removeAtIndex(result.idx)
         }
-        for result in insertions {
+        for result in diff.insertions {
             copy.insert(result.value, atIndex: result.idx)
         }
         return copy

@@ -24,7 +24,7 @@ class DwifftTests: XCTestCase {
         }
     }
     
-    func testLCS() {
+    func testDiff() {
         let tests: [TestCase] = [
             TestCase("1234", "23", "23", "-1@0-4@3"),
             TestCase("0125890", "4598310", "590", "-0@0-1@1-2@2+4@0-8@4+8@3+3@4+1@5"),
@@ -53,7 +53,7 @@ class DwifftTests: XCTestCase {
         
     }
     
-    func testArrayDiffCalculator() {
+    func testTableViewDiffCalculator() {
         
         class TestTableView: UITableView {
             
