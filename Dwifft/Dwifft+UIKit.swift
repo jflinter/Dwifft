@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Places. All rights reserved.
 //
 
+#if os(iOS)
+
 import UIKit
 
 public class TableViewDiffCalculator<T: Equatable> {
@@ -46,3 +48,5 @@ public class TableViewDiffCalculator<T: Equatable> {
     }
     
 }
+
+#endif
