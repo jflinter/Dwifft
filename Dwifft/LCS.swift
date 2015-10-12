@@ -6,10 +6,29 @@
 //  Copyright (c) 2015 jflinter. All rights reserved.
 //
 
+public struct Diff<T> {
+    let results: [DiffStep<T>]
+    func reversed() -> Diff<T> {
+        let reversedResults = self.results.reverse().map { (result: DiffStep<T>) -> DiffStep<T> in
+            switch result {
+            case .Insert(let i, let j):
+                return .Delete(i, j)
+            case .Delete(let i, let j):
+                return .Insert(i, j)
+            }
+        }
+        return Diff<T>(results: reversedResults)
+    }
+}
+
+func +<T> (left: Diff<T>, right: DiffStep<T>) -> Diff<T> {
+    return Diff<T>(results: left.results + [right])
+}
+
 /// These get returned from calls to Array.diff(). They represent insertions or deletions that need to happen to transform array a into array b.
-public enum ArrayDiffResult : CustomDebugStringConvertible {
-    case Insert(Int)
-    case Delete(Int)
+public enum DiffStep<T> : CustomDebugStringConvertible {
+    case Insert(Int, T)
+    case Delete(Int, T)
     var isInsertion: Bool {
         switch(self) {
         case .Insert:
@@ -20,18 +39,26 @@ public enum ArrayDiffResult : CustomDebugStringConvertible {
     }
     public var debugDescription: String {
         switch(self) {
-        case .Insert(let i):
-            return "+\(i)"
-        case .Delete(let i):
-            return "-\(i)"
+        case .Insert(let i, let j):
+            return "+\(j)@\(i)"
+        case .Delete(let i, let j):
+            return "-\(j)@\(i)"
         }
     }
     var idx: Int {
         switch(self) {
-        case .Insert(let i):
+        case .Insert(let i, _):
             return i
-        case .Delete(let i):
+        case .Delete(let i, _):
             return i
+        }
+    }
+    var value: T {
+        switch(self) {
+        case .Insert(let j):
+            return j.1
+        case .Delete(let j):
+            return j.1
         }
     }
 }
@@ -39,26 +66,41 @@ public enum ArrayDiffResult : CustomDebugStringConvertible {
 public extension Array where Element: Equatable {
     
     /// Returns the sequence of ArrayDiffResults required to transform one array into another.
-    public func diff(other: [Element]) -> [ArrayDiffResult] {
+    public func diff(other: [Element]) -> Diff<Element> {
         let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
-        return Array.diffFromIndices(table, self.count, other.count)
+        return Array.diffFromIndices(table, self, other, self.count, other.count)
     }
     
     /// Walks back through the generated table to generate the diff.
-    private static func diffFromIndices(table: [[Int]], _ i: Int, _ j: Int) -> [ArrayDiffResult] {
+    private static func diffFromIndices(table: [[Int]], _ x: [Element], _ y: [Element], _ i: Int, _ j: Int) -> Diff<Element> {
         if i == 0 && j == 0 {
-            return []
+            return Diff<Element>(results: [])
         } else if i == 0 {
-            return diffFromIndices(table, i, j-1) + [ArrayDiffResult.Insert(j-1)]
+            return diffFromIndices(table, x, y, i, j-1) + DiffStep.Insert(j-1, y[j-1])
         } else if j == 0 {
-            return diffFromIndices(table, i - 1, j) + [ArrayDiffResult.Delete(i-1)]
+            return diffFromIndices(table, x, y, i - 1, j) + DiffStep.Delete(i-1, x[i-1])
         } else if table[i][j] == table[i][j-1] {
-            return diffFromIndices(table, i, j-1) + [ArrayDiffResult.Insert(j-1)]
+            return diffFromIndices(table, x, y, i, j-1) + DiffStep.Insert(j-1, y[j-1])
         } else if table[i][j] == table[i-1][j] {
-            return diffFromIndices(table, i - 1, j) + [ArrayDiffResult.Delete(i-1)]
+            return diffFromIndices(table, x, y, i - 1, j) + DiffStep.Delete(i-1, x[i-1])
         } else {
-            return diffFromIndices(table, i-1, j-1)
+            return diffFromIndices(table, x, y, i-1, j-1)
         }
+    }
+    
+    /// Applies a generated diff to an array. The following should always be true:
+    /// Given x: [T], y: [T], x.apply(x.diff(y)) == y
+    public func apply(diff: Diff<Element>) -> Array<Element> {
+        var copy = self
+        let insertions = diff.results.filter({ $0.isInsertion }).sort { $0.idx < $1.idx }
+        let deletions = diff.results.filter({ !$0.isInsertion }).sort { $0.idx > $1.idx }
+        for result in deletions {
+            copy.removeAtIndex(result.idx)
+        }
+        for result in insertions {
+            copy.insert(result.value, atIndex: result.idx)
+        }
+        return copy
     }
     
 }
