@@ -7,14 +7,14 @@
 //
 
 public struct Diff<T> {
-    let results: [DiffStep<T>]
-    var insertions: [DiffStep<T>] {
+    public let results: [DiffStep<T>]
+    public var insertions: [DiffStep<T>] {
         return results.filter({ $0.isInsertion }).sort { $0.idx < $1.idx }
     }
-    var deletions: [DiffStep<T>] {
+    public var deletions: [DiffStep<T>] {
         return results.filter({ !$0.isInsertion }).sort { $0.idx > $1.idx }
     }
-    func reversed() -> Diff<T> {
+    public func reversed() -> Diff<T> {
         let reversedResults = self.results.reverse().map { (result: DiffStep<T>) -> DiffStep<T> in
             switch result {
             case .Insert(let i, let j):
@@ -27,7 +27,7 @@ public struct Diff<T> {
     }
 }
 
-func +<T> (left: Diff<T>, right: DiffStep<T>) -> Diff<T> {
+public func +<T> (left: Diff<T>, right: DiffStep<T>) -> Diff<T> {
     return Diff<T>(results: left.results + [right])
 }
 
@@ -35,7 +35,7 @@ func +<T> (left: Diff<T>, right: DiffStep<T>) -> Diff<T> {
 public enum DiffStep<T> : CustomDebugStringConvertible {
     case Insert(Int, T)
     case Delete(Int, T)
-    var isInsertion: Bool {
+    public var isInsertion: Bool {
         switch(self) {
         case .Insert:
             return true
@@ -51,7 +51,7 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
             return "-\(j)@\(i)"
         }
     }
-    var idx: Int {
+    public var idx: Int {
         switch(self) {
         case .Insert(let i, _):
             return i
@@ -59,7 +59,7 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
             return i
         }
     }
-    var value: T {
+    public var value: T {
         switch(self) {
         case .Insert(let j):
             return j.1
