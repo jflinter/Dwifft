@@ -35,7 +35,7 @@ public func +<T> (left: Diff<T>, right: DiffStep<T>) -> Diff<T> {
 public enum DiffStep<T> : CustomDebugStringConvertible {
     case Insert(Int, T)
     case Delete(Int, T)
-    public var isInsertion: Bool {
+    var isInsertion: Bool {
         switch(self) {
         case .Insert:
             return true
@@ -51,7 +51,7 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
             return "-\(j)@\(i)"
         }
     }
-    public var idx: Int {
+    var idx: Int {
         switch(self) {
         case .Insert(let i, _):
             return i
@@ -59,7 +59,7 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
             return i
         }
     }
-    public var value: T {
+    var value: T {
         switch(self) {
         case .Insert(let j):
             return j.1
