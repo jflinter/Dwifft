@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/jflinter/Dwifft.svg?branch=master)](https://travis-ci.org/jflinter/Dwifft)
+![Current Version](https://img.shields.io/github/tag/jflinter/dwifft.svg?label=Current Version)
+
 
 Dwifft!
 ===
