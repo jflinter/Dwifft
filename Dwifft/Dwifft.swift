@@ -51,7 +51,7 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
             return "-\(j)@\(i)"
         }
     }
-    var idx: Int {
+    public var idx: Int {
         switch(self) {
         case .Insert(let i, _):
             return i
@@ -59,7 +59,7 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
             return i
         }
     }
-    var value: T {
+    public var value: T {
         switch(self) {
         case .Insert(let j):
             return j.1
