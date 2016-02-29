@@ -22,5 +22,5 @@ Happy dwiffing!
 Oh right, how to install
 ---
 
-Cocoapods or Carthage. You'll need to use cocoapods frameworks because Swift. Version 0.1 is written in Swift 1.2, everything after that is Swift 2.
+CocoaPods or Carthage. You'll need to use CocoaPods frameworks because Swift. Version 0.1 is written in Swift 1.2, everything after that is Swift 2.
 
