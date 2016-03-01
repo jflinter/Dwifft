@@ -19,7 +19,6 @@ class StuffTableViewController: UITableViewController {
         "Mud",
         "Pineapples",
         "Fish legs",
-        "Duck panties",
         "Adam's apple",
         "Igloo cream",
         "Self-flying car"
@@ -30,13 +29,15 @@ class StuffTableViewController: UITableViewController {
         var possibleStuff = self.possibleStuff
         for i in 0..<possibleStuff.count - 1 {
             let j = Int(arc4random_uniform(UInt32(possibleStuff.count - i))) + i
-            swap(&possibleStuff[i], &possibleStuff[j])
+            if i != j {
+                swap(&possibleStuff[i], &possibleStuff[j])
+            }
         }
         let subsetCount: Int = Int(arc4random_uniform(3)) + 5
         return Array(possibleStuff[0...subsetCount])
     }
     
-    required init!(coder aDecoder: NSCoder!) {
+    required init!(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .Plain, target: self, action: "shuffle")
     }
@@ -73,7 +74,7 @@ class StuffTableViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath) as! UITableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
         cell.textLabel?.text = self.stuff[indexPath.row]
         return cell
     }
