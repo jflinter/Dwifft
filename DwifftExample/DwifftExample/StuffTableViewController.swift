@@ -39,7 +39,7 @@ class StuffTableViewController: UITableViewController {
     
     required init!(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .Plain, target: self, action: "shuffle")
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .Plain, target: self, action: #selector(StuffTableViewController.shuffle))
     }
     
     @objc func shuffle() {

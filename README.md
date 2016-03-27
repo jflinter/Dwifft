@@ -24,6 +24,7 @@ Oh right, how to install
 
 Cocoapods or Carthage. You'll need to use cocoapods frameworks because Swift. Version 0.1 is written in Swift 1.2, everything after that is Swift 2.
 
+A fun gif
 ---
 
 <img src="dwifft.gif" alt="Dwifft" style="width: 375px !important;"/>
