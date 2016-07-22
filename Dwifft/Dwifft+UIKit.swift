@@ -23,7 +23,7 @@ public class TableViewDiffCalculator<T: Equatable> {
     public var sectionIndex: Int = 0
     
     /// You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
-    public var insertionAnimation = UITableViewRowAnimation.Automatic, deletionAnimation = UITableViewRowAnimation.Automatic
+    public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
     
     /// Change this value to trigger animations on the table view.
     public var rows : [T] {
@@ -35,11 +35,11 @@ public class TableViewDiffCalculator<T: Equatable> {
             if (diff.results.count > 0) {
                 tableView?.beginUpdates()
                 
-                let insertionIndexPaths = diff.insertions.map({ NSIndexPath(forRow: $0.idx, inSection: self.sectionIndex) })
-                let deletionIndexPaths = diff.deletions.map({ NSIndexPath(forRow: $0.idx, inSection: self.sectionIndex) })
+                let insertionIndexPaths = diff.insertions.map({ IndexPath(row: $0.idx, section: self.sectionIndex) })
+                let deletionIndexPaths = diff.deletions.map({ IndexPath(row: $0.idx, section: self.sectionIndex) })
                 
-                tableView?.insertRowsAtIndexPaths(insertionIndexPaths, withRowAnimation: insertionAnimation)
-                tableView?.deleteRowsAtIndexPaths(deletionIndexPaths, withRowAnimation: deletionAnimation)
+                tableView?.insertRows(at: insertionIndexPaths, with: insertionAnimation)
+                tableView?.deleteRows(at: deletionIndexPaths, with: deletionAnimation)
                 
                 tableView?.endUpdates()
             }
@@ -69,12 +69,12 @@ public class CollectionViewDiffCalculator<T: Equatable> {
             let newRows = self.rows
             let diff = oldRows.diff(newRows)
             if (diff.results.count > 0) {
-                let insertionIndexPaths = diff.insertions.map({ NSIndexPath(forItem: $0.idx, inSection: self.sectionIndex) })
-                let deletionIndexPaths = diff.deletions.map({ NSIndexPath(forItem: $0.idx, inSection: self.sectionIndex) })
+                let insertionIndexPaths = diff.insertions.map({ IndexPath(item: $0.idx, section: self.sectionIndex) })
+                let deletionIndexPaths = diff.deletions.map({ IndexPath(item: $0.idx, section: self.sectionIndex) })
                 
                 collectionView?.performBatchUpdates({ () -> Void in
-                    self.collectionView?.insertItemsAtIndexPaths(insertionIndexPaths)
-                    self.collectionView?.deleteItemsAtIndexPaths(deletionIndexPaths)
+                    self.collectionView?.insertItems(at: insertionIndexPaths)
+                    self.collectionView?.deleteItems(at: deletionIndexPaths)
                 }, completion: nil)
             }
             
