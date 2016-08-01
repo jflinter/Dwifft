@@ -121,20 +121,20 @@ class DwifftTests: XCTestCase {
         
         var insertionExpectations: [Int: XCTestExpectation] = [:]
         for i in [0, 3, 4, 5] {
-            let x: XCTestExpectation = expectation(withDescription: "+\(i)")
+            let x: XCTestExpectation = expectation(description: "+\(i)")
             insertionExpectations[i] = x
         }
         
         var deletionExpectations: [Int: XCTestExpectation] = [:]
         for i in [0, 1, 2, 4] {
-            let x: XCTestExpectation = expectation(withDescription: "+\(i)")
+            let x: XCTestExpectation = expectation(description: "+\(i)")
             deletionExpectations[i] = x
         }
         
         let tableView = TestTableView(insertionExpectations: insertionExpectations, deletionExpectations: deletionExpectations)
         let viewController = TestViewController(tableView: tableView, rows: [0, 1, 2, 5, 8, 9, 0])
         viewController.rows = [4, 5, 9, 8, 3, 1, 0]
-        waitForExpectations(withTimeout: 1.0, handler: nil)
+        waitForExpectations(timeout: 1.0, handler: nil)
     }
     
     func testCollectionViewDiffCalculator() {
@@ -201,20 +201,20 @@ class DwifftTests: XCTestCase {
         
         var insertionExpectations: [Int: XCTestExpectation] = [:]
         for i in [0, 3, 4, 5] {
-            let x: XCTestExpectation = expectation(withDescription: "+\(i)")
+            let x: XCTestExpectation = expectation(description: "+\(i)")
             insertionExpectations[i] = x
         }
         
         var deletionExpectations: [Int: XCTestExpectation] = [:]
         for i in [0, 1, 2, 4] {
-            let x: XCTestExpectation = expectation(withDescription: "+\(i)")
+            let x: XCTestExpectation = expectation(description: "+\(i)")
             deletionExpectations[i] = x
         }
         
         let collectionView = TestCollectionView(insertionExpectations: insertionExpectations, deletionExpectations: deletionExpectations)
         let viewController = TestViewController(collectionView: collectionView, rows: [0, 1, 2, 5, 8, 9, 0])
         viewController.rows = [4, 5, 9, 8, 3, 1, 0]
-        waitForExpectations(withTimeout: 1.0, handler: nil)
+        waitForExpectations(timeout: 1.0, handler: nil)
     }
     
 }
