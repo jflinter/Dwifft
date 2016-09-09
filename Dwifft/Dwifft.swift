@@ -78,7 +78,7 @@ public extension Array where Element: Equatable {
     }
     
     /// Walks back through the generated table to generate the diff.
-    private static func diffFromIndices(_ table: [[Int]], _ x: [Element], _ y: [Element], _ i: Int, _ j: Int) -> Diff<Element> {
+    fileprivate static func diffFromIndices(_ table: [[Int]], _ x: [Element], _ y: [Element], _ i: Int, _ j: Int) -> Diff<Element> {
         if i == 0 && j == 0 {
             return Diff<Element>(results: [])
         } else if i == 0 {
@@ -118,7 +118,7 @@ public extension Array where Element: Equatable {
     }
     
     /// Walks back through the generated table to generate the LCS.
-    private static func lcsFromIndices(_ table: [[Int]], _ x: [Element], _ y: [Element], _ i: Int, _ j: Int) -> [Element] {
+    fileprivate static func lcsFromIndices(_ table: [[Int]], _ x: [Element], _ y: [Element], _ i: Int, _ j: Int) -> [Element] {
         if i == 0 && j == 0 {
             return []
         } else if i == 0 {
