@@ -39,7 +39,7 @@ class DwifftTests: XCTestCase {
             XCTAssertEqual(test.array1.LCS(test.array2), test.expectedLCS, "incorrect LCS")
             
             let diff = test.array1.diff(test.array2)
-            let printableDiff = diff.results.map({ $0.debugDescription }).joinWithSeparator("")
+            let printableDiff = diff.results.map({ $0.debugDescription }).joined(separator: "")
             XCTAssertEqual(printableDiff, test.expectedDiff, "incorrect diff")
             
             let applied = test.array1.apply(diff)
@@ -63,24 +63,24 @@ class DwifftTests: XCTestCase {
             init(insertionExpectations: [Int: XCTestExpectation], deletionExpectations: [Int: XCTestExpectation]) {
                 self.insertionExpectations = insertionExpectations
                 self.deletionExpectations = deletionExpectations
-                super.init(frame: CGRectZero, style: UITableViewStyle.Plain)
+                super.init(frame: CGRect.zero, style: UITableViewStyle.plain)
             }
             
             required init?(coder aDecoder: NSCoder) {
                 fatalError("not implemented")
             }
             
-            private override func insertRowsAtIndexPaths(indexPaths: [NSIndexPath], withRowAnimation animation: UITableViewRowAnimation) {
-                XCTAssertEqual(animation, UITableViewRowAnimation.Left, "incorrect insertion animation")
+            fileprivate override func insertRows(at indexPaths: [IndexPath], with animation: UITableViewRowAnimation) {
+                XCTAssertEqual(animation, UITableViewRowAnimation.left, "incorrect insertion animation")
                 for indexPath in indexPaths {
-                    self.insertionExpectations[indexPath.row]!.fulfill()
+                    self.insertionExpectations[(indexPath as NSIndexPath).row]!.fulfill()
                 }
             }
             
-            private override func deleteRowsAtIndexPaths(indexPaths: [NSIndexPath], withRowAnimation animation: UITableViewRowAnimation) {
-                XCTAssertEqual(animation, UITableViewRowAnimation.Right, "incorrect insertion animation")
+            fileprivate override func deleteRows(at indexPaths: [IndexPath], with animation: UITableViewRowAnimation) {
+                XCTAssertEqual(animation, UITableViewRowAnimation.right, "incorrect insertion animation")
                 for indexPath in indexPaths {
-                    self.deletionExpectations[indexPath.row]!.fulfill()
+                    self.deletionExpectations[(indexPath as NSIndexPath).row]!.fulfill()
                 }
             }
             
@@ -99,8 +99,8 @@ class DwifftTests: XCTestCase {
             init(tableView: TestTableView, rows: [Int]) {
                 self.tableView = tableView
                 self.diffCalculator = TableViewDiffCalculator<Int>(tableView: tableView, initialRows: rows)
-                self.diffCalculator.insertionAnimation = .Left
-                self.diffCalculator.deletionAnimation = .Right
+                self.diffCalculator.insertionAnimation = .left
+                self.diffCalculator.deletionAnimation = .right
                 self.rows = rows
                 super.init(nibName: nil, bundle: nil)
             }
@@ -109,11 +109,11 @@ class DwifftTests: XCTestCase {
                 fatalError("not implemented")
             }
             
-            @objc func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+            @objc func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
                 return UITableViewCell()
             }
             
-            @objc func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            @objc func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
                 return rows.count
             }
             
@@ -121,20 +121,20 @@ class DwifftTests: XCTestCase {
         
         var insertionExpectations: [Int: XCTestExpectation] = [:]
         for i in [0, 3, 4, 5] {
-            let x: XCTestExpectation = expectationWithDescription("+\(i)")
+            let x: XCTestExpectation = expectation(description: "+\(i)")
             insertionExpectations[i] = x
         }
         
         var deletionExpectations: [Int: XCTestExpectation] = [:]
         for i in [0, 1, 2, 4] {
-            let x: XCTestExpectation = expectationWithDescription("+\(i)")
+            let x: XCTestExpectation = expectation(description: "+\(i)")
             deletionExpectations[i] = x
         }
         
         let tableView = TestTableView(insertionExpectations: insertionExpectations, deletionExpectations: deletionExpectations)
         let viewController = TestViewController(tableView: tableView, rows: [0, 1, 2, 5, 8, 9, 0])
         viewController.rows = [4, 5, 9, 8, 3, 1, 0]
-        waitForExpectationsWithTimeout(1.0, handler: nil)
+        waitForExpectations(timeout: 1.0, handler: nil)
     }
     
     func testCollectionViewDiffCalculator() {
@@ -147,22 +147,22 @@ class DwifftTests: XCTestCase {
             init(insertionExpectations: [Int: XCTestExpectation], deletionExpectations: [Int: XCTestExpectation]) {
                 self.insertionExpectations = insertionExpectations
                 self.deletionExpectations = deletionExpectations
-                super.init(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
+                super.init(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
             }
             
             required init?(coder aDecoder: NSCoder) {
                 fatalError("not implemented")
             }
             
-            private override func insertItemsAtIndexPaths(indexPaths: [NSIndexPath]) {
+            fileprivate override func insertItems(at indexPaths: [IndexPath]) {
                 for indexPath in indexPaths {
-                    self.insertionExpectations[indexPath.item]!.fulfill()
+                    self.insertionExpectations[(indexPath as NSIndexPath).item]!.fulfill()
                 }
             }
             
-            private override func deleteItemsAtIndexPaths(indexPaths: [NSIndexPath]) {
+            fileprivate override func deleteItems(at indexPaths: [IndexPath]) {
                 for indexPath in indexPaths {
-                    self.deletionExpectations[indexPath.item]!.fulfill()
+                    self.deletionExpectations[(indexPath as NSIndexPath).item]!.fulfill()
                 }
             }
             
@@ -189,11 +189,11 @@ class DwifftTests: XCTestCase {
                 fatalError("not implemented")
             }
             
-            @objc func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+            @objc func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
                 return rows.count
             }
             
-            @objc func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+            @objc func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
                 return UICollectionViewCell()
             }
             
@@ -201,20 +201,20 @@ class DwifftTests: XCTestCase {
         
         var insertionExpectations: [Int: XCTestExpectation] = [:]
         for i in [0, 3, 4, 5] {
-            let x: XCTestExpectation = expectationWithDescription("+\(i)")
+            let x: XCTestExpectation = expectation(description: "+\(i)")
             insertionExpectations[i] = x
         }
         
         var deletionExpectations: [Int: XCTestExpectation] = [:]
         for i in [0, 1, 2, 4] {
-            let x: XCTestExpectation = expectationWithDescription("+\(i)")
+            let x: XCTestExpectation = expectation(description: "+\(i)")
             deletionExpectations[i] = x
         }
         
         let collectionView = TestCollectionView(insertionExpectations: insertionExpectations, deletionExpectations: deletionExpectations)
         let viewController = TestViewController(collectionView: collectionView, rows: [0, 1, 2, 5, 8, 9, 0])
         viewController.rows = [4, 5, 9, 8, 3, 1, 0]
-        waitForExpectationsWithTimeout(1.0, handler: nil)
+        waitForExpectations(timeout: 1.0, handler: nil)
     }
     
 }
