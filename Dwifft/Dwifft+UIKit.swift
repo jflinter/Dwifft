@@ -27,23 +27,21 @@ open class TableViewDiffCalculator<T: Equatable> {
     
     /// Change this value to trigger animations on the table view.
     open var rows : [T] {
+        willSet {
+            tableView?.beginUpdates()
+        }
         didSet {
-            
             let oldRows = oldValue
             let newRows = self.rows
             let diff = oldRows.diff(newRows)
             if (diff.results.count > 0) {
-                tableView?.beginUpdates()
-                
                 let insertionIndexPaths = diff.insertions.map({ IndexPath(row: $0.idx, section: self.sectionIndex) })
                 let deletionIndexPaths = diff.deletions.map({ IndexPath(row: $0.idx, section: self.sectionIndex) })
                 
                 tableView?.insertRows(at: insertionIndexPaths, with: insertionAnimation)
                 tableView?.deleteRows(at: deletionIndexPaths, with: deletionAnimation)
-                
-                tableView?.endUpdates()
             }
-            
+            tableView?.endUpdates()
         }
     }
     
