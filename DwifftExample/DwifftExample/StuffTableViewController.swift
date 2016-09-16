@@ -39,7 +39,7 @@ class StuffTableViewController: UITableViewController {
     
     required init!(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .Plain, target: self, action: #selector(StuffTableViewController.shuffle))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .plain, target: self, action: #selector(StuffTableViewController.shuffle))
     }
     
     @objc func shuffle() {
@@ -60,22 +60,22 @@ class StuffTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
         self.diffCalculator = TableViewDiffCalculator<String>(tableView: self.tableView, initialRows: self.stuff)
         
         // You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
-        self.diffCalculator?.insertionAnimation = .Fade
-        self.diffCalculator?.deletionAnimation = .Fade
+        self.diffCalculator?.insertionAnimation = .fade
+        self.diffCalculator?.deletionAnimation = .fade
     }
 
     // MARK: - Table view data source
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.stuff.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
-        cell.textLabel?.text = self.stuff[indexPath.row]
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        cell.textLabel?.text = self.stuff[(indexPath as NSIndexPath).row]
         return cell
     }
 
