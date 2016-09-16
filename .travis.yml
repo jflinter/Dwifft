@@ -1,8 +1,3 @@
-env:
-  global:
-    secure: jNYbsiXBnFbX3gldS/Z+6Eh5lg6JBnkAdoQMN8TkWB4MO390DJVYn0dYQ17DQPnxIx4GxjBIb6kif+TSAcAv6n3WyLmqEt4zJ/VjeNtt+lmK3hHTPcchnSyBOryZyr12IudD/Vf2dQcAhNqS7xRRS1hiton2eIRAUls8oGbDLNLGRmv38EiTVuttjXz33uDu5zgNlbuJM4bVewBPr/LR2QsrLWABGMdJtsyNoSj/aClu6eGdo3vx2M2yq+Za4A+Dqih4LOqQujBOB26ML238yf+eVXBPKaSn/QIwUHlF+XMb+81SOcDDUQmris7T7V9ShYJFJ42ESQmjSuanWSmF8LBdIarYdpkBvXiq9pffKvLF44FSI6+6j7bOxteGviaY0fioehandB/B/oOG+IoeVG773luy2al41K/6lnRqcdEWPAuwG+b99lPXOfPjPVVElFN+035nZfdFsppoqOSJmOvw2Zb8k7AaGPxqyBoUPMathui/NaS+avK6sAcKguhjzzhvHW3sbDZnv5l+v+3v6EWXY1ovtYBnyHe6z79nDqwq15fcqYQwGUsY4/CWmWALMwhnAUxcquKfXcDjlhx2MhRrx7+FCHcsNInFKrRr/eDu6TbKxKFXN+Ucuv0QaGRivssM3rE6Wz9hPitfDoOSUjgi2NPJy4e0O5LbQmat/cY=
 osx_image: xcode8
 language: objective-c
-# before_install: "./ci_scripts/add_key.sh"
 script: xcodebuild test -project Dwifft.xcodeproj -scheme Dwifft -sdk iphonesimulator10.0 -destination 'platform=iOS Simulator,name=iPhone 7'
-# after_script: "./ci_scripts/remove_key.sh"
