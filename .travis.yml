@@ -4,5 +4,5 @@ env:
 osx_image: xcode8
 language: objective-c
 # before_install: "./ci_scripts/add_key.sh"
-script: xcodebuild test -project Dwifft.xcodeproj -scheme Dwifft -sdk iphonesimulator10.0
+script: xcodebuild test -project Dwifft.xcodeproj -scheme Dwifft -sdk iphonesimulator10.0 -destination 'platform=iOS Simulator,name=iPhone 7'
 # after_script: "./ci_scripts/remove_key.sh"
