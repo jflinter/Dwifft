@@ -16,7 +16,7 @@ open class TableViewDiffCalculator<T: Equatable> {
     
     public init(tableView: UITableView, initialRows: [T] = []) {
         self.tableView = tableView
-        self.rows = initialRows
+        self._rows = initialRows
     }
     
     /// Right now this only works on a single section of a tableView. If your tableView has multiple sections, though, you can just use multiple TableViewDiffCalculators, one per section, and set this value appropriately on each one.
@@ -26,22 +26,25 @@ open class TableViewDiffCalculator<T: Equatable> {
     open var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
 
     /// Change this value to trigger animations on the table view.
+    private var _rows: [T]
     open var rows : [T] {
-        willSet {
-            tableView?.beginUpdates()
+        get {
+            return _rows
         }
-        didSet {
-            let oldRows = oldValue
-            let newRows = self.rows
+        set {
+            let oldRows = rows
+            let newRows = newValue
             let diff = oldRows.diff(newRows)
             if (diff.results.count > 0) {
+                tableView?.beginUpdates()
+                self._rows = newValue
                 let insertionIndexPaths = diff.insertions.map({ IndexPath(row: $0.idx, section: self.sectionIndex) })
                 let deletionIndexPaths = diff.deletions.map({ IndexPath(row: $0.idx, section: self.sectionIndex) })
-                
+
                 tableView?.insertRows(at: insertionIndexPaths, with: insertionAnimation)
                 tableView?.deleteRows(at: deletionIndexPaths, with: deletionAnimation)
+                tableView?.endUpdates()
             }
-            tableView?.endUpdates()
         }
     }
     
