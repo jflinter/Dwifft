@@ -155,12 +155,14 @@ class DwifftTests: XCTestCase {
             }
             
             private override func insertItems(at indexPaths: [IndexPath]) {
+                super.insertItems(at: indexPaths)
                 for indexPath in indexPaths {
                     self.insertionExpectations[(indexPath as NSIndexPath).item]!.fulfill()
                 }
             }
             
             private override func deleteItems(at indexPaths: [IndexPath]) {
+                super.deleteItems(at: indexPaths)
                 for indexPath in indexPaths {
                     self.deletionExpectations[(indexPath as NSIndexPath).item]!.fulfill()
                 }
@@ -183,6 +185,9 @@ class DwifftTests: XCTestCase {
                 self.diffCalculator = CollectionViewDiffCalculator<Int>(collectionView: self.testCollectionView, initialRows: rows)
                 self.rows = rows
                 super.init(nibName: nil, bundle: nil)
+
+                collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "TestCell")
+                collectionView.dataSource = self
             }
             
             required init?(coder aDecoder: NSCoder) {
@@ -190,11 +195,11 @@ class DwifftTests: XCTestCase {
             }
             
             @objc func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-                return rows.count
+                return diffCalculator.rows.count
             }
             
             @objc func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-                return UICollectionViewCell()
+                return collectionView.dequeueReusableCell(withReuseIdentifier: "TestCell", for: indexPath)
             }
             
         }
