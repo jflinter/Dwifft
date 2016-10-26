@@ -50,14 +50,21 @@ open class TableViewDiffCalculator<T: Equatable> {
     
 }
     
+public protocol CollectionViewDiffCalculatorDelegate: class {
+    func didCompleteBatchUpdate(collectionView: UICollectionView?)
+}
+    
 open class CollectionViewDiffCalculator<T: Equatable> {
     
     open weak var collectionView: UICollectionView?
+    private weak var delegate: CollectionViewDiffCalculatorDelegate?
     
-    public init(collectionView: UICollectionView, initialRows: [T] = []) {
+    public init(collectionView: UICollectionView, initialRows: [T] = [], delegate: CollectionViewDiffCalculatorDelegate? = nil) {
         self.collectionView = collectionView
-        _rows = initialRows
+        _rows               = initialRows
+        self.delegate       = delegate
     }
+
     
     /// Right now this only works on a single section of a collectionView. If your collectionView has multiple sections, though, you can just use multiple CollectionViewDiffCalculators, one per section, and set this value appropriately on each one.
     open var sectionIndex: Int = 0
@@ -83,7 +90,10 @@ open class CollectionViewDiffCalculator<T: Equatable> {
 
                     self.collectionView?.insertItems(at: insertionIndexPaths)
                     self.collectionView?.deleteItems(at: deletionIndexPaths)
-                }, completion: nil)
+                
+                }, completion: { (completion) in
+                    self.delegate?.didCompleteBatchUpdate(collectionView: self.collectionView)
+                })
             }
             
         }
