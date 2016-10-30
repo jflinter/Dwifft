@@ -41,13 +41,16 @@ class DwifftTests: XCTestCase {
             let diff = test.array1.diff(test.array2)
             let printableDiff = diff.results.map({ $0.debugDescription }).joined(separator: "")
             XCTAssertEqual(printableDiff, test.expectedDiff, "incorrect diff")
-            
-            let applied = test.array1.apply(diff)
-            XCTAssertEqual(applied, test.array2)
-            
-            let reversed = diff.reversed()
-            let reverseApplied = test.array2.apply(reversed)
-            XCTAssertEqual(reverseApplied, test.array1)
+
+            let diff2 = test.array1.diff(test.array2, { $0.0 == $0.1 })
+            let printableDiff2 = diff.results.map({ $0.debugDescription }).joined(separator: "")
+            XCTAssertEqual(printableDiff2, test.expectedDiff, "incorrect diff")
+
+            XCTAssertEqual(test.array1.apply(diff), test.array2)
+            XCTAssertEqual(test.array1.apply(diff2), test.array2)
+
+            XCTAssertEqual(test.array2.apply(diff.reversed()), test.array1)
+            XCTAssertEqual(test.array2.apply(diff2.reversed()), test.array1)
         }
         
         
