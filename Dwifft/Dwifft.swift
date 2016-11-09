@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 jflinter. All rights reserved.
 //
 
+// MARK: - Diff
 public struct Diff<T> {
     public let results: [DiffStep<T>]
     public var insertions: [DiffStep<T>] {
@@ -31,6 +32,7 @@ public func +<T> (left: Diff<T>, right: DiffStep<T>) -> Diff<T> {
     return Diff<T>(results: left.results + [right])
 }
 
+// MARK: - DiffStep
 /// These get returned from calls to Array.diff(). They represent insertions or deletions that need to happen to transform array a into array b.
 public enum DiffStep<T> : CustomDebugStringConvertible {
     case insert(Int, T)
@@ -69,6 +71,7 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
     }
 }
 
+// MARK: - Diff and LCS calculation
 public extension Array where Element: Equatable {
     
     /// Returns the sequence of ArrayDiffResults required to transform one array into another.
@@ -76,7 +79,16 @@ public extension Array where Element: Equatable {
         let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
         return Array.diffFromIndices(table, self, other, self.count, other.count)
     }
-    
+}
+
+public extension Array {
+
+    /// Returns the sequence of ArrayDiffResults required to transform one array into another.
+    public func diff(_ other: [Element], _ areEquivalent: (Element, Element) throws -> Bool) rethrows -> Diff<Element> {
+        let table = try MemoizedSequenceComparison.buildTable(self, other, self.count, other.count, areEquivalent)
+        return Array.diffFromIndices(table, self, other, self.count, other.count)
+    }
+
     /// Walks back through the generated table to generate the diff.
     fileprivate static func diffFromIndices(_ table: [[Int]], _ x: [Element], _ y: [Element], _ i: Int, _ j: Int) -> Diff<Element> {
         if i == 0 && j == 0 {
@@ -114,33 +126,53 @@ public extension Array where Element: Equatable {
     /// Returns the longest common subsequence between two arrays.
     public func LCS(_ other: [Element]) -> [Element] {
         let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
-        return Array.lcsFromIndices(table, self, other, self.count, other.count)
+
+        return Array.lcsFromIndices(table, self, other, self.count, other.count, ==)
     }
-    
-    /// Walks back through the generated table to generate the LCS.
-    fileprivate static func lcsFromIndices(_ table: [[Int]], _ x: [Element], _ y: [Element], _ i: Int, _ j: Int) -> [Element] {
-        if i == 0 || j == 0 {
-            return []
-        } else if x[i-1] == y[j-1] {
-            return lcsFromIndices(table, x, y, i - 1, j - 1) + [x[i - 1]]
-        } else if table[i-1][j] > table[i][j-1] {
-            return lcsFromIndices(table, x, y, i - 1, j)
-        } else {
-            return lcsFromIndices(table, x, y, i, j - 1)
-        }
-    }
-    
 }
 
-internal struct MemoizedSequenceComparison<T: Equatable> {
-    static func buildTable(_ x: [T], _ y: [T], _ n: Int, _ m: Int) -> [[Int]] {
+public extension Array {
+    /// Returns the longest common subsequence between two arrays.
+    public func LCS(_ other: [Element], _ areEquivalent: (Element, Element) throws -> Bool) rethrows -> [Element] {
+        let table = try MemoizedSequenceComparison.buildTable(self, other, self.count, other.count, areEquivalent)
+
+        return try Array.lcsFromIndices(table, self, other, self.count, other.count, areEquivalent)
+    }
+
+    /// Walks back through the generated table to generate the LCS.
+    fileprivate static func lcsFromIndices(_ table: [[Int]],
+                                           _ x: [Element],
+                                           _ y: [Element],
+                                           _ i: Int,
+                                           _ j: Int,
+                                           _ areEquivalent: (Element, Element) throws -> Bool) rethrows -> [Element]
+    {
+        if i == 0 || j == 0 {
+            return []
+        } else if try areEquivalent(x[i-1], y[j-1]) {
+            return try lcsFromIndices(table, x, y, i - 1, j - 1, areEquivalent) + [x[i - 1]]
+        } else if table[i-1][j] > table[i][j-1] {
+            return try lcsFromIndices(table, x, y, i - 1, j, areEquivalent)
+        } else {
+            return try lcsFromIndices(table, x, y, i, j - 1, areEquivalent)
+        }
+    }
+}
+
+internal struct MemoizedSequenceComparison {
+    static func buildTable<T: Equatable>(_ x: [T], _ y: [T], _ n: Int, _ m: Int) -> [[Int]] {
+        return buildTable(x, y, n, m, ==)
+    }
+
+    static func buildTable<T>(_ x: [T], _ y: [T], _ n: Int, _ m: Int, _ areEquivalent: (T, T) throws -> Bool) rethrows -> [[Int]] {
+
         var table = Array(repeating: Array(repeating: 0, count: m + 1), count: n + 1)
         for i in 0...n {
             for j in 0...m {
                 if (i == 0 || j == 0) {
                     table[i][j] = 0
                 }
-                else if x[i-1] == y[j-1] {
+                else if try areEquivalent(x[i-1], y[j-1]) {
                     table[i][j] = table[i-1][j-1] + 1
                 } else {
                     table[i][j] = max(table[i-1][j], table[i][j-1])

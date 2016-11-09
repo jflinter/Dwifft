@@ -10,23 +10,26 @@
 
 import UIKit
 
-open class TableViewDiffCalculator<T: Equatable> {
-    
+open class BaseTableViewDiffCalculator<T> {
     open weak var tableView: UITableView?
-    
-    public init(tableView: UITableView, initialRows: [T] = []) {
-        self.tableView = tableView
-        self._rows = initialRows
-    }
-    
-    /// Right now this only works on a single section of a tableView. If your tableView has multiple sections, though, you can just use multiple TableViewDiffCalculators, one per section, and set this value appropriately on each one.
+
+    private var _rows: [T]
+
+    /// Right now this only works on a single section of a tableView. 
+    /// If your tableView has multiple sections, though, you can just use 
+    /// multiple TableViewDiffCalculators, one per section, and set this value appropriately on each one.
     open var sectionIndex: Int = 0
-    
+
     /// You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
     open var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
+    open var produceDiff: ([T], [T]) -> Diff<T>
 
-    /// Change this value to trigger animations on the table view.
-    private var _rows: [T]
+    public init(tableView: UITableView, initialRows: [T] = [], produceDiff: @escaping ([T], [T]) -> Diff<T>) {
+        self.tableView = tableView
+        self._rows = initialRows
+        self.produceDiff = produceDiff
+    }
+
     open var rows : [T] {
         get {
             return _rows
@@ -34,7 +37,7 @@ open class TableViewDiffCalculator<T: Equatable> {
         set {
             let oldRows = rows
             let newRows = newValue
-            let diff = oldRows.diff(newRows)
+            let diff = produceDiff(oldRows, newRows)
             if (diff.results.count > 0) {
                 tableView?.beginUpdates()
                 self._rows = newValue
@@ -47,7 +50,12 @@ open class TableViewDiffCalculator<T: Equatable> {
             }
         }
     }
-    
+}
+
+open class TableViewDiffCalculator<T: Equatable>: BaseTableViewDiffCalculator<T> {
+    public init(tableView: UITableView, initialRows: [T] = []) {
+        super.init(tableView: tableView, initialRows: initialRows, produceDiff: { $0.0.diff($0.1) })
+    }
 }
     
 open class CollectionViewDiffCalculator<T: Equatable> {
