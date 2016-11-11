@@ -44,6 +44,8 @@ open class TableViewDiffCalculator<T: Equatable> {
                 tableView?.insertRows(at: insertionIndexPaths, with: insertionAnimation)
                 tableView?.deleteRows(at: deletionIndexPaths, with: deletionAnimation)
                 tableView?.endUpdates()
+            } else {
+                tableView?.reloadData()
             }
         }
     }
