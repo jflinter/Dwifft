@@ -211,6 +211,7 @@
 					041EBB9C1B89679200E113B3 = {
 						CreatedOnToolsVersion = 6.4;
 						LastSwiftMigration = 0800;
+						ProvisioningStyle = Manual;
 					};
 					501E20711E1CECD400DE5797 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -434,6 +435,8 @@
 		041EBBAC1B89679200E113B3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -449,6 +452,8 @@
 		041EBBAD1B89679200E113B3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = DwifftTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jflinter.$(PRODUCT_NAME:rfc1034identifier)";
