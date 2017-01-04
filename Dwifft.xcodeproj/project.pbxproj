@@ -13,8 +13,6 @@
 		041EBBB01B8967C300E113B3 /* Dwifft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* Dwifft.swift */; };
 		041EBBB21B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */; };
 		501E207A1E1CED9000DE5797 /* Dwifft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* Dwifft.swift */; };
-		501E207B1E1CEECD00DE5797 /* Dwifft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* Dwifft.swift */; };
-		501E207C1E1CEECD00DE5797 /* Dwifft+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,7 +34,6 @@
 		041EBBA41B89679200E113B3 /* DwifftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DwifftTests.swift; sourceTree = "<group>"; };
 		041EBBAE1B8967C300E113B3 /* Dwifft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dwifft.swift; sourceTree = "<group>"; };
 		041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dwifft+UIKit.swift"; sourceTree = "<group>"; };
-		501E206C1E1CEC3200DE5797 /* Dwifft copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Dwifft copy-Info.plist"; path = "/Users/ctm/Coding/minNV/Carthage/Checkouts/Dwifft/Dwifft copy-Info.plist"; sourceTree = "<absolute>"; };
 		501E20721E1CECD400DE5797 /* Dwifft.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dwifft.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -72,7 +69,6 @@
 				041EBB941B89679200E113B3 /* Dwifft */,
 				041EBBA11B89679200E113B3 /* DwifftTests */,
 				041EBB931B89679200E113B3 /* Products */,
-				501E206C1E1CEC3200DE5797 /* Dwifft copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -279,9 +275,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				501E207C1E1CEECD00DE5797 /* Dwifft+UIKit.swift in Sources */,
 				041EBBA51B89679200E113B3 /* DwifftTests.swift in Sources */,
-				501E207B1E1CEECD00DE5797 /* Dwifft.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
