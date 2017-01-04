@@ -8,6 +8,7 @@
 
 import UIKit
 import XCTest
+@testable import Dwifft
 
 class DwifftTests: XCTestCase {
     
