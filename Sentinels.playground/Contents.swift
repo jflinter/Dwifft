@@ -5,11 +5,25 @@ import UIKit
 
 public struct Diff<T>: CustomDebugStringConvertible {
     public let results: [DiffStep<T>]
+    init(results: [DiffStep<T>]) {
+        self.results = results.sorted { lhs, rhs in
+            if !lhs.isInsertion && !rhs.isInsertion {
+                return lhs.idx > rhs.idx
+            }
+            else if lhs.isInsertion {
+                return false
+            } else if rhs.isInsertion {
+                return true
+            } else {
+                return lhs.idx < rhs.idx
+            }
+        }
+    }
     public var insertions: [DiffStep<T>] {
-        return results.filter({ $0.isInsertion }).sorted { $0.idx < $1.idx }
+        return results.filter({ $0.isInsertion })
     }
     public var deletions: [DiffStep<T>] {
-        return results.filter({ !$0.isInsertion }).sorted { $0.idx > $1.idx }
+        return results.filter({ !$0.isInsertion })
     }
     public func reversed() -> Diff<T> {
         let reversedResults = self.results.reversed().map { (result: DiffStep<T>) -> DiffStep<T> in
@@ -235,50 +249,47 @@ struct ArrayDiff2D<T: Equatable> {
 
     static func flattenedArray(fromArray: [[T]]) -> [ValOrSentinel<T>] {
         return fromArray.enumerated().reduce([]) { accum, tuple in
-            let x = ValOrSentinel<T>(sentinelValue: (tuple.offset * 2))
-            let y = ValOrSentinel<T>(sentinelValue: (tuple.offset * 2 + 1))
-            return accum + [x] + tuple.element.map(ValOrSentinel.init) + [y]
+            let x = ValOrSentinel<T>(sentinelValue: (tuple.offset))
+            return accum + tuple.element.map(ValOrSentinel.init) + [x]
         }
     }
 
-    func build2DDiffStep(result: DiffStep<ValOrSentinel<T>>, state: [ValOrSentinel<T>]) -> DiffStep2D<T>? {
+    func build2DDiffStep(result: DiffStep<ValOrSentinel<T>>, state: [ValOrSentinel<T>]) -> DiffStep2D<T> {
+        func sectionAndRow(forIndex idx: Int) -> (Int, Int) {
+            for (i, raw) in state.reversed().enumerated() {
+                let j = state.count - i
+                if case .sentinel(let s) = raw, j <= idx {
+                    return (s.idx, idx - j)
+                }
+            }
+            return (0, idx)
+        }
         switch result {
         case .insert(let idx, let val):
             switch val {
             case .sentinel(let s):
-                if (s.idx / 2) % 2 == 0 {
-                    return DiffStep2D.sectionInsert(s.idx / 2)
-                } else {
-                    return nil
-                }
+                return DiffStep2D.sectionInsert(s.idx)
             case .val(let val):
-                let section = 0 // todo
-                return DiffStep2D.insert(section, idx, val)
+                let (section, row) = sectionAndRow(forIndex: idx)
+                return DiffStep2D.insert(section, row, val)
             }
         case .delete(let idx, let val):
             switch val {
             case .sentinel(let s):
-                if s.idx % 2 == 0 {
-                    return DiffStep2D.sectionDelete(s.idx / 2)
-                } else {
-                    return nil
-                }
+                return DiffStep2D.sectionDelete(s.idx)
             case .val(let val):
-                let section = 0 // todo
-                return DiffStep2D.delete(section, idx, val)
+                let (section, row) = sectionAndRow(forIndex: idx)
+                return DiffStep2D.delete(section, row, val)
             }
         }
     }
 
     func results() -> Diff2D<T> {
         let flatL = ArrayDiff2D.flattenedArray(fromArray: self.lhs)
-        let contents = flatL.map { $0.debugDescription }.joined(separator: ", ")
-        let flatLDebug = "[\(contents)]"
         let flatR = ArrayDiff2D.flattenedArray(fromArray: self.rhs)
         let diff = flatL.diff(flatR)
-        var steps: [DiffStep2D<T>] = []
         var state = flatL
-        steps = diff.results.flatMap { result in
+        let steps: [DiffStep2D<T>] = diff.results.map { result in
             let transformed = build2DDiffStep(result: result, state: state)
             state.applyStep(result)
             return transformed
@@ -288,18 +299,21 @@ struct ArrayDiff2D<T: Equatable> {
 }
 
 func ==(lhs: Sentinel, rhs: Sentinel) -> Bool {
-    return lhs.idx == rhs.idx
+    return true
+//    return lhs.idx == rhs.idx
 }
 
-[1, 2, 3].diff([])
+//ArrayDiff2D<Int>(lhs: [[], []], rhs: []).results()
+//ArrayDiff2D<Int>(lhs: [], rhs: [[], []]).results()
+//ArrayDiff2D<Int>(lhs: [], rhs: []).results()
 
-ArrayDiff2D<Int>(lhs: [[], []], rhs: []).results()
-ArrayDiff2D<Int>(lhs: [], rhs: [[], []]).results()
-ArrayDiff2D<Int>(lhs: [], rhs: []).results()
-
-ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[1]]).results()
+//ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[1]]).results()
 ArrayDiff2D<Int>(lhs: [[], [1], []], rhs: [[], [2], []]).results()
-ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[], [1], []]).results()
-ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[], [1]]).results()
+//ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[], [1], []]).results()
+//ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[], [1]]).results()
+//ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[], [1, 2]]).results()
+//ArrayDiff2D<Int>(lhs: [[1]], rhs: [[], [1]]).results()
+
+//ArrayDiff2D<Int>(lhs: [[1, 2, 3], [4, 5], []], rhs: [[], [1, 2], [3, 4]]).results()
 
 
