@@ -60,22 +60,20 @@ class DwifftTests: XCTestCase {
 
     func test2D() {
 
-//        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[], []], rhs: []).results().debugDescription, "[ds(1), ds(0)]")
-//        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [], rhs: [[], []]).results().debugDescription, "[is(0), is(1)]")
-//        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [], rhs: []).results().debugDescription, "[]")
-//
-//        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[1]]).results().debugDescription, "[ds(2), ds(1)]")
-//        
-//        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[], [1], []], rhs: [[], [2], []]).results().debugDescription, "[d(1 0), i(1 0)]")
-//
-//        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[], [1], []]).results().debugDescription, "[ds(2), is(0)]")
-//        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[], [1]]).results().debugDescription, "[ds(2), ds(1), is(0)]")
-//        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[], [1, 2]]).results().debugDescription, "[ds(2), ds(1), is(0), i(1 1)]")
-//        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[1]], rhs: [[], [1]]).results().debugDescription, "[is(0)]")
+        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[], []], rhs: []).results().debugDescription, "[ds(1), ds(0)]")
+        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [], rhs: [[], []]).results().debugDescription, "[is(0), is(1)]")
+        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [], rhs: []).results().debugDescription, "[]")
 
+        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[1]]).results().debugDescription, "[ds(2), ds(1)]")
 
-        let x = ArrayDiff2D<Int>(lhs: [[1, 2, 3], [4, 5], []], rhs: [[], [1, 2], [3, 4]]).results().debugDescription
-        print(x)
+        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[], [1], []], rhs: [[], [2], []]).results().debugDescription, "[d(1 0), i(1 0)]")
+
+        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[], [1], []]).results().debugDescription, "[ds(2), is(0)]")
+        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[], [1]]).results().debugDescription, "[ds(2), ds(1), is(0)]")
+        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[], [1, 2]]).results().debugDescription, "[ds(2), ds(1), is(0), i(1 1)]")
+        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[1]], rhs: [[], [1]]).results().debugDescription, "[is(0)]")
+
+        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[1, 2, 3], [4, 5], []], rhs: [[], [1, 2], [3, 4]]).results().debugDescription, "[ds(2), d(1 1), d(0 2), is(0), i(2 0)]")
 
     }
     
