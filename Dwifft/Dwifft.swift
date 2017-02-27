@@ -1,5 +1,5 @@
 //
-//  LCS.swift
+//  Dwifft.swift
 //  Dwifft
 //
 //  Created by Jack Flintermann on 3/14/15.
@@ -242,8 +242,24 @@ enum DiffStep2D<T>: CustomDebugStringConvertible {
 }
 
 public struct ArrayDiff2D<T: Equatable> {
+
+    init(lhs: [[T]], rhs: [[T]]) {
+        self.lhs = lhs
+        self.rhs = rhs
+        let flatL = ArrayDiff2D.flattenedArray(fromArray: self.lhs)
+        let flatR = ArrayDiff2D.flattenedArray(fromArray: self.rhs)
+        let diff = flatL.diff(flatR)
+        var state = flatL
+        self.results = diff.results.map { result in
+            let transformed = ArrayDiff2D.build2DDiffStep(result: result, state: state)
+            state.applyStep(result)
+            return transformed
+        }
+    }
+
     let lhs: [[T]]
     let rhs: [[T]]
+    let results: [DiffStep2D<T>]
 
     static func flattenedArray(fromArray: [[T]]) -> [ValOrSentinel<T>] {
         return fromArray.enumerated().reduce([]) { accum, tuple in
@@ -252,7 +268,7 @@ public struct ArrayDiff2D<T: Equatable> {
         }
     }
 
-    func build2DDiffStep(result: DiffStep<ValOrSentinel<T>>, state: [ValOrSentinel<T>]) -> DiffStep2D<T> {
+    static func build2DDiffStep(result: DiffStep<ValOrSentinel<T>>, state: [ValOrSentinel<T>]) -> DiffStep2D<T> {
         func sectionAndRow(forIndex idx: Int) -> (Int, Int) {
             let totalSentinels = state.filter { $0 == .sentinel }.count
             var sentinelCount = 0
@@ -287,24 +303,7 @@ public struct ArrayDiff2D<T: Equatable> {
             }
         }
     }
-
-    func results() -> Diff2D<T> {
-        let flatL = ArrayDiff2D.flattenedArray(fromArray: self.lhs)
-        let flatR = ArrayDiff2D.flattenedArray(fromArray: self.rhs)
-        let diff = flatL.diff(flatR)
-        var state = flatL
-        let steps: [DiffStep2D<T>] = diff.results.map { result in
-            let transformed = build2DDiffStep(result: result, state: state)
-            state.applyStep(result)
-            return transformed
-        }
-        return Diff2D(steps: steps)
-    }
 }
-
-
-
-
 
 
 

@@ -10,39 +10,55 @@
 
 import UIKit
 
-open class TableViewDiffCalculator<T: Equatable> {
+public class TableViewDiffCalculator<T: Equatable> {
     
-    open weak var tableView: UITableView?
-    
-    public init(tableView: UITableView, initialRows: [T] = []) {
+    public weak var tableView: UITableView?
+
+    public init(tableView: UITableView, initialRows: [[T]] = []) {
         self.tableView = tableView
         self._rows = initialRows
     }
-    
-    /// Right now this only works on a single section of a tableView. If your tableView has multiple sections, though, you can just use multiple TableViewDiffCalculators, one per section, and set this value appropriately on each one.
-    open var sectionIndex: Int = 0
-    
+
     /// You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
-    open var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
+    public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
+
+    public func numberOfSections() -> Int {
+        return self.rows.count
+    }
+
+    public func numberOfRows(inSection section: Int) -> Int {
+        return self.rows[section].count
+    }
+
+    public func value(atIndexPath indexPath: IndexPath) -> T {
+        return self.rows[indexPath.section][indexPath.row]
+    }
 
     /// Change this value to trigger animations on the table view.
-    private var _rows: [T]
-    open var rows : [T] {
+    private var _rows: [[T]]
+    public var rows : [[T]] {
         get {
             return _rows
         }
         set {
             let oldRows = rows
             let newRows = newValue
-            let diff = oldRows.diff(newRows)
+            let diff = ArrayDiff2D(lhs: oldRows, rhs: newRows)
             if (diff.results.count > 0) {
                 tableView?.beginUpdates()
                 self._rows = newValue
-                let insertionIndexPaths = diff.insertions.map({ IndexPath(row: $0.idx, section: self.sectionIndex) })
-                let deletionIndexPaths = diff.deletions.map({ IndexPath(row: $0.idx, section: self.sectionIndex) })
-
-                tableView?.insertRows(at: insertionIndexPaths, with: insertionAnimation)
-                tableView?.deleteRows(at: deletionIndexPaths, with: deletionAnimation)
+                for result in diff.results {
+                    switch result {
+                    case .sectionInsert(let sectionIndex):
+                        self.tableView?.insertSections(IndexSet(integer: sectionIndex), with: self.insertionAnimation)
+                    case .sectionDelete(let sectionIndex):
+                        self.tableView?.deleteSections(IndexSet(integer: sectionIndex), with: self.deletionAnimation)
+                    case .insert(let sectionIndex, let rowIndex, _):
+                        self.tableView?.insertRows(at: [IndexPath(row: rowIndex, section: sectionIndex)], with: self.insertionAnimation)
+                    case .delete(let sectionIndex, let rowIndex, _):
+                        self.tableView?.deleteRows(at: [IndexPath(row: rowIndex, section: sectionIndex)], with: self.deletionAnimation)
+                    }
+                }
                 tableView?.endUpdates()
             }
         }
@@ -50,39 +66,55 @@ open class TableViewDiffCalculator<T: Equatable> {
     
 }
     
-open class CollectionViewDiffCalculator<T: Equatable> {
+public class CollectionViewDiffCalculator<T: Equatable> {
     
-    open weak var collectionView: UICollectionView?
+    public weak var collectionView: UICollectionView?
     
-    public init(collectionView: UICollectionView, initialRows: [T] = []) {
+    public init(collectionView: UICollectionView, initialRows: [[T]] = []) {
         self.collectionView = collectionView
         _rows = initialRows
     }
-    
-    /// Right now this only works on a single section of a collectionView. If your collectionView has multiple sections, though, you can just use multiple CollectionViewDiffCalculators, one per section, and set this value appropriately on each one.
-    open var sectionIndex: Int = 0
+
+    public func numberOfSections() -> Int {
+        return self.rows.count
+    }
+
+    public func numberOfItems(inSection section: Int) -> Int {
+        return self.rows[section].count
+    }
+
+    public func value(atIndexPath indexPath: IndexPath) -> T {
+        return self.rows[indexPath.section][indexPath.item]
+    }
 
     // Since UICollectionView (unlike UITableView) takes a block which must update its data source and trigger animations, we need to trigger the changes on set, instead of explicitly before and after set. This backing array lets us use a getter/setter in the exposed property.
-    private var _rows: [T]
+    private var _rows: [[T]]
 
     /// Change this value to trigger animations on the collection view.
-    open var rows : [T] {
+    public var rows : [[T]] {
         get {
             return _rows
         }
         set {
             let oldRows = rows
             let newRows = newValue
-            let diff = oldRows.diff(newRows)
+            let diff = ArrayDiff2D(lhs: oldRows, rhs: newRows)
             if (diff.results.count > 0) {
                 collectionView?.performBatchUpdates({ () -> Void in
                     self._rows = newValue
 
-                    let insertionIndexPaths = diff.insertions.map({ IndexPath(item: $0.idx, section: self.sectionIndex) })
-                    let deletionIndexPaths = diff.deletions.map({ IndexPath(item: $0.idx, section: self.sectionIndex) })
-
-                    self.collectionView?.insertItems(at: insertionIndexPaths)
-                    self.collectionView?.deleteItems(at: deletionIndexPaths)
+                    for result in diff.results {
+                        switch result {
+                        case .sectionInsert(let sectionIndex):
+                            self.collectionView?.insertSections(IndexSet(integer: sectionIndex))
+                        case .sectionDelete(let sectionIndex):
+                            self.collectionView?.deleteSections(IndexSet(integer: sectionIndex))
+                        case .insert(let sectionIndex, let rowIndex, _):
+                            self.collectionView?.insertItems(at: [IndexPath(row: rowIndex, section: sectionIndex)])
+                        case .delete(let sectionIndex, let rowIndex, _):
+                            self.collectionView?.deleteItems(at: [IndexPath(row: rowIndex, section: sectionIndex)])
+                        }
+                    }
                 }, completion: nil)
             }
             
