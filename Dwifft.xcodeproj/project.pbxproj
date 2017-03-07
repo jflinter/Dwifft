@@ -8,10 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		041EBB981B89679200E113B3 /* Dwifft.h in Headers */ = {isa = PBXBuildFile; fileRef = 041EBB971B89679200E113B3 /* Dwifft.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		041EBB9E1B89679200E113B3 /* Dwifft.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 041EBB921B89679200E113B3 /* Dwifft.framework */; };
 		041EBBA51B89679200E113B3 /* DwifftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBA41B89679200E113B3 /* DwifftTests.swift */; };
 		041EBBB01B8967C300E113B3 /* Dwifft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* Dwifft.swift */; };
-		041EBBB11B8967C300E113B3 /* Dwifft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* Dwifft.swift */; };
 		1F45B4A11E6ECABE00AC734D /* DiffViewDiffCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F45B4A01E6ECABE00AC734D /* DiffViewDiffCalculator.swift */; };
 		1F45B4A31E6ED0CF00AC734D /* TableViewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F45B4A21E6ED0CF00AC734D /* TableViewUpdater.swift */; };
 		1F45B4A51E6ED16E00AC734D /* CollectionViewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F45B4A41E6ED16E00AC734D /* CollectionViewUpdater.swift */; };
@@ -52,7 +50,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				041EBB9E1B89679200E113B3 /* Dwifft.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,7 +242,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				041EBBB11B8967C300E113B3 /* Dwifft.swift in Sources */,
 				041EBBA51B89679200E113B3 /* DwifftTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
