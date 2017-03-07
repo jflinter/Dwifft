@@ -14,6 +14,8 @@
 		045502231B898C6600F5614D /* Dwifft.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0455021E1B898C5400F5614D /* Dwifft.framework */; };
 		045502241B898C6600F5614D /* Dwifft.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0455021E1B898C5400F5614D /* Dwifft.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0455022B1B898CF000F5614D /* StuffTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0455022A1B898CF000F5614D /* StuffTableViewController.swift */; };
+		1F45B4A81E6EE2DE00AC734D /* StuffCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F45B4A71E6EE2DE00AC734D /* StuffCollectionViewController.swift */; };
+		1F45B4AB1E6EE33500AC734D /* StuffDataSouce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F45B4AA1E6EE33500AC734D /* StuffDataSouce.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +72,8 @@
 		045502021B898C3200F5614D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		045502181B898C5400F5614D /* Dwifft.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Dwifft.xcodeproj; path = ../Dwifft.xcodeproj; sourceTree = "<group>"; };
 		0455022A1B898CF000F5614D /* StuffTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StuffTableViewController.swift; sourceTree = "<group>"; };
+		1F45B4A71E6EE2DE00AC734D /* StuffCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StuffCollectionViewController.swift; sourceTree = "<group>"; };
+		1F45B4AA1E6EE33500AC734D /* StuffDataSouce.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StuffDataSouce.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,7 +109,9 @@
 			isa = PBXGroup;
 			children = (
 				045501F81B898C3200F5614D /* AppDelegate.swift */,
+				1F45B4AA1E6EE33500AC734D /* StuffDataSouce.swift */,
 				0455022A1B898CF000F5614D /* StuffTableViewController.swift */,
+				1F45B4A71E6EE2DE00AC734D /* StuffCollectionViewController.swift */,
 				045501FC1B898C3200F5614D /* Main.storyboard */,
 				045501FF1B898C3200F5614D /* Images.xcassets */,
 				045502011B898C3200F5614D /* LaunchScreen.xib */,
@@ -229,7 +235,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F45B4AB1E6EE33500AC734D /* StuffDataSouce.swift in Sources */,
 				045501F91B898C3200F5614D /* AppDelegate.swift in Sources */,
+				1F45B4A81E6EE2DE00AC734D /* StuffCollectionViewController.swift in Sources */,
 				0455022B1B898CF000F5614D /* StuffTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

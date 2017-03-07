@@ -8,12 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		041EBB981B89679200E113B3 /* Dwifft.h in Headers */ = {isa = PBXBuildFile; fileRef = 041EBB971B89679200E113B3 /* Dwifft.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		041EBB9E1B89679200E113B3 /* Dwifft.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 041EBB921B89679200E113B3 /* Dwifft.framework */; };
 		041EBBA51B89679200E113B3 /* DwifftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBA41B89679200E113B3 /* DwifftTests.swift */; };
 		041EBBB01B8967C300E113B3 /* Dwifft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* Dwifft.swift */; };
-		041EBBB11B8967C300E113B3 /* Dwifft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* Dwifft.swift */; };
-		041EBBB21B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */; };
-		041EBBB31B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */; };
+		1F45B4A11E6ECABE00AC734D /* DiffViewDiffCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F45B4A01E6ECABE00AC734D /* DiffViewDiffCalculator.swift */; };
+		1F45B4A31E6ED0CF00AC734D /* TableViewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F45B4A21E6ED0CF00AC734D /* TableViewUpdater.swift */; };
+		1F45B4A51E6ED16E00AC734D /* CollectionViewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F45B4A41E6ED16E00AC734D /* CollectionViewUpdater.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,7 +33,9 @@
 		041EBBA31B89679200E113B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		041EBBA41B89679200E113B3 /* DwifftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DwifftTests.swift; sourceTree = "<group>"; };
 		041EBBAE1B8967C300E113B3 /* Dwifft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dwifft.swift; sourceTree = "<group>"; };
-		041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dwifft+UIKit.swift"; sourceTree = "<group>"; };
+		1F45B4A01E6ECABE00AC734D /* DiffViewDiffCalculator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiffViewDiffCalculator.swift; sourceTree = "<group>"; };
+		1F45B4A21E6ED0CF00AC734D /* TableViewUpdater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewUpdater.swift; sourceTree = "<group>"; };
+		1F45B4A41E6ED16E00AC734D /* CollectionViewUpdater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewUpdater.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,7 +50,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				041EBB9E1B89679200E113B3 /* Dwifft.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,7 +79,8 @@
 			children = (
 				041EBB971B89679200E113B3 /* Dwifft.h */,
 				041EBBAE1B8967C300E113B3 /* Dwifft.swift */,
-				041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */,
+				1F45B4A61E6EDC6D00AC734D /* DiffableViewUpdater */,
+				1F45B4A01E6ECABE00AC734D /* DiffViewDiffCalculator.swift */,
 				041EBB951B89679200E113B3 /* Supporting Files */,
 			);
 			path = Dwifft;
@@ -108,6 +109,15 @@
 				041EBBA31B89679200E113B3 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1F45B4A61E6EDC6D00AC734D /* DiffableViewUpdater */ = {
+			isa = PBXGroup;
+			children = (
+				1F45B4A41E6ED16E00AC734D /* CollectionViewUpdater.swift */,
+				1F45B4A21E6ED0CF00AC734D /* TableViewUpdater.swift */,
+			);
+			name = DiffableViewUpdater;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -221,8 +231,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				041EBBB21B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */,
+				1F45B4A51E6ED16E00AC734D /* CollectionViewUpdater.swift in Sources */,
+				1F45B4A31E6ED0CF00AC734D /* TableViewUpdater.swift in Sources */,
 				041EBBB01B8967C300E113B3 /* Dwifft.swift in Sources */,
+				1F45B4A11E6ECABE00AC734D /* DiffViewDiffCalculator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,9 +242,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				041EBBB11B8967C300E113B3 /* Dwifft.swift in Sources */,
 				041EBBA51B89679200E113B3 /* DwifftTests.swift in Sources */,
-				041EBBB31B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
