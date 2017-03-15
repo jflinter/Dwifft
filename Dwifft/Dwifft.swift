@@ -254,8 +254,8 @@ enum DiffStep2D<S, T>: CustomDebugStringConvertible {
 public struct ArrayDiff2D<S: Equatable, T: Equatable> {
 
     init(lhs: [(S, [T])], rhs: [(S, [T])]) {
-        self.lhs = ArrayDiff2D.removeDuplicateSections(lhs)
-        self.rhs = ArrayDiff2D.removeDuplicateSections(rhs)
+        self.lhs = lhs
+        self.rhs = rhs
         let flatL = ArrayDiff2D.flattenedArray(fromArray: self.lhs)
         let flatR = ArrayDiff2D.flattenedArray(fromArray: self.rhs)
         let diff = flatL.diff(flatR)
@@ -266,19 +266,7 @@ public struct ArrayDiff2D<S: Equatable, T: Equatable> {
             return transformed
         }
     }
-
-    private static func removeDuplicateSections(_ fromArray: [(S, [T])]) -> [(S, [T])] {
-        var unique: [(S, [T])] = []
-        var uniqueSections: [S] = []
-        for tuple in fromArray {
-            if !uniqueSections.contains(tuple.0) {
-                uniqueSections.append(tuple.0)
-                unique.append(tuple)
-            }
-        }
-        return unique
-    }
-
+    
     let lhs: [(S, [T])]
     let rhs: [(S, [T])]
     let results: [DiffStep2D<S, T>]
