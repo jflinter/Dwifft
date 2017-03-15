@@ -81,7 +81,7 @@ class StuffTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let diffCalculator = self.diffCalculator else { return 0 }
-        return diffCalculator.numberOfRows(inSection: section)
+        return diffCalculator.numberOfObjects(inSection: section)
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

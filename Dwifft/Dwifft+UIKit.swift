@@ -10,8 +10,60 @@
 
 import UIKit
 
-    public class TableViewDiffCalculator<S: Equatable, T: Equatable> {
-    
+public protocol DiffCalculator {
+    associatedtype S: Equatable
+    associatedtype T: Equatable
+    var rowsAndSections: [(S, [T])] { get set }
+    func numberOfSections() -> Int
+    func value(forSection: Int) -> S
+    func numberOfObjects(inSection section: Int) -> Int
+    func value(atIndexPath indexPath: IndexPath) -> T
+}
+
+extension DiffCalculator {
+    public func numberOfSections() -> Int {
+        return self.rowsAndSections.count
+    }
+
+    public func value(forSection: Int) -> S {
+        return self.rowsAndSections[forSection].0
+    }
+
+    public func numberOfObjects(inSection section: Int) -> Int {
+        return self.rowsAndSections[section].1.count
+    }
+
+    public func value(atIndexPath indexPath: IndexPath) -> T {
+        return self.rowsAndSections[indexPath.section].1[indexPath.row]
+    }
+}
+
+public extension DiffCalculator where S: Comparable {
+    public mutating func setRows(_ rows: [T], calculatingSectionBy: ((T) -> S)) {
+        let sorted = rows.map { (calculatingSectionBy($0), $0) }.sorted { lhs, rhs in
+            return lhs.0 > rhs.0
+        }
+        var rowsAndSections: [(S, [T])] = []
+        if let first = sorted.first {
+            var currentSection = first.0
+            var currentRows: [T] = []
+            for (section, row) in sorted {
+                if section == currentSection {
+                    currentRows.append(row)
+                } else {
+                    rowsAndSections.append((currentSection, currentRows))
+                    currentSection = section
+                    currentRows = [row]
+                }
+                rowsAndSections.append((currentSection, currentRows))
+            }
+        }
+        self.rowsAndSections = rowsAndSections
+    }
+}
+
+public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator {
+
     public weak var tableView: UITableView?
 
     public init(tableView: UITableView, initialRowsAndSections: [(S, [T])] = []) {
@@ -21,22 +73,6 @@ import UIKit
 
     /// You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
     public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
-
-    public func numberOfSections() -> Int {
-        return self.rowsAndSections.count
-    }
-
-    public func value(forSection: Int) -> S {
-        return self.rowsAndSections[forSection].0
-    }
-
-    public func numberOfRows(inSection section: Int) -> Int {
-        return self.rowsAndSections[section].1.count
-    }
-
-    public func value(atIndexPath indexPath: IndexPath) -> T {
-        return self.rowsAndSections[indexPath.section].1[indexPath.row]
-    }
 
     /// Change this value to trigger animations on the table view.
     private var _rowsAndSections: [(S, [T])]
@@ -67,32 +103,16 @@ import UIKit
             }
         }
     }
-    
+
 }
-    
-    public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> {
-    
+
+public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalculator {
+
     public weak var collectionView: UICollectionView?
-    
+
     public init(collectionView: UICollectionView, initialRowsAndSections: [(S, [T])] = []) {
         self.collectionView = collectionView
         _rowsAndSections = initialRowsAndSections
-    }
-
-    public func numberOfSections() -> Int {
-        return self.rowsAndSections.count
-    }
-
-    public func value(forSection: Int) -> S {
-        return self.rowsAndSections[forSection].0
-    }
-
-    public func numberOfItems(inSection section: Int) -> Int {
-        return self.rowsAndSections[section].1.count
-    }
-
-    public func value(atIndexPath indexPath: IndexPath) -> T {
-        return self.rowsAndSections[indexPath.section].1[indexPath.item]
     }
 
     // Since UICollectionView (unlike UITableView) takes a block which must update its data source and trigger animations, we need to trigger the changes on set, instead of explicitly before and after set. This backing array lets us use a getter/setter in the exposed property.
@@ -128,7 +148,7 @@ import UIKit
             
         }
     }
-    
+
 }
 
 #endif
