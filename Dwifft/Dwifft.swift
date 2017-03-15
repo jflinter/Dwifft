@@ -183,11 +183,21 @@ internal struct MemoizedSequenceComparison<T: Equatable> {
 // MARK - 2D
 // TODO move
 
-enum ValOrSentinel<T: Equatable>: CustomDebugStringConvertible, Equatable {
+enum ValOrSentinel<S: Equatable, T: Equatable>: CustomDebugStringConvertible, Equatable {
     case val(T)
-    case sentinel
+    case sentinel(S)
     init(_ val: T) {
         self = .val(val)
+    }
+    init(_ val: S) {
+        self = .sentinel(val)
+    }
+
+    public var isSentinel: Bool {
+        switch self {
+            case .sentinel: return true
+            default: return false
+        }
     }
 
     public var debugDescription: String {
@@ -203,10 +213,10 @@ enum ValOrSentinel<T: Equatable>: CustomDebugStringConvertible, Equatable {
     }
 }
 
-func ==<T>(lhs: ValOrSentinel<T>, rhs: ValOrSentinel<T>) -> Bool {
+func ==<S, T>(lhs: ValOrSentinel<S, T>, rhs: ValOrSentinel<S, T>) -> Bool {
     switch lhs {
-    case .sentinel:
-        if case .sentinel = rhs {
+    case .sentinel(let l):
+        if case .sentinel(let r) = rhs, l == r {
             return true
         }
     case .val(let l):
@@ -217,33 +227,33 @@ func ==<T>(lhs: ValOrSentinel<T>, rhs: ValOrSentinel<T>) -> Bool {
     return false
 }
 
-struct Diff2D<T>: CustomDebugStringConvertible {
-    let steps: [DiffStep2D<T>]
+struct Diff2D<S, T>: CustomDebugStringConvertible {
+    let steps: [DiffStep2D<S, T>]
 
     public var debugDescription: String {
         return "[" + self.steps.map { $0.debugDescription }.joined(separator: ", ") + "]"
     }
 }
 
-enum DiffStep2D<T>: CustomDebugStringConvertible {
+enum DiffStep2D<S, T>: CustomDebugStringConvertible {
     case insert(Int, Int, T)
     case delete(Int, Int, T)
-    case sectionInsert(Int)
-    case sectionDelete(Int)
+    case sectionInsert(Int, S)
+    case sectionDelete(Int, S)
 
     public var debugDescription: String {
         switch self {
-        case .sectionDelete(let s): return "ds(\(s))"
-        case .sectionInsert(let s): return "is(\(s))"
+        case .sectionDelete(let s, _): return "ds(\(s))"
+        case .sectionInsert(let s, _): return "is(\(s))"
         case .delete(let section, let row, _): return "d(\(section) \(row))"
         case .insert(let section, let row, _): return "i(\(section) \(row))"
         }
     }
 }
 
-public struct ArrayDiff2D<T: Equatable> {
+public struct ArrayDiff2D<S: Equatable, T: Equatable> {
 
-    init(lhs: [[T]], rhs: [[T]]) {
+    init(lhs: [(S, [T])], rhs: [(S, [T])]) {
         self.lhs = lhs
         self.rhs = rhs
         let flatL = ArrayDiff2D.flattenedArray(fromArray: self.lhs)
@@ -257,24 +267,24 @@ public struct ArrayDiff2D<T: Equatable> {
         }
     }
 
-    let lhs: [[T]]
-    let rhs: [[T]]
-    let results: [DiffStep2D<T>]
+    let lhs: [(S, [T])]
+    let rhs: [(S, [T])]
+    let results: [DiffStep2D<S, T>]
 
-    static func flattenedArray(fromArray: [[T]]) -> [ValOrSentinel<T>] {
+    static func flattenedArray(fromArray: [(S, [T])]) -> [ValOrSentinel<S, T>] {
         return fromArray.enumerated().reduce([]) { accum, tuple in
-            let x = ValOrSentinel<T>.sentinel
-            return accum + tuple.element.map(ValOrSentinel.init) + [x]
+            let x = ValOrSentinel<S, T>.sentinel(tuple.element.0)
+            return accum + tuple.element.1.map(ValOrSentinel.init) + [x]
         }
     }
 
-    static func build2DDiffStep(result: DiffStep<ValOrSentinel<T>>, state: [ValOrSentinel<T>]) -> DiffStep2D<T> {
+    static func build2DDiffStep(result: DiffStep<ValOrSentinel<S, T>>, state: [ValOrSentinel<S, T>]) -> DiffStep2D<S, T> {
         func sectionAndRow(forIndex idx: Int) -> (Int, Int) {
-            let totalSentinels = state.filter { $0 == .sentinel }.count
+            let totalSentinels = state.filter({ $0.isSentinel }).count
             var sentinelCount = 0
             for (i, raw) in state.reversed().enumerated() {
                 let j = state.count - i
-                if raw == .sentinel {
+                if raw.isSentinel {
                     if j <= idx {
                         return ((totalSentinels - sentinelCount), idx - j)
                     } else {
@@ -288,16 +298,16 @@ public struct ArrayDiff2D<T: Equatable> {
         case .insert(let idx, let val):
             let (section, row) = sectionAndRow(forIndex: idx)
             switch val {
-            case .sentinel:
-                return DiffStep2D.sectionInsert(section)
+            case .sentinel(let s):
+                return DiffStep2D.sectionInsert(section, s)
             case .val(let val):
                 return DiffStep2D.insert(section, row, val)
             }
         case .delete(let idx, let val):
             let (section, row) = sectionAndRow(forIndex: idx)
             switch val {
-            case .sentinel:
-                return DiffStep2D.sectionDelete(section)
+            case .sentinel(let s):
+                return DiffStep2D.sectionDelete(section, s)
             case .val(let val):
                 return DiffStep2D.delete(section, row, val)
             }

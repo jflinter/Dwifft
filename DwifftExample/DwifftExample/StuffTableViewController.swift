@@ -12,47 +12,35 @@ import Dwifft
 class StuffTableViewController: UITableViewController {
 
     static let possibleStuff = [
-        "foods": [
+        ("foods", [
             "Onions",
             "Pineapples",
-        ],
-        "animal-related": [
+        ]),
+        ("animal-related", [
             "Cats",
             "A used lobster",
             "Fish legs",
             "Adam's apple",
-        ],
-        "muddy things": [
+        ]),
+        ("muddy things", [
             "Mud",
-        ],
-        "other": [
+        ]),
+        ("other", [
             "Splinters",
             "Igloo cream",
             "Self-flying car"
-        ]
+        ])
     ]
 
-    static func randomStuff() -> [String: [String]] {
-        var mutable = [String: [String]]()
-        for key in self.possibleStuff.keys {
-            let filtered = self.possibleStuff[key]!.filter { _ in arc4random_uniform(2) == 0 }
-            if !filtered.isEmpty { mutable[key] = filtered }
+    static func randomStuff() -> [(String, [String])] {
+        var mutable = [(String, [String])]()
+        for (key, values) in self.possibleStuff {
+            let filtered = values.filter { _ in arc4random_uniform(2) == 0 }
+            if !filtered.isEmpty { mutable.append((key, filtered)) }
         }
         return mutable
     }
     // I shamelessly stole this list of things from my friend Pasquale's blog post because I thought it was funny. You can see it at https://medium.com/elepath-exports/spatial-interfaces-886bccc5d1e9
-    
-//    static func randomArrayOfStuff() -> [String] {
-//        var possibleStuff = self.possibleStuff
-//        for i in 0..<possibleStuff.count - 1 {
-//            let j = Int(arc4random_uniform(UInt32(possibleStuff.count - i))) + i
-//            if i != j {
-//                swap(&possibleStuff[i], &possibleStuff[j])
-//            }
-//        }
-//        let subsetCount: Int = Int(arc4random_uniform(3)) + 5
-//        return Array(possibleStuff[0...subsetCount])
-//    }
 
     required init!(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -66,26 +54,24 @@ class StuffTableViewController: UITableViewController {
     // MARK: - Dwifft stuff
     // This is the stuff that's relevant to actually using Dwifft. The rest is just boilerplate to get the app working.
     
-    var diffCalculator: TableViewDiffCalculator<String>?
+    var diffCalculator: TableViewDiffCalculator<String, String>?
     
-    var stuff: [String: [String]] = StuffTableViewController.randomStuff() {
+    var stuff: [(String, [String])] = StuffTableViewController.randomStuff() {
         // So, whenever your datasource's array of things changes, just let the diffCalculator know and it'll do the rest.
         didSet {
-            let stuffAsArrayOfArrays: [[String]] = stuff.keys.map { self.stuff[$0]! }
-            self.diffCalculator?.rows = stuffAsArrayOfArrays
+            self.diffCalculator?.rowsAndSections = stuff
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
-        self.diffCalculator = TableViewDiffCalculator<String>(tableView: self.tableView, initialRows: [])
+        self.diffCalculator = TableViewDiffCalculator<String, String>(tableView: self.tableView, initialRowsAndSections: [])
         
         // You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
         self.diffCalculator?.insertionAnimation = .fade
         self.diffCalculator?.deletionAnimation = .fade
     }
-
 
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -105,7 +91,7 @@ class StuffTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return Array(self.stuff.keys)[section]
+        return self.diffCalculator?.value(forSection: section)
     }
 
 }
