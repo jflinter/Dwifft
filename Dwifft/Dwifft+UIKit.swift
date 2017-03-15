@@ -10,7 +10,7 @@
 
 import UIKit
 
-public protocol DiffCalculator {
+public protocol DiffCalculator: class {
     associatedtype S: Equatable
     associatedtype T: Equatable
     var rowsAndSections: [(S, [T])] { get set }
@@ -20,7 +20,7 @@ public protocol DiffCalculator {
     func value(atIndexPath indexPath: IndexPath) -> T
 }
 
-extension DiffCalculator {
+public extension DiffCalculator {
     public func numberOfSections() -> Int {
         return self.rowsAndSections.count
     }
@@ -35,30 +35,6 @@ extension DiffCalculator {
 
     public func value(atIndexPath indexPath: IndexPath) -> T {
         return self.rowsAndSections[indexPath.section].1[indexPath.row]
-    }
-}
-
-public extension DiffCalculator where S: Comparable {
-    public mutating func setRows(_ rows: [T], calculatingSectionBy: ((T) -> S)) {
-        let sorted = rows.map { (calculatingSectionBy($0), $0) }.sorted { lhs, rhs in
-            return lhs.0 > rhs.0
-        }
-        var rowsAndSections: [(S, [T])] = []
-        if let first = sorted.first {
-            var currentSection = first.0
-            var currentRows: [T] = []
-            for (section, row) in sorted {
-                if section == currentSection {
-                    currentRows.append(row)
-                } else {
-                    rowsAndSections.append((currentSection, currentRows))
-                    currentSection = section
-                    currentRows = [row]
-                }
-                rowsAndSections.append((currentSection, currentRows))
-            }
-        }
-        self.rowsAndSections = rowsAndSections
     }
 }
 

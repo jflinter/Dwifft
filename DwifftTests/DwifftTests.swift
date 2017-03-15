@@ -274,5 +274,5 @@ class DwifftTests: XCTestCase {
         viewController.rows = [4, 5, 9, 8, 3, 1, 0]
         waitForExpectations(timeout: 1.0, handler: nil)
     }
-    
+
 }
