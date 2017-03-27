@@ -78,10 +78,6 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
     }
 }
 
-enum ArrayError: Error {
-    case insertion, deletion
-}
-
 public extension Array where Element: Equatable {
 
     /// Returns the sequence of ArrayDiffResults required to transform one array into another.
@@ -168,16 +164,23 @@ internal struct MemoizedSequenceComparison<T: Equatable> {
     }
 }
 
-
-
-
-
-
-
-
-
 // MARK - 2D
-// TODO move
+
+public struct SectionedValues<S: Equatable, T: Equatable> {
+    init(_ sectionsAndValues: [(S, [T])] = []) {
+        self.sectionsAndValues = sectionsAndValues
+    }
+    let sectionsAndValues: [(S, [T])]
+    var count: Int { return self.sectionsAndValues.count }
+    subscript(i: Int) -> (S, [T]) {
+        return self.sectionsAndValues[i]
+    }
+//    TODO
+//    func apply(diff: ArrayDiff2D<S, T>) -> SectionedValues<S, T> {
+//
+//    }
+}
+
 
 enum ValOrSentinel<S: Equatable, T: Equatable>: CustomDebugStringConvertible, Equatable {
     case val(T)
@@ -249,7 +252,7 @@ enum DiffStep2D<S, T>: CustomDebugStringConvertible {
 
 public struct ArrayDiff2D<S: Equatable, T: Equatable> {
 
-    init(lhs: [(S, [T])], rhs: [(S, [T])]) {
+    init(lhs: SectionedValues<S, T>, rhs: SectionedValues<S, T>) {
         self.lhs = lhs
         self.rhs = rhs
         let flatL = ArrayDiff2D.flattenedArray(fromArray: self.lhs)
@@ -263,18 +266,18 @@ public struct ArrayDiff2D<S: Equatable, T: Equatable> {
         }
     }
     
-    let lhs: [(S, [T])]
-    let rhs: [(S, [T])]
+    let lhs: SectionedValues<S, T>
+    let rhs: SectionedValues<S, T>
     let results: [DiffStep2D<S, T>]
 
-    static func flattenedArray(fromArray: [(S, [T])]) -> [ValOrSentinel<S, T>] {
-        return fromArray.enumerated().reduce([]) { accum, tuple in
+    private static func flattenedArray(fromArray: SectionedValues<S, T>) -> [ValOrSentinel<S, T>] {
+        return fromArray.sectionsAndValues.enumerated().reduce([]) { accum, tuple in
             let x = ValOrSentinel<S, T>.sentinel(tuple.element.0)
             return accum + tuple.element.1.map(ValOrSentinel.init) + [x]
         }
     }
 
-    static func build2DDiffStep(result: DiffStep<ValOrSentinel<S, T>>, state: [ValOrSentinel<S, T>]) -> DiffStep2D<S, T> {
+    private static func build2DDiffStep(result: DiffStep<ValOrSentinel<S, T>>, state: [ValOrSentinel<S, T>]) -> DiffStep2D<S, T> {
         func sectionAndRow(forIndex idx: Int) -> (Int, Int) {
             let totalSentinels = state.filter({ $0.isSentinel }).count
             var sentinelCount = 0
@@ -310,6 +313,3 @@ public struct ArrayDiff2D<S: Equatable, T: Equatable> {
         }
     }
 }
-
-
-

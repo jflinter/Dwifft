@@ -13,7 +13,7 @@ import UIKit
 public protocol DiffCalculator: class {
     associatedtype S: Equatable
     associatedtype T: Equatable
-    var rowsAndSections: [(S, [T])] { get set }
+    var rowsAndSections: SectionedValues<S, T> { get set }
     func numberOfSections() -> Int
     func value(forSection: Int) -> S
     func numberOfObjects(inSection section: Int) -> Int
@@ -42,7 +42,7 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator
 
     public weak var tableView: UITableView?
 
-    public init(tableView: UITableView, initialRowsAndSections: [(S, [T])] = []) {
+    public init(tableView: UITableView, initialRowsAndSections: SectionedValues<S, T> = SectionedValues()) {
         self.tableView = tableView
         self._rowsAndSections = initialRowsAndSections
     }
@@ -51,8 +51,8 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator
     public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
 
     /// Change this value to trigger animations on the table view.
-    private var _rowsAndSections: [(S, [T])]
-    public var rowsAndSections : [(S, [T])] {
+    private var _rowsAndSections: SectionedValues<S, T>
+    public var rowsAndSections : SectionedValues<S, T> {
         get {
             return _rowsAndSections
         }
@@ -86,16 +86,16 @@ public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalc
 
     public weak var collectionView: UICollectionView?
 
-    public init(collectionView: UICollectionView, initialRowsAndSections: [(S, [T])] = []) {
+    public init(collectionView: UICollectionView, initialRowsAndSections: SectionedValues<S, T> = SectionedValues()) {
         self.collectionView = collectionView
         _rowsAndSections = initialRowsAndSections
     }
 
     // Since UICollectionView (unlike UITableView) takes a block which must update its data source and trigger animations, we need to trigger the changes on set, instead of explicitly before and after set. This backing array lets us use a getter/setter in the exposed property.
-    private var _rowsAndSections: [(S, [T])]
+    private var _rowsAndSections: SectionedValues<S, T>
 
     /// Change this value to trigger animations on the collection view.
-    public var rowsAndSections : [(S, [T])] {
+    public var rowsAndSections : SectionedValues<S, T> {
         get {
             return _rowsAndSections
         }

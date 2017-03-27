@@ -11,12 +11,33 @@ import XCTest
 import SwiftCheck
 
 class DwifftSwiftCheckTests: XCTestCase {
+
+    struct ArbitraryOrderedLists: Arbitrary {
+        let lhs: SectionedValues<String, Int>
+        let rhs: SectionedValues<String, Int>
+
+        static var arbitrary: Gen<ArbitraryOrderedLists> {
+            typealias OrderedDict = DictionaryOf<String, ArrayOf<Int>>
+            typealias OrderedDictsGen = Gen<(OrderedDict, OrderedDict)>
+            return OrderedDictsGen.zip(OrderedDict.arbitrary, OrderedDict.arbitrary).map { (lhs, rhs) in
+                let x = SectionedValues(lhs.getDictionary.map { ($0, $1.getArray) })
+                let y = SectionedValues(rhs.getDictionary.map { ($0, $1.getArray) })
+                return ArbitraryOrderedLists.init(lhs: x, rhs: y)
+            }
+        }
+    }
+
     func testAll() {
-        property("Diffing two arrays, then applying the diff to the first, yields the second") <- forAll { (a1 : ArrayOf<UInt>, a2 : ArrayOf<UInt>) in
+        property("Diffing two arrays, then applying the diff to the first, yields the second") <- forAll { (a1 : ArrayOf<Int>, a2 : ArrayOf<Int>) in
             let diff = a1.getArray.diff(a2.getArray)
             let x = (a1.getArray.apply(diff) == a2.getArray) <?> "diff applies in forward order"
             let y = (a2.getArray.apply(diff.reversed()) == a1.getArray) <?> "diff applies in reverse order"
             return  x ^&&^ y
+        }
+
+        property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- forAll { (a: ArbitraryOrderedLists) in
+//            let diff = ArrayDiff2D(lhs: a.lhs, rhs: a.rhs)
+            return true
         }
     }
 }
@@ -76,8 +97,8 @@ class DwifftTests: XCTestCase {
             ([[1, 2, 3], [4, 5], []], [[], [1, 2], [3, 4]], "[ds(2), d(1 1), d(0 2), is(0), i(2 0)]"),
         ]
         for (lhs, rhs, expected) in testCases {
-            let mappedLhs = lhs.map { (0, $0) }
-            let mappedRhs = rhs.map { (0, $0) }
+            let mappedLhs = SectionedValues(lhs.map { (0, $0) })
+            let mappedRhs = SectionedValues(rhs.map { (0, $0) })
             XCTAssertEqual(ArrayDiff2D<Int, Int>(lhs: mappedLhs, rhs: mappedRhs).results.debugDescription, expected)
         }
     }
@@ -121,13 +142,13 @@ class DwifftTests: XCTestCase {
             let diffCalculator: TableViewDiffCalculator<Int, Int>
             var rows: [Int] {
                 didSet {
-                    self.diffCalculator.rowsAndSections = [(0, rows)]
+                    self.diffCalculator.rowsAndSections = SectionedValues([(0, rows)])
                 }
             }
 
             init(tableView: TestTableView, rows: [Int]) {
                 self.tableView = tableView
-                self.diffCalculator = TableViewDiffCalculator<Int, Int>(tableView: tableView, initialRowsAndSections: [(0, rows)])
+                self.diffCalculator = TableViewDiffCalculator<Int, Int>(tableView: tableView, initialRowsAndSections: SectionedValues([(0, rows)]))
                 self.diffCalculator.insertionAnimation = .left
                 self.diffCalculator.deletionAnimation = .right
                 self.rows = rows
@@ -209,13 +230,13 @@ class DwifftTests: XCTestCase {
             let diffCalculator: CollectionViewDiffCalculator<Int, Int>
             var rows: [Int] {
                 didSet {
-                    self.diffCalculator.rowsAndSections = [(0, rows)]
+                    self.diffCalculator.rowsAndSections = SectionedValues([(0, rows)])
                 }
             }
 
             init(collectionView: TestCollectionView, rows: [Int]) {
                 self.testCollectionView = collectionView
-                self.diffCalculator = CollectionViewDiffCalculator<Int, Int>(collectionView: self.testCollectionView, initialRowsAndSections: [(0, rows)])
+                self.diffCalculator = CollectionViewDiffCalculator<Int, Int>(collectionView: self.testCollectionView, initialRowsAndSections: SectionedValues([(0, rows)]))
                 self.rows = rows
                 super.init(nibName: nil, bundle: nil)
 
