@@ -36,8 +36,11 @@ class DwifftSwiftCheckTests: XCTestCase {
         }
 
         property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- forAll { (a: ArbitraryOrderedLists) in
-//            let diff = ArrayDiff2D(lhs: a.lhs, rhs: a.rhs)
-            return true
+            let diff = ArrayDiff2D(lhs: a.lhs, rhs: a.rhs)
+            let x = (a.lhs.apply(diff) == a.rhs) <?> "diff applies in forward order"
+            return x
+//            let y = (a2.getArray.apply(diff.reversed()) == a1.getArray) <?> "diff applies in reverse order"
+//            return  x ^&&^ y
         }
     }
 }

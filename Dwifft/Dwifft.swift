@@ -166,19 +166,51 @@ internal struct MemoizedSequenceComparison<T: Equatable> {
 
 // MARK - 2D
 
-public struct SectionedValues<S: Equatable, T: Equatable> {
+public struct SectionedValues<S: Equatable, T: Equatable>: Equatable {
     init(_ sectionsAndValues: [(S, [T])] = []) {
         self.sectionsAndValues = sectionsAndValues
     }
-    let sectionsAndValues: [(S, [T])]
+    var sectionsAndValues: [(S, [T])]
     var count: Int { return self.sectionsAndValues.count }
     subscript(i: Int) -> (S, [T]) {
         return self.sectionsAndValues[i]
     }
-//    TODO
-//    func apply(diff: ArrayDiff2D<S, T>) -> SectionedValues<S, T> {
-//
-//    }
+
+    fileprivate var flattened: [ValOrSentinel<S, T>] {
+        return self.sectionsAndValues.enumerated().reduce([]) { accum, tuple in
+            let x = ValOrSentinel<S, T>.sentinel(tuple.element.0)
+            return accum + tuple.element.1.map(ValOrSentinel.init) + [x]
+        }
+    }
+
+    func apply(_ diff: ArrayDiff2D<S, T>) -> SectionedValues<S, T> {
+        var tmp = self
+        for result in diff.results {
+            switch result {
+            case .sectionInsert(let sectionIndex, let val):
+                tmp.sectionsAndValues.insert((val, []), at: sectionIndex)
+            case .sectionDelete(let sectionIndex, _):
+                tmp.sectionsAndValues.remove(at: sectionIndex)
+            case .insert(let sectionIndex, let rowIndex, let val):
+                tmp.sectionsAndValues[sectionIndex].1.insert(val, at: rowIndex)
+            case .delete(let sectionIndex, let rowIndex, _):
+                tmp.sectionsAndValues[sectionIndex].1.remove(at: rowIndex)
+            }
+        }
+        return tmp
+    }
+}
+
+public func ==<S, T>(lhs: SectionedValues<S, T>, rhs: SectionedValues<S, T>) -> Bool {
+    if lhs.sectionsAndValues.count != rhs.sectionsAndValues.count { return false }
+    for i in 0..<(lhs.sectionsAndValues.count) {
+        let ltuple = lhs.sectionsAndValues[i]
+        let rtuple = rhs.sectionsAndValues[i]
+        if (ltuple.0 != rtuple.0 || ltuple.1 != rtuple.1) {
+            return false
+        }
+    }
+    return true
 }
 
 
@@ -228,6 +260,10 @@ func ==<S, T>(lhs: ValOrSentinel<S, T>, rhs: ValOrSentinel<S, T>) -> Bool {
 
 struct Diff2D<S, T>: CustomDebugStringConvertible {
     let steps: [DiffStep2D<S, T>]
+    init(_ steps: [DiffStep2D<S, T>]) {
+        // TODO: remove unnecessary row deletions here (ones where the section will be deleted anyway)
+        self.steps = steps
+    }
 
     public var debugDescription: String {
         return "[" + self.steps.map { $0.debugDescription }.joined(separator: ", ") + "]"
@@ -255,27 +291,21 @@ public struct ArrayDiff2D<S: Equatable, T: Equatable> {
     init(lhs: SectionedValues<S, T>, rhs: SectionedValues<S, T>) {
         self.lhs = lhs
         self.rhs = rhs
-        let flatL = ArrayDiff2D.flattenedArray(fromArray: self.lhs)
-        let flatR = ArrayDiff2D.flattenedArray(fromArray: self.rhs)
+        let flatL = lhs.flattened
+        let flatR = rhs.flattened
         let diff = flatL.diff(flatR)
         var state = flatL
-        self.results = diff.results.map { result in
+        let results: [DiffStep2D<S, T>] = diff.results.map { result in
             let transformed = ArrayDiff2D.build2DDiffStep(result: result, state: state)
             state.applyStep(result)
             return transformed
         }
+        self.results = results
     }
     
     let lhs: SectionedValues<S, T>
     let rhs: SectionedValues<S, T>
     let results: [DiffStep2D<S, T>]
-
-    private static func flattenedArray(fromArray: SectionedValues<S, T>) -> [ValOrSentinel<S, T>] {
-        return fromArray.sectionsAndValues.enumerated().reduce([]) { accum, tuple in
-            let x = ValOrSentinel<S, T>.sentinel(tuple.element.0)
-            return accum + tuple.element.1.map(ValOrSentinel.init) + [x]
-        }
-    }
 
     private static func build2DDiffStep(result: DiffStep<ValOrSentinel<S, T>>, state: [ValOrSentinel<S, T>]) -> DiffStep2D<S, T> {
         func sectionAndRow(forIndex idx: Int) -> (Int, Int) {
