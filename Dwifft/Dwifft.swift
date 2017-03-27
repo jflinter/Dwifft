@@ -258,7 +258,7 @@ public struct ArrayDiff2D<S: Equatable, T: Equatable> {
         var state = flatL
         self.results = diff.results.map { result in
             let transformed = ArrayDiff2D.build2DDiffStep(result: result, state: state)
-            try! state.applyStep(result)
+            state.applyStep(result)
             return transformed
         }
     }
