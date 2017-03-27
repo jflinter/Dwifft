@@ -12,10 +12,11 @@ import SwiftCheck
 
 class DwifftSwiftCheckTests: XCTestCase {
     func testAll() {
-        property("Diffing two arrays, then applying the diff to the first, yields the second") <- forAll { (a1 : ArrayOf<Int>, a2 : ArrayOf<Int>) in
+        property("Diffing two arrays, then applying the diff to the first, yields the second") <- forAll { (a1 : ArrayOf<UInt>, a2 : ArrayOf<UInt>) in
             let diff = a1.getArray.diff(a2.getArray)
-            return (a1.getArray.apply(diff) == a2.getArray) <?> "diff applies in forward order" ^&&^
-                (a2.getArray.apply(diff.reversed()) == a1.getArray) <?> "diff applies in reverse order"
+            let x = (a1.getArray.apply(diff) == a2.getArray) <?> "diff applies in forward order"
+            let y = (a2.getArray.apply(diff.reversed()) == a1.getArray) <?> "diff applies in reverse order"
+            return  x ^&&^ y
         }
     }
 }
@@ -60,19 +61,6 @@ class DwifftTests: XCTestCase {
         
     }
 
-    func test2D() {
-
-        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[], []], rhs: []).results.debugDescription, "[ds(1), ds(0)]")
-        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [], rhs: [[], []]).results.debugDescription, "[is(0), is(1)]")
-        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [], rhs: []).results.debugDescription, "[]")
-            let reversed = diff.reversed()
-            let reverseApplied = test.array2.apply(reversed)
-            XCTAssertEqual(reverseApplied, test.array1)
-
-        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[1], [], []], rhs: [[1]]).results.debugDescription, "[ds(2), ds(1)]")
-
-        XCTAssertEqual(ArrayDiff2D<Int>(lhs: [[], [1], []], rhs: [[], [2], []]).results.debugDescription, "[d(1 0), i(1 0)]")
-    }
 
     func test2D() {
         let testCases = [
@@ -94,10 +82,6 @@ class DwifftTests: XCTestCase {
         }
     }
 
-    func testTableViewDiffCalculator() {
-
-    }
-    
     func testTableViewDiffCalculator() {
         
         class TestTableView: UITableView {

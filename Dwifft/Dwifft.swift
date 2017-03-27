@@ -9,19 +9,11 @@
 public struct Diff<T>: CustomDebugStringConvertible {
     public let results: [DiffStep<T>]
     init(results: [DiffStep<T>]) {
-        self.results = results.sorted { lhs, rhs in
-            if !lhs.isInsertion && !rhs.isInsertion {
-                return lhs.idx > rhs.idx
-            }
-            else if lhs.isInsertion {
-                return false
-            } else if rhs.isInsertion {
-                return true
-            } else {
-                return lhs.idx < rhs.idx
-            }
-        }
+        let insertions = results.filter({ $0.isInsertion }).sorted(by: { $0.idx < $1.idx })
+        let deletions = results.filter({ !$0.isInsertion }).sorted(by: { $0.idx > $1.idx })
+        self.results = deletions + insertions
     }
+
     public var insertions: [DiffStep<T>] {
         return results.filter({ $0.isInsertion })
     }
@@ -84,6 +76,10 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
             return j.1
         }
     }
+}
+
+enum ArrayError: Error {
+    case insertion, deletion
 }
 
 public extension Array where Element: Equatable {
@@ -262,7 +258,7 @@ public struct ArrayDiff2D<S: Equatable, T: Equatable> {
         var state = flatL
         self.results = diff.results.map { result in
             let transformed = ArrayDiff2D.build2DDiffStep(result: result, state: state)
-            state.applyStep(result)
+            try! state.applyStep(result)
             return transformed
         }
     }
