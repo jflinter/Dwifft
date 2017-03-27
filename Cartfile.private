@@ -1,1 +1,1 @@
-github "typelift/SwiftCheck"
+github "typelift/SwiftCheck" "0.7.3"
