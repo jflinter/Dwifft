@@ -8,6 +8,17 @@
 
 import UIKit
 import XCTest
+import SwiftCheck
+
+class DwifftSwiftCheckTests: XCTestCase {
+    func testAll() {
+        property("Diffing two arrays, then applying the diff to the first, yields the second") <- forAll { (a1 : ArrayOf<Int>, a2 : ArrayOf<Int>) in
+            let diff = a1.getArray.diff(a2.getArray)
+            return (a1.getArray.apply(diff) == a2.getArray) <?> "diff applies in forward order" ^&&^
+                (a2.getArray.apply(diff.reversed()) == a1.getArray) <?> "diff applies in reverse order"
+        }
+    }
+}
 
 class DwifftTests: XCTestCase {
     
@@ -41,13 +52,6 @@ class DwifftTests: XCTestCase {
             let diff = test.array1.diff(test.array2)
             let printableDiff = diff.results.map({ $0.debugDescription }).joined(separator: "")
             XCTAssertEqual(printableDiff, test.expectedDiff, "incorrect diff")
-            
-            let applied = test.array1.apply(diff)
-            XCTAssertEqual(applied, test.array2)
-            
-            let reversed = diff.reversed()
-            let reverseApplied = test.array2.apply(reversed)
-            XCTAssertEqual(reverseApplied, test.array1)
         }
         
         
