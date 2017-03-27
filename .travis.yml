@@ -1,4 +1,9 @@
 osx_image: xcode8
 language: objective-c
 before_script: carthage bootstrap --platform ios --configuration Debug
-script: set -o pipefail && xcodebuild test -project Dwifft.xcodeproj -scheme Dwifft -sdk iphonesimulator10.0 -destination 'platform=iOS Simulator,name=iPhone 7' | xcpretty -c
+script: set -o pipefail && xcodebuild test -project Dwifft.xcodeproj -scheme Dwifft
+  -sdk iphonesimulator10.0 -destination 'platform=iOS Simulator,name=iPhone 7' | xcpretty
+  -c
+env:
+  global:
+    secure: pUV8Ccwq1FWO8PxTHPQ3qZDUDhjNOisNVRyrziYR8x0ZQYjmVmnaLKaOHFP8co6rhBlFqReKUjoFYgRqP5QK1EkD6lqSZfnkrWqnZuLDNy0sn3/+4sLtvqAhBroAfjmmvb5GpY+Kkqfz8Lhdu6+1Z/a5xPhqNeDO3aDpa2vdBztb2qLIZnf2g8NFLOoNuR+ula868nIm858LCN1sqLp9PhV4CGaMsFx7ZFaX1yEQbwNb8+85+U2HIHqjZ62u9KZ4lA1d58VVDGj2f7ObKkC+pjiuknljy5bvRVvg5pttXggJracFgMqouwwQFFCV3nFYSDS6h7ZIjUvbyMrqBN+u32RmtqVLp1by1JvRXSeemJ3HxtZGLbq7rff4zWXyYbelT6sR6J1tWIubRo5v3sXc8E1kurqKkcPqJdG4jqiUXOau2oSHhf7WCRwa0KNfvaQuMhm0Onnsi9tW2MzGieumscfuFIJsXJdXnac7jQUVb571GfxMrDeJ9v2GOPcbnlM8cttBFAw4IoINV6teKITUW6T8RpeDXzfQyxDDQaV0M1ZTab1Tj/f4EYDAXKfZ+QquWK3bgXJhxKghXIskZLdDhYMyP55T6QxLZY9wD2CxLrEbEhDQCEb+7R2LmIC95Rlku+W92b8eWAqNxf+vV7QRqBb/sV9w2mlxmmezYTP5VAs=
