@@ -39,14 +39,14 @@ class DwifftSwiftCheckTests: XCTestCase {
             let diff = ArrayDiff2D(lhs: a.lhs, rhs: a.rhs)
             let x = (a.lhs.apply(diff) == a.rhs) <?> "diff applies in forward order"
             return x
-//            let y = (a2.getArray.apply(diff.reversed()) == a1.getArray) <?> "diff applies in reverse order"
-//            return  x ^&&^ y
+            //            let y = (a2.getArray.apply(diff.reversed()) == a1.getArray) <?> "diff applies in reverse order"
+            //            return  x ^&&^ y
         }
     }
 }
 
 class DwifftTests: XCTestCase {
-    
+
     struct TestCase {
         let array1: [Character]
         let array2: [Character]
@@ -81,24 +81,64 @@ class DwifftTests: XCTestCase {
             }
             XCTAssertEqual(printableDiff, test.expectedDiff, "incorrect diff")
         }
-        
-        
+
+
     }
 
 
     func test2D() {
         let testCases = [
-            ([[], []], [], "[ds(1), ds(0)]"),
-            ([], [[], []], "[is(0), is(1)]"),
-            ([], [], "[]"),
-            ([[1], [], []], [[1]], "[ds(2), ds(1)]"),
-            ([[], [1], []], [[], [2], []], "[d(1 0), i(1 0)]"),
-            ([[1], [], []], [[], [1], []], "[ds(2), is(0)]"),
-            ([[1], [], []], [[], [1]], "[ds(2), ds(1), is(0)]"),
-            ([[1], [], []], [[], [1, 2]], "[ds(2), ds(1), is(0), i(1 1)]"),
-            ([[1]], [[], [1]], "[is(0)]"),
-            ([[1, 2, 3], [4, 5], []], [[], [1, 2], [3, 4]], "[ds(2), d(1 1), d(0 2), is(0), i(2 0)]"),
-        ]
+            (
+                [[], []],
+                [],
+                "[ds(1), ds(0)]"
+            ),
+            (
+                [],
+                [[], []],
+                "[is(0), is(1)]"
+            ),
+            (
+                [],
+                [],
+                "[]"
+            ),
+            (
+                [[1], [], []],
+                [[1]],
+                "[ds(2), ds(1)]"
+            ),
+            (
+                [[], [1], []],
+                [[], [2], []],
+                "[d(1 0), i(1 0)]"
+            ),
+            (
+                [[1], [], []],
+                [[], [1], []],
+                "[ds(2), is(0)]"
+            ),
+            (
+                [[1], [], []],
+                [[], [1]],
+                "[ds(2), ds(1), is(0)]"
+            ),
+            (
+                [[1], [], []],
+                [[], [1, 2]],
+                "[ds(2), ds(1), is(0), i(1 1)]"
+            ),
+            (
+                [[1]],
+                [[], [1]],
+                "[is(0)]"
+            ),
+            (
+                [[1, 2, 3], [4, 5], []],
+                [[], [1, 2], [3, 4]],
+                "[ds(2), d(1 1), d(0 2), is(0), i(2 0)]"
+            ),
+            ]
         for (lhs, rhs, expected) in testCases {
             let mappedLhs = SectionedValues(lhs.map { (0, $0) })
             let mappedRhs = SectionedValues(rhs.map { (0, $0) })
@@ -107,9 +147,9 @@ class DwifftTests: XCTestCase {
     }
 
     func testTableViewDiffCalculator() {
-        
+
         class TestTableView: UITableView {
-            
+
             let insertionExpectations: [Int: XCTestExpectation]
             let deletionExpectations: [Int: XCTestExpectation]
 
@@ -276,11 +316,11 @@ class DwifftTests: XCTestCase {
             let x: XCTestExpectation = expectation(description: "+\(i)")
             deletionExpectations[i] = x
         }
-
+        
         let collectionView = TestCollectionView(insertionExpectations: insertionExpectations, deletionExpectations: deletionExpectations)
         let viewController = TestViewController(collectionView: collectionView, rows: [0, 1, 2, 5, 8, 9, 0])
         viewController.rows = [4, 5, 9, 8, 3, 1, 0]
         waitForExpectations(timeout: 1.0, handler: nil)
     }
-
+    
 }
