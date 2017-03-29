@@ -6,13 +6,19 @@
 //  Copyright (c) 2015 jflinter. All rights reserved.
 //
 
-public struct Diff<T> {
+public struct Diff<T>: CustomDebugStringConvertible {
     public let results: [DiffStep<T>]
+    init(results: [DiffStep<T>]) {
+        let insertions = results.filter({ $0.isInsertion }).sorted(by: { $0.idx < $1.idx })
+        let deletions = results.filter({ !$0.isInsertion }).sorted(by: { $0.idx > $1.idx })
+        self.results = deletions + insertions
+    }
+
     public var insertions: [DiffStep<T>] {
-        return results.filter({ $0.isInsertion }).sorted { $0.idx < $1.idx }
+        return results.filter({ $0.isInsertion })
     }
     public var deletions: [DiffStep<T>] {
-        return results.filter({ !$0.isInsertion }).sorted { $0.idx > $1.idx }
+        return results.filter({ !$0.isInsertion })
     }
     public func reversed() -> Diff<T> {
         let reversedResults = self.results.reversed().map { (result: DiffStep<T>) -> DiffStep<T> in
@@ -24,6 +30,9 @@ public struct Diff<T> {
             }
         }
         return Diff<T>(results: reversedResults)
+    }
+    public var debugDescription: String {
+        return "[" + self.results.map { $0.debugDescription }.joined(separator: ", ") + "]"
     }
 }
 
@@ -82,12 +91,6 @@ public extension Array where Element: Equatable {
     
     /// Returns the sequence of ArrayDiffResults required to transform one array into another.
     public func diff(_ other: [Element]) -> Diff<Element> {
-        let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
-        return Array.diffFromIndices(table, self, other, self.count, other.count, Diff<Element>(results: []))
-    }
-    
-    /// Walks back through the generated table to generate the diff.
-    fileprivate static func diffFromIndices(_ table: [[Int]], _ x: [Element], _ y: [Element], _ i: Int, _ j: Int, _ currentResults: Diff<Element>) -> Diff<Element> {
 
         func diffFromIndicesInternal(
             _ table: [[Int]],
@@ -96,7 +99,7 @@ public extension Array where Element: Equatable {
             _ i: Int,
             _ j: Int,
             _ currentResults: Diff<Element>
-        ) -> Result<Diff<Element>> {
+            ) -> Result<Diff<Element>> {
             if i == 0 && j == 0 {
                 return .done(currentResults)
             }
@@ -116,7 +119,9 @@ public extension Array where Element: Equatable {
                 }
             }
         }
-        var result = diffFromIndicesInternal(table, x, y, i, j, Diff<Element>(results: []))
+
+        let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
+        var result = diffFromIndicesInternal(table, self, other, self.count, other.count, Diff<Element>(results: []))
         while case .call(let f) = result {
             result = f()
         }
@@ -125,7 +130,6 @@ public extension Array where Element: Equatable {
         } else {
             fatalError("unreachable code")
         }
-
     }
     
     /// Applies a generated diff to an array. The following should always be true:
