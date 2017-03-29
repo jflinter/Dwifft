@@ -10,22 +10,35 @@ import UIKit
 import XCTest
 import SwiftCheck
 
-class DwifftSwiftCheckTests: XCTestCase {
+struct ArbitraryOrderedLists {
+    let lhs: SectionedValues<String, Int>
+    let rhs: SectionedValues<String, Int>
+}
 
-    struct ArbitraryOrderedLists: Arbitrary {
-        let lhs: SectionedValues<String, Int>
-        let rhs: SectionedValues<String, Int>
-
-        static var arbitrary: Gen<ArbitraryOrderedLists> {
-            typealias OrderedDict = DictionaryOf<String, ArrayOf<Int>>
-            typealias OrderedDictsGen = Gen<(OrderedDict, OrderedDict)>
-            return OrderedDictsGen.zip(OrderedDict.arbitrary, OrderedDict.arbitrary).map { (lhs, rhs) in
-                let x = SectionedValues(lhs.getDictionary.map { ($0, $1.getArray) })
-                let y = SectionedValues(rhs.getDictionary.map { ($0, $1.getArray) })
-                return ArbitraryOrderedLists.init(lhs: x, rhs: y)
-            }
+extension ArbitraryOrderedLists : Arbitrary {
+    static var arbitrary: Gen<ArbitraryOrderedLists> {
+        typealias OrderedDict = DictionaryOf<String, ArrayOf<Int>>
+        typealias OrderedDictsGen = Gen<(OrderedDict, OrderedDict)>
+        return OrderedDictsGen.zip(OrderedDict.arbitrary, OrderedDict.arbitrary).map { (lhs, rhs) in
+            let x = SectionedValues(lhs.getDictionary.map { ($0, $1.getArray) })
+            let y = SectionedValues(rhs.getDictionary.map { ($0, $1.getArray) })
+            return ArbitraryOrderedLists.init(lhs: x, rhs: y)
         }
     }
+
+    static func shrink(_ lists: ArbitraryOrderedLists) -> [ArbitraryOrderedLists] {
+        var shrinked: [ArbitraryOrderedLists] = []
+        if lists.lhs.count > 0 {
+            shrinked.append(ArbitraryOrderedLists(lhs: SectionedValues(Array(lists.lhs.sectionsAndValues.dropLast())), rhs: lists.rhs))
+        }
+        if lists.rhs.count > 0 {
+            shrinked.append(ArbitraryOrderedLists(lhs: lists.lhs, rhs: SectionedValues(Array(lists.rhs.sectionsAndValues.dropLast()))))
+        }
+        return shrinked
+    }
+}
+
+class DwifftSwiftCheckTests: XCTestCase {
 
     func testAll() {
         property("Diffing two arrays, then applying the diff to the first, yields the second") <- forAll { (a1 : ArrayOf<Int>, a2 : ArrayOf<Int>) in
@@ -35,13 +48,17 @@ class DwifftSwiftCheckTests: XCTestCase {
             return  x ^&&^ y
         }
 
-        property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- forAll { (a: ArbitraryOrderedLists) in
-            let diff = ArrayDiff2D(lhs: a.lhs, rhs: a.rhs)
+        var i = 0
+        let myProperty = forAllNoShrink(ArbitraryOrderedLists.arbitrary) { (a: ArbitraryOrderedLists) in
+            print("iteration \(i)")
+            i += 1
+            let diff = Diff2D(lhs: a.lhs, rhs: a.rhs)
             let x = (a.lhs.apply(diff) == a.rhs) <?> "diff applies in forward order"
             return x
             //            let y = (a2.getArray.apply(diff.reversed()) == a1.getArray) <?> "diff applies in reverse order"
             //            return  x ^&&^ y
         }
+        property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- myProperty
     }
 }
 
@@ -85,17 +102,16 @@ class DwifftTests: XCTestCase {
 
     }
 
-
     func test2D() {
-        let testCases = [
+        let testCases: [([(String, [Int])], [(String, [Int])], String)] = [
             (
-                [[], []],
+                [("a", []), ("b", [])],
                 [],
                 "[ds(1), ds(0)]"
             ),
             (
                 [],
-                [[], []],
+                [("a", []), ("b", [])],
                 "[is(0), is(1)]"
             ),
             (
@@ -104,45 +120,50 @@ class DwifftTests: XCTestCase {
                 "[]"
             ),
             (
-                [[1], [], []],
-                [[1]],
+                [("a", [1]), ("b", []), ("c", [])],
+                [("a", [1])],
                 "[ds(2), ds(1)]"
             ),
             (
-                [[], [1], []],
-                [[], [2], []],
+                [("a", []), ("b", [1]), ("c", [])],
+                [("a", []), ("b", [2]), ("c", [])],
                 "[d(1 0), i(1 0)]"
             ),
             (
-                [[1], [], []],
-                [[], [1], []],
-                "[ds(2), is(0)]"
+                [("a", [1]), ("b", []), ("c", [])],
+                [("a", []), ("b", [1]), ("c", [])],
+                "[d(0 0), i(1 0)]"
             ),
             (
-                [[1], [], []],
-                [[], [1]],
+                [("a", [1]), ("b", []), ("c", [])],
+                [("q", []), ("a", [1])],
                 "[ds(2), ds(1), is(0)]"
             ),
             (
-                [[1], [], []],
-                [[], [1, 2]],
+                [("a", [1]), ("b", []), ("c", [])],
+                [("q", []), ("a", [1, 2])],
                 "[ds(2), ds(1), is(0), i(1 1)]"
             ),
             (
-                [[1]],
-                [[], [1]],
+                [("a", [1])],
+                [("q", []), ("a", [1])],
                 "[is(0)]"
             ),
             (
-                [[1, 2, 3], [4, 5], []],
-                [[], [1, 2], [3, 4]],
-                "[ds(2), d(1 1), d(0 2), is(0), i(2 0)]"
+                [("a", [1, 2]), ("b", [3, 4])],
+                [("a", [1, 2, 3, 4])],
+                "[d(1 1), d(1 0), ds(1), i(0 2), i(0 3)]"
+            ),
+            (
+                [("a", [1, 2, 3]), ("b", [4, 5]), ("c", [])],
+                [("q", []), ("a", [1, 2]), ("b", [3, 4])],
+                "[d(1 1), d(0 2), ds(2), is(0), i(2 0)]"
             ),
             ]
         for (lhs, rhs, expected) in testCases {
-            let mappedLhs = SectionedValues(lhs.map { (0, $0) })
-            let mappedRhs = SectionedValues(rhs.map { (0, $0) })
-            XCTAssertEqual(ArrayDiff2D<Int, Int>(lhs: mappedLhs, rhs: mappedRhs).results.debugDescription, expected)
+            let mappedLhs = SectionedValues(lhs.map { ($0, $1) })
+            let mappedRhs = SectionedValues(rhs.map { ($0, $1) })
+            XCTAssertEqual(Diff2D(lhs: mappedLhs, rhs: mappedRhs).results.debugDescription, expected)
         }
     }
 

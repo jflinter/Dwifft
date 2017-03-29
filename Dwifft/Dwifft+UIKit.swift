@@ -59,7 +59,7 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator
         set {
             let oldRowsAndSections = rowsAndSections
             let newRowsAndSections = newValue
-            let diff = ArrayDiff2D(lhs: oldRowsAndSections, rhs: newRowsAndSections)
+            let diff = Diff2D(lhs: oldRowsAndSections, rhs: newRowsAndSections)
             if (diff.results.count > 0) {
                 tableView?.beginUpdates()
                 self._rowsAndSections = newValue
@@ -102,7 +102,7 @@ public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalc
         set {
             let oldRowsAndSections = rowsAndSections
             let newRowsAndSections = newValue
-            let diff = ArrayDiff2D(lhs: oldRowsAndSections, rhs: newRowsAndSections)
+            let diff = Diff2D(lhs: oldRowsAndSections, rhs: newRowsAndSections)
             if (diff.results.count > 0) {
                 collectionView?.performBatchUpdates({ () -> Void in
                     self._rowsAndSections = newValue

@@ -32,13 +32,20 @@ class StuffTableViewController: UITableViewController {
         ])
     ]
 
-    static func randomStuff() -> [(String, [String])] {
+    static func randomStuff() -> SectionedValues<String, String> {
         var mutable = [(String, [String])]()
-        for (key, values) in self.possibleStuff {
-            let filtered = values.filter { _ in arc4random_uniform(2) == 0 }
-            if !filtered.isEmpty { mutable.append((key, filtered)) }
+//        for (key, values) in self.possibleStuff {
+//            let filtered = values.filter { _ in arc4random_uniform(2) == 0 }
+//            if !filtered.isEmpty { mutable.append((key, filtered)) }
+//        }
+        let n = 30
+        for i in (0..<n) {
+            if arc4random_uniform(2) == 0 {
+                let a  = (0...arc4random_uniform(UInt32(n))).map { _ in arc4random_uniform(100) }.map(String.init)
+                mutable.append((String(i), a))
+            }
         }
-        return mutable
+        return SectionedValues(mutable)
     }
     // I shamelessly stole this list of things from my friend Pasquale's blog post because I thought it was funny. You can see it at https://medium.com/elepath-exports/spatial-interfaces-886bccc5d1e9
 
@@ -56,7 +63,7 @@ class StuffTableViewController: UITableViewController {
     
     var diffCalculator: TableViewDiffCalculator<String, String>?
     
-    var stuff: [(String, [String])] = StuffTableViewController.randomStuff() {
+    var stuff: SectionedValues<String, String> = StuffTableViewController.randomStuff() {
         // So, whenever your datasource's array of things changes, just let the diffCalculator know and it'll do the rest.
         didSet {
             self.diffCalculator?.rowsAndSections = stuff
@@ -66,7 +73,7 @@ class StuffTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
-        self.diffCalculator = TableViewDiffCalculator<String, String>(tableView: self.tableView, initialRowsAndSections: [])
+        self.diffCalculator = TableViewDiffCalculator<String, String>(tableView: self.tableView)
         
         // You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
         self.diffCalculator?.insertionAnimation = .fade
