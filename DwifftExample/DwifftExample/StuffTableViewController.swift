@@ -34,6 +34,7 @@ class StuffTableViewController: UITableViewController {
 
     static func randomStuff() -> SectionedValues<String, String> {
         var mutable = [(String, [String])]()
+//        TODO
 //        for (key, values) in self.possibleStuff {
 //            let filtered = values.filter { _ in arc4random_uniform(2) == 0 }
 //            if !filtered.isEmpty { mutable.append((key, filtered)) }
