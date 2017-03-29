@@ -38,7 +38,7 @@ class StuffTableViewController: UITableViewController {
 //            let filtered = values.filter { _ in arc4random_uniform(2) == 0 }
 //            if !filtered.isEmpty { mutable.append((key, filtered)) }
 //        }
-        let n = 30
+        let n = 100
         for i in (0..<n) {
             if arc4random_uniform(2) == 0 {
                 let a  = (0...arc4random_uniform(UInt32(n))).map { _ in arc4random_uniform(100) }.map(String.init)
@@ -74,6 +74,7 @@ class StuffTableViewController: UITableViewController {
         super.viewDidLoad()
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
         self.diffCalculator = TableViewDiffCalculator<String, String>(tableView: self.tableView)
+        self.diffCalculator?.tableView = nil // TODO remove
         
         // You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
         self.diffCalculator?.insertionAnimation = .fade

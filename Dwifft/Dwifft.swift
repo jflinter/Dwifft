@@ -87,7 +87,7 @@ public extension Array where Element: Equatable {
     /// Returns the sequence of ArrayDiffResults required to transform one array into another.
     public func diff(_ other: [Element]) -> Diff<Element> {
 
-        func diffFromIndicesInternal(
+        func diffInternal(
             _ table: [[Int]],
             _ x: [Element],
             _ y: [Element],
@@ -99,29 +99,30 @@ public extension Array where Element: Equatable {
                 return .done(currentResults)
             }
             else {
+                // TODO this might be faster with a linked list.
                 return .call {
                     var nextResults = currentResults
                     if i == 0 {
                         nextResults.0 = [DiffStep.insert(j-1, y[j-1])] + nextResults.0
-                        return diffFromIndicesInternal(table, x, y, i, j-1, nextResults)
+                        return diffInternal(table, x, y, i, j-1, nextResults)
                     } else if j == 0 {
                         nextResults.1 = nextResults.1 + [DiffStep.delete(i-1, x[i-1])]
-                        return diffFromIndicesInternal(table, x, y, i - 1, j, nextResults)
+                        return diffInternal(table, x, y, i - 1, j, nextResults)
                     } else if table[i][j] == table[i][j-1] {
                         nextResults.0 = [DiffStep.insert(j-1, y[j-1])] + nextResults.0
-                        return diffFromIndicesInternal(table, x, y, i, j-1, nextResults)
+                        return diffInternal(table, x, y, i, j-1, nextResults)
                     } else if table[i][j] == table[i-1][j] {
                         nextResults.1 = nextResults.1 + [DiffStep.delete(i-1, x[i-1])]
-                        return diffFromIndicesInternal(table, x, y, i - 1, j, nextResults)
+                        return diffInternal(table, x, y, i - 1, j, nextResults)
                     } else {
-                        return diffFromIndicesInternal(table, x, y, i-1, j-1, nextResults)
+                        return diffInternal(table, x, y, i-1, j-1, nextResults)
                     }
                 }
             }
         }
 
         let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
-        var result = diffFromIndicesInternal(table, self, other, self.count, other.count, ([], []))
+        var result = diffInternal(table, self, other, self.count, other.count, ([], []))
         while case .call(let f) = result {
             result = f()
         }
@@ -194,6 +195,7 @@ internal struct MemoizedSequenceComparison<T: Equatable> {
 }
 
 // MARK - 2D
+// TODO split into separate file
 
 public struct SectionedValues<S: Equatable, T: Equatable>: Equatable {
     public init(_ sectionsAndValues: [(S, [T])] = []) {
@@ -280,6 +282,7 @@ fileprivate enum SectionOrValue<S: Equatable, T: Equatable>: CustomDebugStringCo
 }
 
 fileprivate func ==<S, T>(lhs: SectionOrValue<S, T>, rhs: SectionOrValue<S, T>) -> Bool {
+    // TODO this is sort of slow, it can maybe be faster somehow.
     switch lhs {
     case .section(let l):
         if case .section(let r) = rhs, l == r {
@@ -299,15 +302,34 @@ public struct Diff2D<S: Equatable, T: Equatable>: CustomDebugStringConvertible {
         self.rhs = rhs
         let flatL = lhs.flattened
         let flatR = rhs.flattened
+
+        func indicesFor(flattenedList: [SectionOrValue<S, T>]) -> [(Int, Int)] {
+            var currentSection = 0
+            var currentRow = 0
+            return flattenedList.enumerated().map { i, value in
+                switch(value) {
+                case .section:
+                    let next = (currentSection, -1)
+                    currentSection += 1
+                    currentRow = 0
+                    return next
+                case .value:
+                    let next = (currentSection, currentRow)
+                    currentRow += 1
+                    return next
+                }
+            }
+        }
+        let indicesL = indicesFor(flattenedList: flatL)
+        let indicesR = indicesFor(flattenedList: flatR)
         let diff = flatL.diff(flatR)
-        var state = flatL
         var deletions = [DiffStep2D<S, T>]()
         var sectionDeletions = [DiffStep2D<S, T>]()
         var sectionInsertions = [DiffStep2D<S, T>]()
         var insertions = [DiffStep2D<S, T>]()
+
         for result in diff.results {
-            let transformed = Diff2D.build2DDiffStep(result: result, state: state)
-            state.applyStep(result)
+            let transformed = Diff2D.build2DDiffStep(result: result, indicesL: indicesL, indicesR: indicesR)
             switch transformed {
             case .delete: deletions.append(transformed)
             case .sectionDelete: sectionDeletions.append(transformed)
@@ -322,25 +344,10 @@ public struct Diff2D<S: Equatable, T: Equatable>: CustomDebugStringConvertible {
     let rhs: SectionedValues<S, T>
     let results: [DiffStep2D<S, T>]
 
-    private static func build2DDiffStep(result: DiffStep<SectionOrValue<S, T>>, state: [SectionOrValue<S, T>]) -> DiffStep2D<S, T> {
-        func sectionAndRow(forIndex idx: Int) -> (Int, Int) {
-            let totalSentinels = state.filter({ $0.isSection }).count
-            var sentinelCount = 0
-            for (i, raw) in state.reversed().enumerated() {
-                let j = state.count - i
-                if raw.isSection {
-                    if j <= idx {
-                        return ((totalSentinels - sentinelCount), idx - j)
-                    } else {
-                        sentinelCount += 1
-                    }
-                }
-            }
-            return (0, idx)
-        }
+    private static func build2DDiffStep(result: DiffStep<SectionOrValue<S, T>>, indicesL: [(Int, Int)], indicesR: [(Int, Int)]) -> DiffStep2D<S, T> {
         switch result {
         case .insert(let idx, let val):
-            let (section, row) = sectionAndRow(forIndex: idx)
+            let (section, row) = indicesR[idx]
             switch val {
             case .section(let s):
                 return DiffStep2D.sectionInsert(section, s)
@@ -348,7 +355,7 @@ public struct Diff2D<S: Equatable, T: Equatable>: CustomDebugStringConvertible {
                 return DiffStep2D.insert(section, row, val)
             }
         case .delete(let idx, let val):
-            let (section, row) = sectionAndRow(forIndex: idx)
+            let (section, row) = indicesL[idx]
             switch val {
             case .section(let s):
                 return DiffStep2D.sectionDelete(section, s)
@@ -357,35 +364,6 @@ public struct Diff2D<S: Equatable, T: Equatable>: CustomDebugStringConvertible {
             }
         }
     }
-//    init(_ steps: [DiffStep2D<S, T>]) {
-//        self.steps = steps.sorted { lhs, rhs in
-//            switch (lhs, rhs) {
-//            case (.delete(let s1, let r1, _), .delete(let s2, let r2, _)): return s1 < s2 || r1 < r2
-//            case (.delete, _): return true
-//            case (.sectionDelete(let s1, _), .sectionDelete(let s2, _)): return s1 < s2
-//            case (.sectionDelete, _): return true
-//            case (.sectionInsert(let s1, _), .sectionInsert(let s2, _)): return s1 < s2
-//            case (.sectionInsert, _): return true
-//            case (.insert(let s1, let r1, _), .insert(let s2, let r2, _)): return s1 < s2 || r1 < r2
-//            case (.insert, _): return true
-//            }
-//        }
-//        let _ = self.steps
-//        // TODO: remove unnecessary row deletions here (ones where the section will be deleted anyway)
-////        let rowDeletions = steps.filter { step in
-////            if case .delete = step { return true } else { return false }
-////        }.sorted(by: { $0.idx < $1.idx })
-////        let sectionDeletions = steps.filter { step in
-////            if case .sectionDelete = step { return true } else { return false }
-////        }
-////        let sectionInsertions = steps.filter { step in
-////            if case .sectionInsert = step { return true } else { return false }
-////        }
-////        let rowInsertions = steps.filter { step in
-////            if case .insert = step { return true } else { return false }
-////        }
-////        self.steps = steps
-//    }
 
     public var debugDescription: String {
         return "[" + self.results.map { $0.debugDescription }.joined(separator: ", ") + "]"

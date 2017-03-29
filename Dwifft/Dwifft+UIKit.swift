@@ -63,6 +63,9 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator
             if (diff.results.count > 0) {
                 tableView?.beginUpdates()
                 self._rowsAndSections = newValue
+                // TODO see if using no animation for offscreen rows makes things go faster
+                // TODO group together
+                // TODO don't call row deletions for sections that will be deleted
                 for result in diff.results {
                     switch result {
                     case .sectionInsert(let sectionIndex, _):
