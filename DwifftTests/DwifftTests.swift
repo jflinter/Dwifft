@@ -56,8 +56,8 @@ class DwifftTests: XCTestCase {
     }
 
     func testDiffBenchmark() {
-        let a: [Int] = (0...10000).map({ _ in Int(arc4random_uniform(100)) }).filter({ _ in arc4random_uniform(2) == 0})
-        let b: [Int] = (0...10000).map({ _ in Int(arc4random_uniform(100)) }).filter({ _ in arc4random_uniform(2) == 0})
+        let a: [Int] = (0...1000).map({ _ in Int(arc4random_uniform(100)) }).filter({ _ in arc4random_uniform(2) == 0})
+        let b: [Int] = (0...1000).map({ _ in Int(arc4random_uniform(100)) }).filter({ _ in arc4random_uniform(2) == 0})
         measure {
             let _ = a.diff(b)
         }

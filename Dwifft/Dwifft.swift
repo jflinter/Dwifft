@@ -73,6 +73,11 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
     }
 }
 
+private enum Result<T>{
+    case done(T)
+    case call(() -> Result<T>)
+}
+
 public extension Array where Element: Equatable {
     
     /// Returns the sequence of ArrayDiffResults required to transform one array into another.
@@ -83,19 +88,44 @@ public extension Array where Element: Equatable {
     
     /// Walks back through the generated table to generate the diff.
     fileprivate static func diffFromIndices(_ table: [[Int]], _ x: [Element], _ y: [Element], _ i: Int, _ j: Int, _ currentResults: Diff<Element>) -> Diff<Element> {
-        if i == 0 && j == 0 {
-            return currentResults
-        } else if i == 0 {
-            return diffFromIndices(table, x, y, i, j-1, DiffStep.insert(j-1, y[j-1]) + currentResults)
-        } else if j == 0 {
-            return diffFromIndices(table, x, y, i - 1, j, DiffStep.delete(i-1, x[i-1]) + currentResults)
-        } else if table[i][j] == table[i][j-1] {
-            return diffFromIndices(table, x, y, i, j-1, DiffStep.insert(j-1, y[j-1]) + currentResults)
-        } else if table[i][j] == table[i-1][j] {
-            return diffFromIndices(table, x, y, i - 1, j, DiffStep.delete(i-1, x[i-1]) + currentResults)
-        } else {
-            return diffFromIndices(table, x, y, i-1, j-1, currentResults)
+
+        func diffFromIndicesInternal(
+            _ table: [[Int]],
+            _ x: [Element],
+            _ y: [Element],
+            _ i: Int,
+            _ j: Int,
+            _ currentResults: Diff<Element>
+        ) -> Result<Diff<Element>> {
+            if i == 0 && j == 0 {
+                return .done(currentResults)
+            }
+            else {
+                return .call {
+                    if i == 0 {
+                        return diffFromIndicesInternal(table, x, y, i, j-1, DiffStep.insert(j-1, y[j-1]) + currentResults)
+                    } else if j == 0 {
+                        return diffFromIndicesInternal(table, x, y, i - 1, j, DiffStep.delete(i-1, x[i-1]) + currentResults)
+                    } else if table[i][j] == table[i][j-1] {
+                        return diffFromIndicesInternal(table, x, y, i, j-1, DiffStep.insert(j-1, y[j-1]) + currentResults)
+                    } else if table[i][j] == table[i-1][j] {
+                        return diffFromIndicesInternal(table, x, y, i - 1, j, DiffStep.delete(i-1, x[i-1]) + currentResults)
+                    } else {
+                        return diffFromIndicesInternal(table, x, y, i-1, j-1, currentResults)
+                    }
+                }
+            }
         }
+        var result = diffFromIndicesInternal(table, x, y, i, j, Diff<Element>(results: []))
+        while case .call(let f) = result {
+            result = f()
+        }
+        if case let .done(accum) = result {
+            return accum
+        } else {
+            fatalError("unreachable code")
+        }
+
     }
     
     /// Applies a generated diff to an array. The following should always be true:
