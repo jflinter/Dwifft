@@ -58,7 +58,7 @@ class DwifftSwiftCheckTests: XCTestCase {
             //            let y = (a2.getArray.apply(diff.reversed()) == a1.getArray) <?> "diff applies in reverse order"
             //            return  x ^&&^ y
         }
-        property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- myProperty
+//        property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- myProperty
     }
 }
 
