@@ -121,6 +121,12 @@ public extension Array where Element: Equatable {
             }
         }
 
+        if self.isEmpty {
+            return Diff(sortedInsertions: other.enumerated().map(DiffStep.insert), sortedDeletions: [])
+        } else if other.isEmpty {
+            return Diff(sortedInsertions: [], sortedDeletions: self.enumerated().map(DiffStep.delete).reversed())
+        }
+
         let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
         var result = diffInternal(table, self, other, self.count, other.count, ([], []))
         while case .call(let f) = result {
@@ -200,27 +206,19 @@ internal struct MemoizedSequenceComparison<T: Equatable> {
 public struct SectionedValues<S: Equatable, T: Equatable>: Equatable {
     public init(_ sectionsAndValues: [(S, [T])] = []) {
         self.sectionsAndValues = sectionsAndValues
+        self._sections = sectionsAndValues.map { $0.0 }
     }
-    public var sectionsAndValues: [(S, [T])]
+    public var sectionsAndValues: [(S, [T])] { didSet {
+        self._sections = sectionsAndValues.map { $0.0 }
+    }}
+    private var _sections: [S]
+    public var sections: [S] { get { return _sections } }
     public var count: Int { return self.sectionsAndValues.count }
     public subscript(i: Int) -> (S, [T]) {
         return self.sectionsAndValues[i]
     }
 
-    fileprivate var flattened: [SectionOrValue<S, T>] {
-        return self.sectionsAndValues.enumerated().reduce([]) { accum, tuple in
-            let x = SectionOrValue<S, T>.section(tuple.element.0)
-            let values = tuple.element.1.map { SectionOrValue.value(tuple.element.0, $0) }
-            return accum + values + [x]
-        }
-    }
-
     public func apply(_ diff: Diff2D<S, T>) -> SectionedValues<S, T> {
-        // TODO this needs to change, because when a section is deleted, all its rows are deleted as well.
-        // If that section is re-inserted later, it's not clear how to know to reinsert all the values as well.
-        // Instead, we'll probably want to convert self to `flattened` here, apply each step in some kind of
-        // 'flattened form', then unflatten.
-
         var tmp = self
         for result in diff.results {
             switch result {
@@ -272,7 +270,7 @@ fileprivate enum SectionOrValue<S: Equatable, T: Equatable>: CustomDebugStringCo
         switch self {
         case .section:
             return ","
-        case .value(let _, let t):
+        case .value(_, let t):
             if let x = t as? Int {
                 return "\(x)"
             }
@@ -282,7 +280,6 @@ fileprivate enum SectionOrValue<S: Equatable, T: Equatable>: CustomDebugStringCo
 }
 
 fileprivate func ==<S, T>(lhs: SectionOrValue<S, T>, rhs: SectionOrValue<S, T>) -> Bool {
-    // TODO this is sort of slow, it can maybe be faster somehow.
     switch lhs {
     case .section(let l):
         if case .section(let r) = rhs, l == r {
@@ -300,68 +297,86 @@ public struct Diff2D<S: Equatable, T: Equatable>: CustomDebugStringConvertible {
     init(lhs: SectionedValues<S, T>, rhs: SectionedValues<S, T>) {
         self.lhs = lhs
         self.rhs = rhs
-        let flatL = lhs.flattened
-        let flatR = rhs.flattened
-
-        func indicesFor(flattenedList: [SectionOrValue<S, T>]) -> [(Int, Int)] {
-            var currentSection = 0
-            var currentRow = 0
-            return flattenedList.enumerated().map { i, value in
-                switch(value) {
-                case .section:
-                    let next = (currentSection, -1)
-                    currentSection += 1
-                    currentRow = 0
-                    return next
-                case .value:
-                    let next = (currentSection, currentRow)
-                    currentRow += 1
-                    return next
-                }
-            }
-        }
-        let indicesL = indicesFor(flattenedList: flatL)
-        let indicesR = indicesFor(flattenedList: flatR)
-        let diff = flatL.diff(flatR)
-        var deletions = [DiffStep2D<S, T>]()
-        var sectionDeletions = [DiffStep2D<S, T>]()
-        var sectionInsertions = [DiffStep2D<S, T>]()
-        var insertions = [DiffStep2D<S, T>]()
-
-        for result in diff.results {
-            let transformed = Diff2D.build2DDiffStep(result: result, indicesL: indicesL, indicesR: indicesR)
-            switch transformed {
-            case .delete: deletions.append(transformed)
-            case .sectionDelete: sectionDeletions.append(transformed)
-            case .sectionInsert: sectionInsertions.append(transformed)
-            case .insert: insertions.append(transformed)
-            }
-        }
-        self.results = deletions + sectionDeletions + sectionInsertions + insertions
+        let results = Diff2D.buildResults(lhs, rhs)
+        self.results = results.deletions + results.sectionDeletions + results.sectionInsertions + results.insertions
     }
 
     let lhs: SectionedValues<S, T>
     let rhs: SectionedValues<S, T>
     let results: [DiffStep2D<S, T>]
 
-    private static func build2DDiffStep(result: DiffStep<SectionOrValue<S, T>>, indicesL: [(Int, Int)], indicesR: [(Int, Int)]) -> DiffStep2D<S, T> {
-        switch result {
-        case .insert(let idx, let val):
-            let (section, row) = indicesR[idx]
-            switch val {
-            case .section(let s):
-                return DiffStep2D.sectionInsert(section, s)
-            case .value(let _, let val):
-                return DiffStep2D.insert(section, row, val)
+    private struct DiffResults<S, T> {
+        let insertions: [DiffStep2D<S, T>]
+        let deletions: [DiffStep2D<S, T>]
+        let sectionInsertions: [DiffStep2D<S, T>]
+        let sectionDeletions: [DiffStep2D<S, T>]
+    }
+
+    private static func buildResults(_ lhs: SectionedValues<S, T>, _ rhs: SectionedValues<S, T>) -> DiffResults<S, T> {
+        if lhs.sections == rhs.sections {
+            // todo: parallelize?
+            let allResults: [[DiffStep2D<S, T>]] = (0..<lhs.sections.count).map { i in
+                let lValues = lhs.sectionsAndValues[i].1
+                let rValues = rhs.sectionsAndValues[i].1
+                let rowDiff = lValues.diff(rValues)
+                let results: [DiffStep2D<S, T>] = rowDiff.results.map { result in
+                    switch result {
+                    case .insert(let j, let t): return DiffStep2D.insert(i, j, t)
+                    case .delete(let j, let t): return DiffStep2D.delete(i, j, t)
+                    }
+                }
+                return results
             }
-        case .delete(let idx, let val):
-            let (section, row) = indicesL[idx]
-            switch val {
-            case .section(let s):
-                return DiffStep2D.sectionDelete(section, s)
-            case .value(let _, let val):
-                return DiffStep2D.delete(section, row, val)
+            let flattened = allResults.flatMap { $0 }
+            let insertions = flattened.filter { result in
+                if case .insert = result { return true }
+                return false
             }
+            let deletions = flattened.filter { result in
+                if case .delete = result { return true }
+                return false
+            }
+            return DiffResults<S, T>(insertions: insertions, deletions: deletions, sectionInsertions: [], sectionDeletions: [])
+
+        } else {
+            var middleSectionsAndValues = lhs.sectionsAndValues
+            let sectionDiff = lhs.sections.diff(rhs.sections)
+            var sectionInsertions: [DiffStep2D<S, T>] = []
+            var sectionDeletions: [DiffStep2D<S, T>] = []
+            for result in sectionDiff.results {
+                switch result {
+                case .insert(let i, let s):
+                    sectionInsertions.append(DiffStep2D.sectionInsert(i, s))
+                    middleSectionsAndValues.insert((s, []), at: i)
+                case .delete(let i, let s):
+                    sectionDeletions.append(DiffStep2D.sectionDelete(i, s))
+                    middleSectionsAndValues.remove(at: i)
+                }
+            }
+            let deletedSections = Set<Int>(sectionDeletions.flatMap { deletion in
+                guard case .sectionDelete(let i, _) = deletion else { fatalError("not possible") }
+                return i
+            })
+            let rowDeletions: [[DiffStep2D<S, T>]] = lhs.sectionsAndValues.enumerated().flatMap { s, tuple in
+                guard deletedSections.contains(s) else { return nil }
+                return tuple.1.enumerated().map { r, value in
+                    return DiffStep2D.delete(s, r, value)
+                }
+            }
+            let flattenedRowDeletions: [DiffStep2D<S, T>] = rowDeletions.flatMap { $0 }.sorted { l, r in
+                guard case .delete(let ls, let lr, _) = l, case .delete(let rs, let rr, _) = r else { fatalError("not possible") }
+                return ls > rs || (ls == rs) && lr > rr
+            }
+
+            let middle = SectionedValues(middleSectionsAndValues)
+            let rowResults = Diff2D.buildResults(middle, rhs)
+
+            return DiffResults<S, T>(
+                insertions: rowResults.insertions,
+                deletions: flattenedRowDeletions + rowResults.deletions,
+                sectionInsertions: sectionInsertions,
+                sectionDeletions: sectionDeletions
+            )
         }
     }
 
