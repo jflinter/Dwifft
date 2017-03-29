@@ -8,18 +8,21 @@
 
 public struct Diff<T>: CustomDebugStringConvertible {
     public let results: [DiffStep<T>]
+    public let insertions: [DiffStep<T>]
+    public let deletions: [DiffStep<T>]
+
     init(results: [DiffStep<T>]) {
         let insertions = results.filter({ $0.isInsertion }).sorted(by: { $0.idx < $1.idx })
         let deletions = results.filter({ !$0.isInsertion }).sorted(by: { $0.idx > $1.idx })
-        self.results = deletions + insertions
+        self.init(sortedInsertions: insertions, sortedDeletions: deletions)
     }
 
-    public var insertions: [DiffStep<T>] {
-        return results.filter({ $0.isInsertion })
+    fileprivate init(sortedInsertions: [DiffStep<T>], sortedDeletions: [DiffStep<T>]) {
+        self.insertions = sortedInsertions
+        self.deletions = sortedDeletions
+        self.results = sortedDeletions + sortedInsertions
     }
-    public var deletions: [DiffStep<T>] {
-        return results.filter({ !$0.isInsertion })
-    }
+
     public func reversed() -> Diff<T> {
         let reversedResults = self.results.reversed().map { (result: DiffStep<T>) -> DiffStep<T> in
             switch result {
@@ -34,14 +37,6 @@ public struct Diff<T>: CustomDebugStringConvertible {
     public var debugDescription: String {
         return "[" + self.results.map { $0.debugDescription }.joined(separator: ", ") + "]"
     }
-}
-
-public func +<T> (left: Diff<T>, right: DiffStep<T>) -> Diff<T> {
-    return Diff<T>(results: left.results + [right])
-}
-
-public func +<T> (left: DiffStep<T>, right: Diff<T>) -> Diff<T> {
-    return Diff<T>(results: [left] + right.results)
 }
 
 /// These get returned from calls to Array.diff(). They represent insertions or deletions that need to happen to transform array a into array b.
@@ -98,35 +93,40 @@ public extension Array where Element: Equatable {
             _ y: [Element],
             _ i: Int,
             _ j: Int,
-            _ currentResults: Diff<Element>
-            ) -> Result<Diff<Element>> {
+            _ currentResults: ([DiffStep<Element>], [DiffStep<Element>])
+            ) -> Result<([DiffStep<Element>], [DiffStep<Element>])> {
             if i == 0 && j == 0 {
                 return .done(currentResults)
             }
             else {
                 return .call {
+                    var nextResults = currentResults
                     if i == 0 {
-                        return diffFromIndicesInternal(table, x, y, i, j-1, DiffStep.insert(j-1, y[j-1]) + currentResults)
+                        nextResults.0 = [DiffStep.insert(j-1, y[j-1])] + nextResults.0
+                        return diffFromIndicesInternal(table, x, y, i, j-1, nextResults)
                     } else if j == 0 {
-                        return diffFromIndicesInternal(table, x, y, i - 1, j, DiffStep.delete(i-1, x[i-1]) + currentResults)
+                        nextResults.1 = nextResults.1 + [DiffStep.delete(i-1, x[i-1])]
+                        return diffFromIndicesInternal(table, x, y, i - 1, j, nextResults)
                     } else if table[i][j] == table[i][j-1] {
-                        return diffFromIndicesInternal(table, x, y, i, j-1, DiffStep.insert(j-1, y[j-1]) + currentResults)
+                        nextResults.0 = [DiffStep.insert(j-1, y[j-1])] + nextResults.0
+                        return diffFromIndicesInternal(table, x, y, i, j-1, nextResults)
                     } else if table[i][j] == table[i-1][j] {
-                        return diffFromIndicesInternal(table, x, y, i - 1, j, DiffStep.delete(i-1, x[i-1]) + currentResults)
+                        nextResults.1 = nextResults.1 + [DiffStep.delete(i-1, x[i-1])]
+                        return diffFromIndicesInternal(table, x, y, i - 1, j, nextResults)
                     } else {
-                        return diffFromIndicesInternal(table, x, y, i-1, j-1, currentResults)
+                        return diffFromIndicesInternal(table, x, y, i-1, j-1, nextResults)
                     }
                 }
             }
         }
 
         let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
-        var result = diffFromIndicesInternal(table, self, other, self.count, other.count, Diff<Element>(results: []))
+        var result = diffFromIndicesInternal(table, self, other, self.count, other.count, ([], []))
         while case .call(let f) = result {
             result = f()
         }
         if case let .done(accum) = result {
-            return accum
+            return Diff(sortedInsertions: accum.0, sortedDeletions: accum.1)
         } else {
             fatalError("unreachable code")
         }
