@@ -8,29 +8,21 @@
 
 public struct Diff<T>: CustomDebugStringConvertible {
     public let results: [DiffStep<T>]
+    public let insertions: [DiffStep<T>]
+    public let deletions: [DiffStep<T>]
+
     init(results: [DiffStep<T>]) {
-//        self.results = results.sorted { lhs, rhs in
-//            if lhs.isInsertion && rhs.isInsertion {
-//                return lhs.idx < rhs.idx
-//            } else if lhs.isInsertion {
-//                return false
-//            } else if rhs.isInsertion {
-//                return true
-//            } else {
-//                return lhs.idx > rhs.idx
-//            }
-//        }
         let insertions = results.filter({ $0.isInsertion }).sorted(by: { $0.idx < $1.idx })
         let deletions = results.filter({ !$0.isInsertion }).sorted(by: { $0.idx > $1.idx })
-        self.results = deletions + insertions
+        self.init(sortedInsertions: insertions, sortedDeletions: deletions)
     }
 
-    public var insertions: [DiffStep<T>] {
-        return results.filter({ $0.isInsertion })
+    fileprivate init(sortedInsertions: [DiffStep<T>], sortedDeletions: [DiffStep<T>]) {
+        self.insertions = sortedInsertions
+        self.deletions = sortedDeletions
+        self.results = sortedDeletions + sortedInsertions
     }
-    public var deletions: [DiffStep<T>] {
-        return results.filter({ !$0.isInsertion })
-    }
+
     public func reversed() -> Diff<T> {
         let reversedResults = self.results.reversed().map { (result: DiffStep<T>) -> DiffStep<T> in
             switch result {
@@ -45,14 +37,6 @@ public struct Diff<T>: CustomDebugStringConvertible {
     public var debugDescription: String {
         return "[" + self.results.map { $0.debugDescription }.joined(separator: ", ") + "]"
     }
-}
-
-public func +<T> (left: Diff<T>, right: DiffStep<T>) -> Diff<T> {
-    return Diff<T>(results: left.results + [right])
-}
-
-public func +<T> (left: DiffStep<T>, right: Diff<T>) -> Diff<T> {
-    return Diff<T>(results: [left] + right.results)
 }
 
 /// These get returned from calls to Array.diff(). They represent insertions or deletions that need to happen to transform array a into array b.
@@ -102,12 +86,6 @@ public extension Array where Element: Equatable {
 
     /// Returns the sequence of ArrayDiffResults required to transform one array into another.
     public func diff(_ other: [Element]) -> Diff<Element> {
-        let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
-        return Array.diffFromIndices(table, self, other, self.count, other.count, Diff<Element>(results: []))
-    }
-
-    /// Walks back through the generated table to generate the diff.
-    fileprivate static func diffFromIndices(_ table: [[Int]], _ x: [Element], _ y: [Element], _ i: Int, _ j: Int, _ currentResults: Diff<Element>) -> Diff<Element> {
 
         func diffFromIndicesInternal(
             _ table: [[Int]],
@@ -115,37 +93,43 @@ public extension Array where Element: Equatable {
             _ y: [Element],
             _ i: Int,
             _ j: Int,
-            _ currentResults: Diff<Element>
-        ) -> Result<Diff<Element>> {
+            _ currentResults: ([DiffStep<Element>], [DiffStep<Element>])
+            ) -> Result<([DiffStep<Element>], [DiffStep<Element>])> {
             if i == 0 && j == 0 {
                 return .done(currentResults)
             }
             else {
                 return .call {
+                    var nextResults = currentResults
                     if i == 0 {
-                        return diffFromIndicesInternal(table, x, y, i, j-1, DiffStep.insert(j-1, y[j-1]) + currentResults)
+                        nextResults.0 = [DiffStep.insert(j-1, y[j-1])] + nextResults.0
+                        return diffFromIndicesInternal(table, x, y, i, j-1, nextResults)
                     } else if j == 0 {
-                        return diffFromIndicesInternal(table, x, y, i - 1, j, DiffStep.delete(i-1, x[i-1]) + currentResults)
+                        nextResults.1 = nextResults.1 + [DiffStep.delete(i-1, x[i-1])]
+                        return diffFromIndicesInternal(table, x, y, i - 1, j, nextResults)
                     } else if table[i][j] == table[i][j-1] {
-                        return diffFromIndicesInternal(table, x, y, i, j-1, DiffStep.insert(j-1, y[j-1]) + currentResults)
+                        nextResults.0 = [DiffStep.insert(j-1, y[j-1])] + nextResults.0
+                        return diffFromIndicesInternal(table, x, y, i, j-1, nextResults)
                     } else if table[i][j] == table[i-1][j] {
-                        return diffFromIndicesInternal(table, x, y, i - 1, j, DiffStep.delete(i-1, x[i-1]) + currentResults)
+                        nextResults.1 = nextResults.1 + [DiffStep.delete(i-1, x[i-1])]
+                        return diffFromIndicesInternal(table, x, y, i - 1, j, nextResults)
                     } else {
-                        return diffFromIndicesInternal(table, x, y, i-1, j-1, currentResults)
+                        return diffFromIndicesInternal(table, x, y, i-1, j-1, nextResults)
                     }
                 }
             }
         }
-        var result = diffFromIndicesInternal(table, x, y, i, j, Diff<Element>(results: []))
+
+        let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
+        var result = diffFromIndicesInternal(table, self, other, self.count, other.count, ([], []))
         while case .call(let f) = result {
             result = f()
         }
         if case let .done(accum) = result {
-            return accum
+            return Diff(sortedInsertions: accum.0, sortedDeletions: accum.1)
         } else {
             fatalError("unreachable code")
         }
-
     }
 
     /// Applies a generated diff to an array. The following should always be true:
@@ -317,25 +301,21 @@ public struct Diff2D<S: Equatable, T: Equatable>: CustomDebugStringConvertible {
         let flatR = rhs.flattened
         let diff = flatL.diff(flatR)
         var state = flatL
-        let results: [DiffStep2D<S, T>] = diff.results.map { result in
+        var deletions = [DiffStep2D<S, T>]()
+        var sectionDeletions = [DiffStep2D<S, T>]()
+        var sectionInsertions = [DiffStep2D<S, T>]()
+        var insertions = [DiffStep2D<S, T>]()
+        for result in diff.results {
             let transformed = Diff2D.build2DDiffStep(result: result, state: state)
             state.applyStep(result)
-            return transformed
-        }
-        self.results = results.sorted { lhs, rhs in
-            switch (lhs, rhs) {
-            case (.delete(let s1, let r1, _), .delete(let s2, let r2, _)): return s1 > s2 || (s1 == s2 && r1 > r2)
-            case (.delete, _): return true
-            case (.sectionDelete(let s1, _), .sectionDelete(let s2, _)): return s1 > s2
-            case (.sectionDelete, .sectionInsert): return true
-            case (.sectionDelete, .insert): return true
-            case (.sectionInsert(let s1, _), .sectionInsert(let s2, _)): return s1 < s2
-            case (.sectionInsert, .insert): return true
-            case (.insert(let s1, let r1, _), .insert(let s2, let r2, _)): return s1 < s2 || (s1 == s2 && r1 < r2)
-            default: return false
+            switch transformed {
+            case .delete: deletions.append(transformed)
+            case .sectionDelete: sectionDeletions.append(transformed)
+            case .sectionInsert: sectionInsertions.append(transformed)
+            case .insert: insertions.append(transformed)
             }
         }
-        let _ = self.results
+        self.results = deletions + sectionDeletions + sectionInsertions + insertions
     }
 
     let lhs: SectionedValues<S, T>
