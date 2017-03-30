@@ -15,6 +15,7 @@ struct ArbitraryOrderedLists {
     let rhs: SectionedValues<String, Int>
 }
 
+// TODO this isn't a realistic test case. should instead take the same static list of values/sections and shuffle them around (like in the example app)
 extension ArbitraryOrderedLists : Arbitrary {
     static var arbitrary: Gen<ArbitraryOrderedLists> {
         typealias OrderedDict = DictionaryOf<String, ArrayOf<Int>>
@@ -52,11 +53,10 @@ class DwifftSwiftCheckTests: XCTestCase {
         let myProperty = forAllNoShrink(ArbitraryOrderedLists.arbitrary) { (a: ArbitraryOrderedLists) in
             print("iteration \(i)")
             i += 1
-            let diff = Diff2D(lhs: a.lhs, rhs: a.rhs)
+            let diff = Diff2D.diff(lhs: a.lhs, rhs: a.rhs)
             let x = (a.lhs.apply(diff) == a.rhs) <?> "diff applies in forward order"
-            return x
-            //            let y = (a2.getArray.apply(diff.reversed()) == a1.getArray) <?> "diff applies in reverse order"
-            //            return  x ^&&^ y
+            let y = (a.rhs.apply(diff.reversed()) == a.lhs) <?> "diff applies in revers order"
+            return  x ^&&^ y
         }
         property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- myProperty
     }
@@ -113,6 +113,11 @@ class DwifftTests: XCTestCase {
     func test2D() {
         let testCases: [([(String, [Int])], [(String, [Int])], String)] = [
             (
+                [("a", [0, 1]), ("b", [2, 3, 4])],
+                [("b", [2])],
+                "[ds(0), d(0 2), d(0 1)]"
+            ),
+            (
                 [("a", []), ("b", [])],
                 [],
                 "[ds(1), ds(0)]"
@@ -165,18 +170,18 @@ class DwifftTests: XCTestCase {
             (
                 [("a", [1, 2]), ("b", [3, 4])],
                 [("a", [1, 2, 3, 4])],
-                "[d(1 1), d(1 0), ds(1), i(0 2), i(0 3)]"
+                "[ds(1), i(0 2), i(0 3)]"
             ),
-//            (
-//                [("a", [1, 2, 3]), ("b", [4, 5]), ("c", [])],
-//                [("q", []), ("a", [1, 2]), ("b", [3, 4])],
-//                "[d(1 1), d(0 2), ds(2), is(0), i(2 0)]"
-//            ),
+            (
+                [("a", [1, 2, 3]), ("b", [4, 5]), ("c", [])],
+                [("q", []), ("a", [1, 2]), ("b", [3, 4])],
+                "[ds(2), is(0), d(1 2), d(2 1), i(2 0)]"
+            ),
             ]
         for (lhs, rhs, expected) in testCases {
             let mappedLhs = SectionedValues(lhs.map { ($0, $1) })
             let mappedRhs = SectionedValues(rhs.map { ($0, $1) })
-            XCTAssertEqual(Diff2D(lhs: mappedLhs, rhs: mappedRhs).results.debugDescription, expected)
+            XCTAssertEqual(Diff2D.diff(lhs: mappedLhs, rhs: mappedRhs).results.debugDescription, expected)
         }
     }
 
@@ -195,7 +200,7 @@ class DwifftTests: XCTestCase {
         let lhs = SectionedValues(a)
         let rhs = SectionedValues(b)
         measure {
-            let _ = Diff2D(lhs: lhs, rhs: rhs)
+            let _ = Diff2D.diff(lhs: lhs, rhs: rhs)
         }
     }
 

@@ -59,26 +59,54 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator
         set {
             let oldRowsAndSections = rowsAndSections
             let newRowsAndSections = newValue
-            let diff = Diff2D(lhs: oldRowsAndSections, rhs: newRowsAndSections)
+            var wip = oldRowsAndSections
+            let diff = Diff2D.diff(lhs: oldRowsAndSections, rhs: newRowsAndSections)
             if (diff.results.count > 0) {
-                tableView?.beginUpdates()
-                self._rowsAndSections = newValue
-                // TODO see if using no animation for offscreen rows makes things go faster
-                // TODO group together
-                // TODO don't call row deletions for sections that will be deleted
-                for result in diff.results {
-                    switch result {
-                    case .sectionInsert(let sectionIndex, _):
-                        self.tableView?.insertSections(IndexSet(integer: sectionIndex), with: self.insertionAnimation)
-                    case .sectionDelete(let sectionIndex, _):
-                        self.tableView?.deleteSections(IndexSet(integer: sectionIndex), with: self.deletionAnimation)
-                    case .insert(let sectionIndex, let rowIndex, _):
-                        self.tableView?.insertRows(at: [IndexPath(row: rowIndex, section: sectionIndex)], with: self.insertionAnimation)
-                    case .delete(let sectionIndex, let rowIndex, _):
-                        self.tableView?.deleteRows(at: [IndexPath(row: rowIndex, section: sectionIndex)], with: self.deletionAnimation)
-                    }
+
+                // we need to do a 2-pass update to the tableview here due to what appears to be a bug in UITableView.
+                // it does not handle calling `deleteSections` and `deleteRows` inside the same `beginUpdates/endUpdates` block
+                // nicely - it will not actually track the section indices correctly. For example, if the tableview looks like
+                // ["a": [], "b": [2, 3]], and transitions to ["b": [2]], it will expect a call to `deleteRows` with (1, 1)
+                // even after you've already deleted section 0 (the correct thing to expect would be (0, 0).
+                // TODO see if this affects UICollectionView as well.
+                for sectionDeletion in diff.sectionDeletions {
+                    wip.applyStep(step: sectionDeletion)
                 }
-                tableView?.endUpdates()
+                for sectionInsertion in diff.sectionInsertions {
+                    wip.applyStep(step: sectionInsertion)
+                }
+                let sectionDeletionIndices: IndexSet = diff.sectionDeletions.reduce(IndexSet()) { accum, d in
+                    var next = accum
+                    next.insert(d.section)
+                    return next
+                }
+                let sectionInsertionIndices: IndexSet = diff.sectionInsertions.reduce(IndexSet()) { accum, d in
+                    var next = accum
+                    next.insert(d.section)
+                    return next
+                }
+
+                self.tableView?.beginUpdates()
+                self._rowsAndSections = wip
+                self.tableView?.deleteSections(sectionDeletionIndices, with: self.deletionAnimation)
+                self.tableView?.insertSections(sectionInsertionIndices, with: self.insertionAnimation)
+                self.tableView?.endUpdates()
+
+                let deletionIndexPaths: [IndexPath] = diff.deletions.flatMap { d in
+                    guard let row = d.row else { return nil }
+                    return IndexPath(row: row, section: d.section)
+                }
+                let insertionIndexPaths: [IndexPath] = diff.insertions.flatMap { d in
+                    guard let row = d.row else { return nil }
+                    return IndexPath(row: row, section: d.section)
+                }
+                self.tableView?.beginUpdates()
+                self._rowsAndSections = newRowsAndSections
+                self.tableView?.deleteRows(at: deletionIndexPaths, with: self.deletionAnimation)
+                self.tableView?.insertRows(at: insertionIndexPaths, with: self.insertionAnimation)
+                self.tableView?.endUpdates()
+                // TODO see if using no animation for offscreen rows makes things go faster
+
             }
         }
     }
@@ -105,7 +133,7 @@ public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalc
         set {
             let oldRowsAndSections = rowsAndSections
             let newRowsAndSections = newValue
-            let diff = Diff2D(lhs: oldRowsAndSections, rhs: newRowsAndSections)
+            let diff = Diff2D.diff(lhs: oldRowsAndSections, rhs: newRowsAndSections)
             if (diff.results.count > 0) {
                 collectionView?.performBatchUpdates({ () -> Void in
                     self._rowsAndSections = newValue

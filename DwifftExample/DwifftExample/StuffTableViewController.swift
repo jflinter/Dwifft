@@ -11,6 +11,23 @@ import Dwifft
 
 class StuffTableViewController: UITableViewController {
 
+    static let stuff1 = [
+        ("foods", [
+            "Onions",
+//            "Pineapples",
+            ]),
+        ("animal-related", [
+            "Cats",
+//            "Fish legs",
+            "Adam's apple",
+        ]),
+    ]
+    static let stuff2 = [
+        ("animal-related", [
+            "Cats",
+//            "A used lobster",
+        ]),
+        ]
     static let possibleStuff = [
         ("foods", [
             "Onions",
@@ -31,8 +48,14 @@ class StuffTableViewController: UITableViewController {
             "Self-flying car"
         ])
     ]
-
+    static var testIdx = 0
     static func randomStuff() -> SectionedValues<String, String> {
+//        testIdx += 1
+//        if testIdx % 2 == 0 {
+//            return SectionedValues(stuff1)
+//        } else {
+//            return SectionedValues(stuff2)
+//        }
         var mutable = [(String, [String])]()
 //        TODO
 //        for (key, values) in self.possibleStuff {
@@ -75,7 +98,6 @@ class StuffTableViewController: UITableViewController {
         super.viewDidLoad()
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
         self.diffCalculator = TableViewDiffCalculator<String, String>(tableView: self.tableView)
-        self.diffCalculator?.tableView = nil // TODO remove
         
         // You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
         self.diffCalculator?.insertionAnimation = .fade
