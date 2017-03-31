@@ -18,6 +18,16 @@ public protocol DiffCalculator: class {
     func value(forSection: Int) -> S
     func numberOfObjects(inSection section: Int) -> Int
     func value(atIndexPath indexPath: IndexPath) -> T
+
+    func processChanges(
+        newState: SectionedValues<S, T>,
+        sectionDeletionIndices: IndexSet,
+        sectionInsertionIndices: IndexSet,
+        deletionIndexPaths: [IndexPath],
+        insertionIndexPaths: [IndexPath]
+    )
+
+    func internalRowsAndSections() -> SectionedValues<S, T>
 }
 
 public extension DiffCalculator {
@@ -36,25 +46,10 @@ public extension DiffCalculator {
     public func value(atIndexPath indexPath: IndexPath) -> T {
         return self.rowsAndSections[indexPath.section].1[indexPath.row]
     }
-}
 
-public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator {
-
-    public weak var tableView: UITableView?
-
-    public init(tableView: UITableView, initialRowsAndSections: SectionedValues<S, T> = SectionedValues()) {
-        self.tableView = tableView
-        self._rowsAndSections = initialRowsAndSections
-    }
-
-    /// You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
-    public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
-
-    /// Change this value to trigger animations on the table view.
-    private var _rowsAndSections: SectionedValues<S, T>
     public var rowsAndSections : SectionedValues<S, T> {
         get {
-            return _rowsAndSections
+            return internalRowsAndSections()
         }
         set {
             let oldRowsAndSections = rowsAndSections
@@ -68,7 +63,8 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator
                 // nicely - it will not actually track the section indices correctly. For example, if the tableview looks like
                 // ["a": [], "b": [2, 3]], and transitions to ["b": [2]], it will expect a call to `deleteRows` with (1, 1)
                 // even after you've already deleted section 0 (the correct thing to expect would be (0, 0).
-                // TODO see if this affects UICollectionView as well.
+
+                // TODO can we pause UIKit updates somehow to mitigate this
                 for sectionDeletion in diff.sectionDeletions {
                     wip.applyStep(step: sectionDeletion)
                 }
@@ -86,11 +82,13 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator
                     return next
                 }
 
-                self.tableView?.beginUpdates()
-                self._rowsAndSections = wip
-                self.tableView?.deleteSections(sectionDeletionIndices, with: self.deletionAnimation)
-                self.tableView?.insertSections(sectionInsertionIndices, with: self.insertionAnimation)
-                self.tableView?.endUpdates()
+                self.processChanges(
+                    newState: wip,
+                    sectionDeletionIndices: sectionDeletionIndices,
+                    sectionInsertionIndices: sectionInsertionIndices,
+                    deletionIndexPaths: [],
+                    insertionIndexPaths: []
+                )
 
                 let deletionIndexPaths: [IndexPath] = diff.deletions.flatMap { d in
                     guard let row = d.row else { return nil }
@@ -100,17 +98,55 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator
                     guard let row = d.row else { return nil }
                     return IndexPath(row: row, section: d.section)
                 }
-                self.tableView?.beginUpdates()
-                self._rowsAndSections = newRowsAndSections
-                self.tableView?.deleteRows(at: deletionIndexPaths, with: self.deletionAnimation)
-                self.tableView?.insertRows(at: insertionIndexPaths, with: self.insertionAnimation)
-                self.tableView?.endUpdates()
-                // TODO see if using no animation for offscreen rows makes things go faster
 
+                self.processChanges(
+                    newState: newRowsAndSections,
+                    sectionDeletionIndices: IndexSet(),
+                    sectionInsertionIndices: IndexSet(),
+                    deletionIndexPaths: deletionIndexPaths,
+                    insertionIndexPaths: insertionIndexPaths
+                )
+                
             }
         }
     }
 
+}
+
+public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator {
+
+    public weak var tableView: UITableView?
+
+    private var _rowsAndSections: SectionedValues<S, T>
+
+    public init(tableView: UITableView, initialRowsAndSections: SectionedValues<S, T> = SectionedValues()) {
+        self.tableView = tableView
+        self._rowsAndSections = initialRowsAndSections
+    }
+
+    /// You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
+    public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
+
+    public func internalRowsAndSections() -> SectionedValues<S, T> {
+        return self._rowsAndSections
+    }
+
+    public func processChanges(
+        newState: SectionedValues<S, T>,
+        sectionDeletionIndices: IndexSet,
+        sectionInsertionIndices: IndexSet,
+        deletionIndexPaths: [IndexPath],
+        insertionIndexPaths: [IndexPath]
+    ) {
+        guard let tableView = self.tableView else { return }
+        tableView.beginUpdates()
+        self._rowsAndSections = newState
+        tableView.deleteSections(sectionDeletionIndices, with: self.deletionAnimation)
+        tableView.insertSections(sectionInsertionIndices, with: self.insertionAnimation)
+        tableView.deleteRows(at: deletionIndexPaths, with: self.deletionAnimation)
+        tableView.insertRows(at: insertionIndexPaths, with: self.insertionAnimation)
+        tableView.endUpdates()
+    }
 }
 
 public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalculator {
@@ -124,36 +160,25 @@ public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalc
 
     // Since UICollectionView (unlike UITableView) takes a block which must update its data source and trigger animations, we need to trigger the changes on set, instead of explicitly before and after set. This backing array lets us use a getter/setter in the exposed property.
     private var _rowsAndSections: SectionedValues<S, T>
+    public func internalRowsAndSections() -> SectionedValues<S, T> {
+        return self._rowsAndSections
+    }
 
-    /// Change this value to trigger animations on the collection view.
-    public var rowsAndSections : SectionedValues<S, T> {
-        get {
-            return _rowsAndSections
-        }
-        set {
-            let oldRowsAndSections = rowsAndSections
-            let newRowsAndSections = newValue
-            let diff = Diff2D.diff(lhs: oldRowsAndSections, rhs: newRowsAndSections)
-            if (diff.results.count > 0) {
-                collectionView?.performBatchUpdates({ () -> Void in
-                    self._rowsAndSections = newValue
-
-                    for result in diff.results {
-                        switch result {
-                        case .sectionInsert(let sectionIndex, _):
-                            self.collectionView?.insertSections(IndexSet(integer: sectionIndex))
-                        case .sectionDelete(let sectionIndex, _):
-                            self.collectionView?.deleteSections(IndexSet(integer: sectionIndex))
-                        case .insert(let sectionIndex, let rowIndex, _):
-                            self.collectionView?.insertItems(at: [IndexPath(row: rowIndex, section: sectionIndex)])
-                        case .delete(let sectionIndex, let rowIndex, _):
-                            self.collectionView?.deleteItems(at: [IndexPath(row: rowIndex, section: sectionIndex)])
-                        }
-                    }
-                }, completion: nil)
-            }
-            
-        }
+    public func processChanges(
+        newState: SectionedValues<S, T>,
+        sectionDeletionIndices: IndexSet,
+        sectionInsertionIndices: IndexSet,
+        deletionIndexPaths: [IndexPath],
+        insertionIndexPaths: [IndexPath]
+    ) {
+        guard let collectionView = self.collectionView else { return }
+        collectionView.performBatchUpdates({ () -> Void in
+            self._rowsAndSections = newState
+            collectionView.deleteSections(sectionDeletionIndices)
+            collectionView.insertSections(sectionInsertionIndices)
+            collectionView.deleteItems(at: deletionIndexPaths)
+            collectionView.insertItems(at: insertionIndexPaths)
+        }, completion: nil)
     }
 
 }

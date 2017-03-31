@@ -14,6 +14,8 @@
 		045502231B898C6600F5614D /* Dwifft.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0455021E1B898C5400F5614D /* Dwifft.framework */; };
 		045502241B898C6600F5614D /* Dwifft.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0455021E1B898C5400F5614D /* Dwifft.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0455022B1B898CF000F5614D /* StuffTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0455022A1B898CF000F5614D /* StuffTableViewController.swift */; };
+		046EA8A01E8CB1AA00FBD07D /* StuffCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046EA89F1E8CB1AA00FBD07D /* StuffCollectionViewController.swift */; };
+		046EA8A31E8CBB9400FBD07D /* Stuff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046EA8A21E8CBB9400FBD07D /* Stuff.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +72,8 @@
 		045502021B898C3200F5614D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		045502181B898C5400F5614D /* Dwifft.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Dwifft.xcodeproj; path = ../Dwifft.xcodeproj; sourceTree = "<group>"; };
 		0455022A1B898CF000F5614D /* StuffTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StuffTableViewController.swift; sourceTree = "<group>"; };
+		046EA89F1E8CB1AA00FBD07D /* StuffCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StuffCollectionViewController.swift; sourceTree = "<group>"; };
+		046EA8A21E8CBB9400FBD07D /* Stuff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stuff.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +110,8 @@
 			children = (
 				045501F81B898C3200F5614D /* AppDelegate.swift */,
 				0455022A1B898CF000F5614D /* StuffTableViewController.swift */,
+				046EA89F1E8CB1AA00FBD07D /* StuffCollectionViewController.swift */,
+				046EA8A21E8CBB9400FBD07D /* Stuff.swift */,
 				045501FC1B898C3200F5614D /* Main.storyboard */,
 				045501FF1B898C3200F5614D /* Images.xcassets */,
 				045502011B898C3200F5614D /* LaunchScreen.xib */,
@@ -230,6 +236,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				045501F91B898C3200F5614D /* AppDelegate.swift in Sources */,
+				046EA8A01E8CB1AA00FBD07D /* StuffCollectionViewController.swift in Sources */,
+				046EA8A31E8CBB9400FBD07D /* Stuff.swift in Sources */,
 				0455022B1B898CF000F5614D /* StuffTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

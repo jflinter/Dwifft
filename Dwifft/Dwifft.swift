@@ -101,7 +101,6 @@ public extension Array where Element: Equatable {
                 return .done(currentResults)
             }
             else {
-                // TODO this might be faster with a linked list.
                 return .call {
                     var nextResults = currentResults
                     if i == 0 {

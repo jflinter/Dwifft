@@ -106,7 +106,6 @@ public struct Diff2D<S: Equatable, T: Equatable>: CustomDebugStringConvertible {
 
     private static func buildResults(_ lhs: SectionedValues<S, T>, _ rhs: SectionedValues<S, T>) -> DiffResults<S, T> {
         if lhs.sections == rhs.sections {
-            // todo: parallelize?
             let allResults: [[DiffStep2D<S, T>]] = (0..<lhs.sections.count).map { i in
                 let lValues = lhs.sectionsAndValues[i].1
                 let rValues = rhs.sectionsAndValues[i].1

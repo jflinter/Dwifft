@@ -11,83 +11,18 @@ import Dwifft
 
 class StuffTableViewController: UITableViewController {
 
-    static let stuff1 = [
-        ("foods", [
-            "Onions",
-//            "Pineapples",
-            ]),
-        ("animal-related", [
-            "Cats",
-//            "Fish legs",
-            "Adam's apple",
-        ]),
-    ]
-    static let stuff2 = [
-        ("animal-related", [
-            "Cats",
-//            "A used lobster",
-        ]),
-        ]
-    static let possibleStuff = [
-        ("foods", [
-            "Onions",
-            "Pineapples",
-        ]),
-        ("animal-related", [
-            "Cats",
-            "A used lobster",
-            "Fish legs",
-            "Adam's apple",
-        ]),
-        ("muddy things", [
-            "Mud",
-        ]),
-        ("other", [
-            "Splinters",
-            "Igloo cream",
-            "Self-flying car"
-        ])
-    ]
-    static var testIdx = 0
-    static func randomStuff() -> SectionedValues<String, String> {
-//        testIdx += 1
-//        if testIdx % 2 == 0 {
-//            return SectionedValues(stuff1)
-//        } else {
-//            return SectionedValues(stuff2)
-//        }
-        var mutable = [(String, [String])]()
-//        TODO
-//        for (key, values) in self.possibleStuff {
-//            let filtered = values.filter { _ in arc4random_uniform(2) == 0 }
-//            if !filtered.isEmpty { mutable.append((key, filtered)) }
-//        }
-        let n = 100
-        for i in (0..<n) {
-            if arc4random_uniform(2) == 0 {
-                let a  = (0...arc4random_uniform(UInt32(n))).map { _ in arc4random_uniform(100) }.map(String.init)
-                mutable.append((String(i), a))
-            }
-        }
-        return SectionedValues(mutable)
-    }
-    // I shamelessly stole this list of things from my friend Pasquale's blog post because I thought it was funny. You can see it at https://medium.com/elepath-exports/spatial-interfaces-886bccc5d1e9
-
     required init!(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .plain, target: self, action: #selector(StuffTableViewController.shuffle))
     }
     
     @objc func shuffle() {
-        self.stuff = StuffTableViewController.randomStuff()
+        self.stuff = Stuff.wordStuff()
     }
-    
-    // MARK: - Dwifft stuff
-    // This is the stuff that's relevant to actually using Dwifft. The rest is just boilerplate to get the app working.
     
     var diffCalculator: TableViewDiffCalculator<String, String>?
     
-    var stuff: SectionedValues<String, String> = StuffTableViewController.randomStuff() {
+    var stuff: SectionedValues<String, String> = Stuff.wordStuff() {
         // So, whenever your datasource's array of things changes, just let the diffCalculator know and it'll do the rest.
         didSet {
             self.diffCalculator?.rowsAndSections = stuff
@@ -99,20 +34,19 @@ class StuffTableViewController: UITableViewController {
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
         self.diffCalculator = TableViewDiffCalculator<String, String>(tableView: self.tableView)
         
-        // You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
+        // You can change insertion/deletion animations like this! Automatic works for most situations. Fade works well too. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
         self.diffCalculator?.insertionAnimation = .fade
         self.diffCalculator?.deletionAnimation = .fade
     }
 
     // MARK: - Table view data source
+    // diff calculators give you nice convenience methods to fill these out.
     override func numberOfSections(in tableView: UITableView) -> Int {
-        guard let diffCalculator = self.diffCalculator else { return 0 }
-        return diffCalculator.numberOfSections()
+        return self.diffCalculator?.numberOfSections() ?? 0
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let diffCalculator = self.diffCalculator else { return 0 }
-        return diffCalculator.numberOfObjects(inSection: section)
+        return self.diffCalculator?.numberOfObjects(inSection: section) ?? 0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
