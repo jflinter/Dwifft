@@ -68,6 +68,13 @@ public func ==<S, T>(lhs: SectionedValues<S, T>, rhs: SectionedValues<S, T>) -> 
     return true
 }
 
+fileprivate struct DiffResults<S, T> {
+    let deletions: [DiffStep2D<S, T>]
+    let sectionDeletions: [DiffStep2D<S, T>]
+    let sectionInsertions: [DiffStep2D<S, T>]
+    let insertions: [DiffStep2D<S, T>]
+}
+
 public struct Diff2D<S: Equatable, T: Equatable>: CustomDebugStringConvertible {
     public static func diff(lhs: SectionedValues<S, T>, rhs: SectionedValues<S, T>) -> Diff2D {
         let results = Diff2D.buildResults(lhs, rhs)
@@ -109,13 +116,6 @@ public struct Diff2D<S: Equatable, T: Equatable>: CustomDebugStringConvertible {
 
     public func reversed() -> Diff2D<S, T> {
         return Diff2D.diff(lhs: self.rhs, rhs: self.lhs)
-    }
-
-    private struct DiffResults<S, T> {
-        let deletions: [DiffStep2D<S, T>]
-        let sectionDeletions: [DiffStep2D<S, T>]
-        let sectionInsertions: [DiffStep2D<S, T>]
-        let insertions: [DiffStep2D<S, T>]
     }
 
     private static func buildResults(_ lhs: SectionedValues<S, T>, _ rhs: SectionedValues<S, T>) -> DiffResults<S, T> {

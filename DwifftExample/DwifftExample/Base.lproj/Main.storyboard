@@ -53,13 +53,13 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CY3-w0-EuH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-34" y="439"/>
+            <point key="canvasLocation" x="-35" y="500"/>
         </scene>
         <!--Stuff Collection View Controller-->
         <scene sceneID="gtx-ym-66E">
             <objects>
                 <collectionViewController id="PJ4-h2-BwO" customClass="StuffCollectionViewController" customModule="DwifftExample" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" id="d7d-tJ-ZXf">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" id="d7d-tJ-ZXf">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -85,15 +85,19 @@
                         </connections>
                     </collectionView>
                     <navigationItem key="navigationItem" id="oHJ-dm-pQQ"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="375" height="667"/>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PSD-Y9-e1X" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="821.60000000000002" y="438.53073463268368"/>
+            <point key="canvasLocation" x="822" y="500"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="7Pf-Hz-gkr">
             <objects>
                 <tabBarController id="dcg-9l-nyv" sceneMemberID="viewController">
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="375" height="667"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="6sx-eC-v4e">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>

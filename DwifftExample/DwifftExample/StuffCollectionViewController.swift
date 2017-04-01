@@ -16,6 +16,7 @@ class StuffCollectionViewCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        label.textAlignment = .center
         self.addSubview(label)
     }
     
@@ -24,6 +25,7 @@ class StuffCollectionViewCell: UICollectionViewCell {
     }
 
     override func layoutSubviews() {
+        super.layoutSubviews()
         self.label.frame = self.bounds
     }
 }

@@ -37,9 +37,35 @@ class DwifftSwiftCheckTests: XCTestCase {
 
         property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- forAll { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
             let diff = Diff2D.diff(lhs: lhs.values, rhs: rhs.values)
-            let x = (lhs.values.apply(diff) == rhs.values) <?> "diff applies in forward order"
-            let y = (rhs.values.apply(diff.reversed()) == lhs.values) <?> "diff applies in reverse order"
+            let x = (lhs.values.apply(diff) == rhs.values) <?> "2d diff applies in forward order"
+            let y = (rhs.values.apply(diff.reversed()) == lhs.values) <?> "2d diff applies in reverse order"
             return  x ^&&^ y
+        }
+
+        class DataSource: NSObject, UITableViewDataSource {
+            let diffCalculator: TableViewDiffCalculator<Int, Int>
+            init(_ diffCalculator: TableViewDiffCalculator<Int, Int>) {
+                self.diffCalculator = diffCalculator
+            }
+            func numberOfSections(in tableView: UITableView) -> Int {
+                return self.diffCalculator.numberOfSections()
+            }
+            func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+                return self.diffCalculator.numberOfObjects(inSection: section)
+            }
+            func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+                return UITableViewCell()
+            }
+        }
+
+        property("Updating a TableViewDiffCalculator never raises an exception") <- forAll { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
+            let tableView = UITableView()
+            let diffCalculator = TableViewDiffCalculator(tableView: tableView, initialRowsAndSections: lhs.values)
+            let dataSource = DataSource(diffCalculator)
+            tableView.dataSource = dataSource
+            tableView.reloadData()
+            diffCalculator.rowsAndSections = rhs.values
+            return true <?> "no exception was raised"
         }
     }
 }
