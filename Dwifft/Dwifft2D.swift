@@ -9,13 +9,10 @@
 public struct SectionedValues<S: Equatable, T: Equatable>: Equatable {
     public init(_ sectionsAndValues: [(S, [T])] = []) {
         self.sectionsAndValues = sectionsAndValues
-        self._sections = sectionsAndValues.map { $0.0 }
     }
-    public var sectionsAndValues: [(S, [T])] { didSet {
-        self._sections = sectionsAndValues.map { $0.0 }
-        }}
-    private var _sections: [S]
-    public var sections: [S] { get { return _sections } }
+    public var sectionsAndValues: [(S, [T])]
+
+    public var sections: [S] { get { return self.sectionsAndValues.map { $0.0 } } }
     public var count: Int { return self.sectionsAndValues.count }
     public subscript(i: Int) -> (S, [T]) {
         return self.sectionsAndValues[i]
@@ -40,6 +37,22 @@ public struct SectionedValues<S: Equatable, T: Equatable>: Equatable {
         case .delete(let sectionIndex, let rowIndex, _):
             self.sectionsAndValues[sectionIndex].1.remove(at: rowIndex)
         }
+    }
+}
+
+extension SectionedValues where S: Comparable, S: Hashable, T: Comparable {
+    init(values: [T], valueToSection: ((T) -> S)) {
+        let dictionary: [S: [T]] = values.reduce([:]) { (accum, value) in
+            var next = accum
+            let section = valueToSection(value)
+            var current = next[section] ?? []
+            current.append(value)
+            next[section] = current
+            return next
+        }
+        self.init(dictionary.keys.sorted().map { section in
+            (section, dictionary[section]?.sorted() ?? [])
+        })
     }
 }
 
@@ -82,26 +95,27 @@ public struct Diff2D<S: Equatable, T: Equatable>: CustomDebugStringConvertible {
         self.sectionInsertions = sectionInsertions
         self.deletions = deletions
         self.insertions = insertions
-        self.results = sectionDeletions + sectionInsertions + deletions + insertions
+        self.results = deletions + sectionDeletions + sectionInsertions + insertions
     }
 
     private let lhs: SectionedValues<S, T>
     private let rhs: SectionedValues<S, T>
     let results: [DiffStep2D<S, T>]
-    let insertions: [DiffStep2D<S, T>]
     let deletions: [DiffStep2D<S, T>]
-    let sectionInsertions: [DiffStep2D<S, T>]
     let sectionDeletions: [DiffStep2D<S, T>]
+    let sectionInsertions: [DiffStep2D<S, T>]
+    let insertions: [DiffStep2D<S, T>]
+
 
     public func reversed() -> Diff2D<S, T> {
         return Diff2D.diff(lhs: self.rhs, rhs: self.lhs)
     }
 
     private struct DiffResults<S, T> {
-        let insertions: [DiffStep2D<S, T>]
         let deletions: [DiffStep2D<S, T>]
-        let sectionInsertions: [DiffStep2D<S, T>]
         let sectionDeletions: [DiffStep2D<S, T>]
+        let sectionInsertions: [DiffStep2D<S, T>]
+        let insertions: [DiffStep2D<S, T>]
     }
 
     private static func buildResults(_ lhs: SectionedValues<S, T>, _ rhs: SectionedValues<S, T>) -> DiffResults<S, T> {
@@ -128,10 +142,10 @@ public struct Diff2D<S: Equatable, T: Equatable>: CustomDebugStringConvertible {
                 return false
             }
             return DiffResults<S, T>(
-                insertions: insertions,
                 deletions: deletions,
+                sectionDeletions: [],
                 sectionInsertions: [],
-                sectionDeletions: []
+                insertions: insertions
             )
 
         } else {
@@ -153,11 +167,32 @@ public struct Diff2D<S: Equatable, T: Equatable>: CustomDebugStringConvertible {
             let middle = SectionedValues(middleSectionsAndValues)
             let rowResults = Diff2D.buildResults(middle, rhs)
 
+            // we need to calculate a mapping from the final section indices to the original
+            // section indices. This lets us perform the deletions before the section deletions,
+            // which makes UITableView + UICollectionView happy. See https://developer.apple.com/library/content/documentation/UserExperience/Conceptual/TableView_iPhone/ManageInsertDeleteRow/ManageInsertDeleteRow.html#//apple_ref/doc/uid/TP40007451-CH10-SW9
+            var indexMapping = Array(0..<lhs.count)
+            for deletion in sectionDeletions {
+                indexMapping.remove(at: deletion.section)
+            }
+            for insertion in sectionInsertions {
+                indexMapping.insert(-1, at: insertion.section)
+            }
+            var mapping = [Int: Int]()
+            for (i, j) in indexMapping.enumerated() {
+                mapping[i] = j
+            }
+
+            let mappedDeletions: [DiffStep2D<S, T>] = rowResults.deletions.map { deletion in
+                guard case .delete(let section, let row, let val) = deletion else { fatalError("not possible") }
+                guard let newIndex = mapping[section], newIndex != -1 else { fatalError("not possible") }
+                return .delete(newIndex, row, val)
+            }
+
             return DiffResults<S, T>(
-                insertions: rowResults.insertions,
-                deletions: rowResults.deletions,
+                deletions: mappedDeletions,
+                sectionDeletions: sectionDeletions,
                 sectionInsertions: sectionInsertions,
-                sectionDeletions: sectionDeletions
+                insertions: rowResults.insertions
             )
         }
     }
@@ -187,15 +222,6 @@ public enum DiffStep2D<S, T>: CustomDebugStringConvertible {
         case .insert(_, let r, _): return r
         case .delete(_, let r, _): return r
         case .sectionInsert, .sectionDelete: return nil
-        }
-    }
-
-    fileprivate var inverted: DiffStep2D<S, T> {
-        switch self {
-        case .insert(let s, let i, let j): return .delete(s, i, j)
-        case .delete(let s, let i, let j): return .insert(s, i, j)
-        case .sectionInsert(let s, let i): return .sectionDelete(s, i)
-        case .sectionDelete(let s, let i): return .sectionInsert(s, i)
         }
     }
 

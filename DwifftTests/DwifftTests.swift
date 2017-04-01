@@ -10,32 +10,18 @@ import UIKit
 import XCTest
 import SwiftCheck
 
-struct ArbitraryOrderedLists {
-    let lhs: SectionedValues<String, Int>
-    let rhs: SectionedValues<String, Int>
-}
+struct SectionedValuesWrapper: Arbitrary {
+    let values: SectionedValues<Int, Int>
 
-// TODO this isn't a realistic test case. should instead take the same static list of values/sections and shuffle them around (like in the example app)
-extension ArbitraryOrderedLists : Arbitrary {
-    static var arbitrary: Gen<ArbitraryOrderedLists> {
-        typealias OrderedDict = DictionaryOf<String, ArrayOf<Int>>
-        typealias OrderedDictsGen = Gen<(OrderedDict, OrderedDict)>
-        return OrderedDictsGen.zip(OrderedDict.arbitrary, OrderedDict.arbitrary).map { (lhs, rhs) in
-            let x = SectionedValues(lhs.getDictionary.map { ($0, $1.getArray) })
-            let y = SectionedValues(rhs.getDictionary.map { ($0, $1.getArray) })
-            return ArbitraryOrderedLists.init(lhs: x, rhs: y)
+    public static var arbitrary: Gen<SectionedValuesWrapper> {
+        let arrayOfNumbers = Gen<Int>.fromElements(in: 0...10).proliferate.suchThat({ $0.count <= 100 })
+        return arrayOfNumbers.map { array in
+            return array.map { i in
+                return (i, arrayOfNumbers.generate)
+            }
+            }.map { val in
+                return SectionedValuesWrapper(values: SectionedValues<Int, Int>(val))
         }
-    }
-
-    static func shrink(_ lists: ArbitraryOrderedLists) -> [ArbitraryOrderedLists] {
-        var shrinked: [ArbitraryOrderedLists] = []
-        if lists.lhs.count > 0 {
-            shrinked.append(ArbitraryOrderedLists(lhs: SectionedValues(Array(lists.lhs.sectionsAndValues.dropLast())), rhs: lists.rhs))
-        }
-        if lists.rhs.count > 0 {
-            shrinked.append(ArbitraryOrderedLists(lhs: lists.lhs, rhs: SectionedValues(Array(lists.rhs.sectionsAndValues.dropLast()))))
-        }
-        return shrinked
     }
 }
 
@@ -49,16 +35,12 @@ class DwifftSwiftCheckTests: XCTestCase {
             return  x ^&&^ y
         }
 
-        var i = 0
-        let myProperty = forAllNoShrink(ArbitraryOrderedLists.arbitrary) { (a: ArbitraryOrderedLists) in
-            print("iteration \(i)")
-            i += 1
-            let diff = Diff2D.diff(lhs: a.lhs, rhs: a.rhs)
-            let x = (a.lhs.apply(diff) == a.rhs) <?> "diff applies in forward order"
-            let y = (a.rhs.apply(diff.reversed()) == a.lhs) <?> "diff applies in revers order"
+        property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- forAll { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
+            let diff = Diff2D.diff(lhs: lhs.values, rhs: rhs.values)
+            let x = (lhs.values.apply(diff) == rhs.values) <?> "diff applies in forward order"
+            let y = (rhs.values.apply(diff.reversed()) == lhs.values) <?> "diff applies in reverse order"
             return  x ^&&^ y
         }
-        property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- myProperty
     }
 }
 
@@ -115,7 +97,7 @@ class DwifftTests: XCTestCase {
             (
                 [("a", [0, 1]), ("b", [2, 3, 4])],
                 [("b", [2])],
-                "[ds(0), d(0 2), d(0 1)]"
+                "[d(1 2), d(1 1), ds(0)]"
             ),
             (
                 [("a", []), ("b", [])],
@@ -175,7 +157,7 @@ class DwifftTests: XCTestCase {
             (
                 [("a", [1, 2, 3]), ("b", [4, 5]), ("c", [])],
                 [("q", []), ("a", [1, 2]), ("b", [3, 4])],
-                "[ds(2), is(0), d(1 2), d(2 1), i(2 0)]"
+                "[d(0 2), d(1 1), ds(2), is(0), i(2 0)]"
             ),
             ]
         for (lhs, rhs, expected) in testCases {

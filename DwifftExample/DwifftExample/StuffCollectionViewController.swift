@@ -49,6 +49,7 @@ class StuffCollectionViewController: UICollectionViewController {
     var diffCalculator: CollectionViewDiffCalculator<String, String>?
 
     override func viewDidLoad() {
+        // TODO make me slightly prettier
         super.viewDidLoad()
         guard let collectionView = self.collectionView else { return }
         self.diffCalculator = CollectionViewDiffCalculator(collectionView: collectionView, initialRowsAndSections: self.stuff)

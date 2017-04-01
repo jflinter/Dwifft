@@ -21,9 +21,9 @@ public protocol DiffCalculator: class {
 
     func processChanges(
         newState: SectionedValues<S, T>,
+        deletionIndexPaths: [IndexPath],
         sectionDeletionIndices: IndexSet,
         sectionInsertionIndices: IndexSet,
-        deletionIndexPaths: [IndexPath],
         insertionIndexPaths: [IndexPath]
     )
 
@@ -54,22 +54,12 @@ public extension DiffCalculator {
         set {
             let oldRowsAndSections = rowsAndSections
             let newRowsAndSections = newValue
-            var wip = oldRowsAndSections
             let diff = Diff2D.diff(lhs: oldRowsAndSections, rhs: newRowsAndSections)
             if (diff.results.count > 0) {
 
-                // we need to do a 2-pass update to the tableview here due to what appears to be a bug in UITableView.
-                // it does not handle calling `deleteSections` and `deleteRows` inside the same `beginUpdates/endUpdates` block
-                // nicely - it will not actually track the section indices correctly. For example, if the tableview looks like
-                // ["a": [], "b": [2, 3]], and transitions to ["b": [2]], it will expect a call to `deleteRows` with (1, 1)
-                // even after you've already deleted section 0 (the correct thing to expect would be (0, 0).
-
-                // TODO can we pause UIKit updates somehow to mitigate this
-                for sectionDeletion in diff.sectionDeletions {
-                    wip.applyStep(step: sectionDeletion)
-                }
-                for sectionInsertion in diff.sectionInsertions {
-                    wip.applyStep(step: sectionInsertion)
+                let deletionIndexPaths: [IndexPath] = diff.deletions.flatMap { d in
+                    guard let row = d.row else { return nil }
+                    return IndexPath(row: row, section: d.section)
                 }
                 let sectionDeletionIndices: IndexSet = diff.sectionDeletions.reduce(IndexSet()) { accum, d in
                     var next = accum
@@ -81,19 +71,6 @@ public extension DiffCalculator {
                     next.insert(d.section)
                     return next
                 }
-
-                self.processChanges(
-                    newState: wip,
-                    sectionDeletionIndices: sectionDeletionIndices,
-                    sectionInsertionIndices: sectionInsertionIndices,
-                    deletionIndexPaths: [],
-                    insertionIndexPaths: []
-                )
-
-                let deletionIndexPaths: [IndexPath] = diff.deletions.flatMap { d in
-                    guard let row = d.row else { return nil }
-                    return IndexPath(row: row, section: d.section)
-                }
                 let insertionIndexPaths: [IndexPath] = diff.insertions.flatMap { d in
                     guard let row = d.row else { return nil }
                     return IndexPath(row: row, section: d.section)
@@ -101,12 +78,12 @@ public extension DiffCalculator {
 
                 self.processChanges(
                     newState: newRowsAndSections,
-                    sectionDeletionIndices: IndexSet(),
-                    sectionInsertionIndices: IndexSet(),
                     deletionIndexPaths: deletionIndexPaths,
+                    sectionDeletionIndices: sectionDeletionIndices,
+                    sectionInsertionIndices: sectionInsertionIndices,
                     insertionIndexPaths: insertionIndexPaths
                 )
-                
+
             }
         }
     }
@@ -133,9 +110,9 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator
 
     public func processChanges(
         newState: SectionedValues<S, T>,
+        deletionIndexPaths: [IndexPath],
         sectionDeletionIndices: IndexSet,
         sectionInsertionIndices: IndexSet,
-        deletionIndexPaths: [IndexPath],
         insertionIndexPaths: [IndexPath]
     ) {
         guard let tableView = self.tableView else { return }
@@ -166,9 +143,9 @@ public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalc
 
     public func processChanges(
         newState: SectionedValues<S, T>,
+        deletionIndexPaths: [IndexPath],
         sectionDeletionIndices: IndexSet,
         sectionInsertionIndices: IndexSet,
-        deletionIndexPaths: [IndexPath],
         insertionIndexPaths: [IndexPath]
     ) {
         guard let collectionView = self.collectionView else { return }
