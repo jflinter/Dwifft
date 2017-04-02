@@ -76,6 +76,8 @@ public extension DiffCalculator {
                     return IndexPath(row: row, section: d.section)
                 }
 
+                // TODO does rendering offscreen changes without animation improve performance meaningfully?
+
                 self.processChanges(
                     newState: newRowsAndSections,
                     deletionIndexPaths: deletionIndexPaths,
