@@ -8,14 +8,6 @@
 
 import Dwifft
 
-extension String: Diffable {
-    public var diffRepresentation: String { get { return self } }
-}
-
-extension Int: Diffable {
-    public var diffRepresentation: String { get { return String(self) } }
-}
-
 struct Stuff {
 
     // I shamelessly stole this list of things from my friend Pasquale's blog post because I thought it was funny. You can see it at https://medium.com/elepath-exports/spatial-interfaces-886bccc5d1e9

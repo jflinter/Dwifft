@@ -10,6 +10,16 @@ import UIKit
 import XCTest
 import SwiftCheck
 
+extension DwifftSection: Arbitrary {
+    public static var arbitrary: Gen<DwifftSection> {
+        let numbers = Gen<Int>.fromElements(in: 0...10)
+        let arrayOfNumbers = numbers.proliferate.suchThat({ $0.count <= 100 })
+        return numbers.map { i in
+            return DwifftSection.section(identifier: String(i), values: arrayOfNumbers.generate)
+        }
+    }
+}
+
 struct SectionedValuesWrapper: Arbitrary {
     let values: SectionedValues<Int, Int>
 
@@ -43,8 +53,8 @@ class DwifftSwiftCheckTests: XCTestCase {
         }
 
         class DataSource: NSObject, UITableViewDataSource {
-            let diffCalculator: TableViewDiffCalculator<Int, Int>
-            init(_ diffCalculator: TableViewDiffCalculator<Int, Int>) {
+            let diffCalculator: TableViewDiffCalculator
+            init(_ diffCalculator: TableViewDiffCalculator) {
                 self.diffCalculator = diffCalculator
             }
             func numberOfSections(in tableView: UITableView) -> Int {
@@ -58,13 +68,13 @@ class DwifftSwiftCheckTests: XCTestCase {
             }
         }
 
-        property("Updating a TableViewDiffCalculator never raises an exception") <- forAll { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
+        property("Updating a TableViewDiffCalculator never raises an exception") <- forAll { (lhs: ArrayOf<DwifftSection>, rhs: ArrayOf<DwifftSection>) in
             let tableView = UITableView()
-            let diffCalculator = TableViewDiffCalculator(tableView: tableView, initialRowsAndSections: lhs.values)
+            let diffCalculator = TableViewDiffCalculator(tableView: tableView, initialSections: lhs.getArray)
             let dataSource = DataSource(diffCalculator)
             tableView.dataSource = dataSource
             tableView.reloadData()
-            diffCalculator.rowsAndSections = rhs.values
+            diffCalculator.sections = rhs.getArray
             return true <?> "no exception was raised"
         }
     }
@@ -248,16 +258,16 @@ class DwifftTests: XCTestCase {
         class TestViewController: UIViewController, UITableViewDataSource {
 
             let tableView: TestTableView
-            let diffCalculator: TableViewDiffCalculator<Int, Int>
+            let diffCalculator: TableViewDiffCalculator
             var rows: [Int] {
                 didSet {
-                    self.diffCalculator.rowsAndSections = SectionedValues([(0, rows)])
+                    self.diffCalculator.sections = [.section(identifier: "", values: rows)]
                 }
             }
 
             init(tableView: TestTableView, rows: [Int]) {
                 self.tableView = tableView
-                self.diffCalculator = TableViewDiffCalculator<Int, Int>(tableView: tableView, initialRowsAndSections: SectionedValues([(0, rows)]))
+                self.diffCalculator = TableViewDiffCalculator(tableView: tableView, initialSections: [.section(identifier: "", values: rows)])
                 self.diffCalculator.insertionAnimation = .left
                 self.diffCalculator.deletionAnimation = .right
                 self.rows = rows
@@ -339,13 +349,13 @@ class DwifftTests: XCTestCase {
             let diffCalculator: CollectionViewDiffCalculator<Int, Int>
             var rows: [Int] {
                 didSet {
-                    self.diffCalculator.rowsAndSections = SectionedValues([(0, rows)])
+                    self.diffCalculator.sections = [.section(identifier: "", values: rows)]
                 }
             }
 
             init(collectionView: TestCollectionView, rows: [Int]) {
                 self.testCollectionView = collectionView
-                self.diffCalculator = CollectionViewDiffCalculator<Int, Int>(collectionView: self.testCollectionView, initialRowsAndSections: SectionedValues([(0, rows)]))
+                self.diffCalculator = CollectionViewDiffCalculator(collectionView: self.testCollectionView, initialSections: [.section(identifier: "", values: rows)])
                 self.rows = rows
                 super.init(nibName: nil, bundle: nil)
 

@@ -34,6 +34,14 @@ private extension DwifftSection {
     }
 }
 
+extension String: Diffable {
+    public var diffRepresentation: String { get { return self } }
+}
+
+extension Int: Diffable {
+    public var diffRepresentation: String { get { return String(self) } }
+}
+
 public protocol DiffCalculator: class {
     var sections: [DwifftSection] { get set }
     func numberOfSections() -> Int
