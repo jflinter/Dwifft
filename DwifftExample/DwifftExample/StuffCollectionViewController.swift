@@ -41,10 +41,10 @@ class StuffCollectionViewController: UICollectionViewController {
         self.stuff = Stuff.emojiStuff()
     }
 
-    var stuff: SectionedValues<String, String> = Stuff.emojiStuff() {
+    var stuff: [DwifftSection] = Stuff.emojiStuff() {
         // So, whenever your datasource's array of things changes, just let the diffCalculator know and it'll do the rest.
         didSet {
-            self.diffCalculator?.rowsAndSections = stuff
+            self.diffCalculator?.sections = stuff
         }
     }
 
@@ -54,7 +54,7 @@ class StuffCollectionViewController: UICollectionViewController {
         // TODO make me slightly prettier
         super.viewDidLoad()
         guard let collectionView = self.collectionView else { return }
-        self.diffCalculator = CollectionViewDiffCalculator(collectionView: collectionView, initialRowsAndSections: self.stuff)
+        self.diffCalculator = CollectionViewDiffCalculator(collectionView: collectionView, initialSections: self.stuff)
 
         // Register cell classes
         self.collectionView!.register(StuffCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
@@ -75,8 +75,9 @@ class StuffCollectionViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! StuffCollectionViewCell
         guard let diffCalculator = self.diffCalculator else { return cell }
-        let thing = diffCalculator.value(atIndexPath: indexPath)
-        cell.label.text = thing
+        if let thing = diffCalculator.value(atIndexPath: indexPath) as? String {
+            cell.label.text = thing
+        }
         return cell
     }
 

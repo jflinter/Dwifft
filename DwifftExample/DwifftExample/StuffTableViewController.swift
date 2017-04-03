@@ -20,19 +20,19 @@ class StuffTableViewController: UITableViewController {
         self.stuff = Stuff.wordStuff()
     }
     
-    var diffCalculator: TableViewDiffCalculator<String, String>?
+    var diffCalculator: TableViewDiffCalculator?
     
-    var stuff: SectionedValues<String, String> = Stuff.wordStuff() {
+    var stuff: [DwifftSection] = Stuff.wordStuff() {
         // So, whenever your datasource's array of things changes, just let the diffCalculator know and it'll do the rest.
         didSet {
-            self.diffCalculator?.rowsAndSections = stuff
+            self.diffCalculator?.sections = stuff
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
-        self.diffCalculator = TableViewDiffCalculator<String, String>(tableView: self.tableView)
+        self.diffCalculator = TableViewDiffCalculator(tableView: self.tableView)
         
         // You can change insertion/deletion animations like this! Automatic works for most situations. Fade works well too. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
         self.diffCalculator?.insertionAnimation = .fade
@@ -51,12 +51,17 @@ class StuffTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-        cell.textLabel?.text = self.diffCalculator?.value(atIndexPath: indexPath)
+        if let value = self.diffCalculator?.value(atIndexPath: indexPath) as? String {
+            cell.textLabel?.text = value
+        }
+        if let value = self.diffCalculator?.value(atIndexPath: indexPath) as? Int {
+            cell.textLabel?.text = String(value)
+        }
         return cell
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return self.diffCalculator?.value(forSection: section)
+        return self.diffCalculator?.value(forSection: section).identifier
     }
 
 }
