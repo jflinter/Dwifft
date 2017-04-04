@@ -14,6 +14,7 @@
 		045502231B898C6600F5614D /* Dwifft.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0455021E1B898C5400F5614D /* Dwifft.framework */; };
 		045502241B898C6600F5614D /* Dwifft.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0455021E1B898C5400F5614D /* Dwifft.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0455022B1B898CF000F5614D /* StuffTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0455022A1B898CF000F5614D /* StuffTableViewController.swift */; };
+		D297A65C1E93FB78008B9FD5 /* SwiftCheck.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D297A65B1E93FB78008B9FD5 /* SwiftCheck.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,7 @@
 		045502021B898C3200F5614D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		045502181B898C5400F5614D /* Dwifft.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Dwifft.xcodeproj; path = ../Dwifft.xcodeproj; sourceTree = "<group>"; };
 		0455022A1B898CF000F5614D /* StuffTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StuffTableViewController.swift; sourceTree = "<group>"; };
+		D297A65B1E93FB78008B9FD5 /* SwiftCheck.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftCheck.framework; path = ../Carthage/Build/iOS/SwiftCheck.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D297A65C1E93FB78008B9FD5 /* SwiftCheck.framework in Frameworks */,
 				045502231B898C6600F5614D /* Dwifft.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -90,6 +93,7 @@
 				045502181B898C5400F5614D /* Dwifft.xcodeproj */,
 				045501F51B898C3200F5614D /* DwifftExample */,
 				045501F41B898C3200F5614D /* Products */,
+				D297A65A1E93FB78008B9FD5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -131,6 +135,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		D297A65A1E93FB78008B9FD5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D297A65B1E93FB78008B9FD5 /* SwiftCheck.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -142,6 +154,7 @@
 				045501F01B898C3200F5614D /* Frameworks */,
 				045501F11B898C3200F5614D /* Resources */,
 				045502271B898C6600F5614D /* Embed Frameworks */,
+				D297A65E1E93FB97008B9FD5 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -223,6 +236,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D297A65E1E93FB97008B9FD5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/SwiftCheck.framework",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		045501EF1B898C3200F5614D /* Sources */ = {
