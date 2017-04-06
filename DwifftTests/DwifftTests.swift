@@ -27,21 +27,39 @@ final class DwifftTests: XCTestCase {
                      TestCase(array1: "thisisatest", array2: "testing123testing", expectedLCS: "tsitest", expectedDiff: "-a@6-s@5-i@2-h@1+e@1+t@3+n@5+g@6+1@7+2@8+3@9+i@14+n@15+g@16"),
                      TestCase(array1: "HUMAN", array2: "CHIMPANZEE", expectedLCS: "HMAN", expectedDiff: "-U@1+C@0+I@2+P@4+Z@7+E@8+E@9")]
 
-    func testDiff() {
-        for test in testCases {
-            XCTAssertEqual(test.array1.LCS(test.array2), test.expectedLCS, "incorrect LCS")
-            let diff = test.array1.diff(test.array2)
-            let printableDiff = diff.results.map({ $0.debugDescription }).joined(separator: "")
-            XCTAssertEqual(printableDiff, test.expectedDiff, "incorrect diff")
+    func testThatLCSIsCalculatedCorrectly() {
+        for testCase in testCases {
+            XCTAssertEqual(testCase.array1.LCS(testCase.array2), testCase.expectedLCS, "incorrect LCS")
+        }
+    }
+
+    func testThatDiffIsCreatedCorreclty() {
+        for testCase in testCases {
+            let diff = testCase.array1.diff(testCase.array2)
+            let printableDiff = diff.results
+                .map { $0.debugDescription }
+                .joined(separator: "")
+
+            XCTAssertEqual(printableDiff, testCase.expectedDiff, "incorrect diff")
         }
     }
 
     func testDiffBenchmark() {
-        let a: [Int] = (0...1000).map({ _ in Int(arc4random_uniform(100)) }).filter({ _ in arc4random_uniform(2) == 0})
-        let b: [Int] = (0...1000).map({ _ in Int(arc4random_uniform(100)) }).filter({ _ in arc4random_uniform(2) == 0})
+        let a: [Int] = (0...1000)
+            .map { _ in randomNumber(upTo: 100) }
+            .filter { _ in randomNumber(upTo: 2) == 0}
+
+        let b: [Int] = (0...1000)
+            .map { _ in randomNumber(upTo: 100) }
+            .filter { _ in randomNumber(upTo: 2) == 0}
+
         measure {
             let _ = a.diff(b)
         }
+    }
+
+    private func randomNumber(upTo bound: UInt32) -> Int {
+        return Int(arc4random_uniform(bound))
     }
 }
 
