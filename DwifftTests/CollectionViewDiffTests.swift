@@ -16,32 +16,29 @@ struct ExpectedAssertion<T> {
 
 final class CollectionViewDiffTests: XCTestCase {
     func testCollectionViewDiffCalculator() {
-        var insertionAssertions: [ExpectedAssertion<String>] = []
-        let expectedInsertionIndexes = [0, 3, 4, 5]
+        let expectedIndexesForInsertions = [0, 3, 4, 5]
+        let expectedIndexesForDeletions = [4, 2, 1, 0]
 
-        for index in expectedInsertionIndexes {
+        let collectionView = TestCollectionView(insertionAssertions: assertions(for: expectedIndexesForInsertions),
+                                                deletionAssertions: assertions(for: expectedIndexesForDeletions))
+        let viewController = TestCollectionViewController(collectionView: collectionView, rows: [0, 1, 2, 5, 8, 9, 0])
+
+        viewController.rows = [4, 5, 9, 8, 3, 1, 0]
+
+        waitForExpectations(timeout: 1.0, handler: nil)
+    }
+
+    private func assertions(for indexes: [Int]) -> [ExpectedAssertion<String>] {
+        var insertionAssertions: [ExpectedAssertion<String>] = []
+
+        for index in indexes {
             let expected = "\(index)"
             let insertionExpectation = expectation(description:expected)
             let insertionAssertion = ExpectedAssertion<String>(expectation: insertionExpectation) { inserted in XCTAssertEqual(inserted, expected) }
             insertionAssertions.append(insertionAssertion)
         }
 
-        var deletionAssertions: [ExpectedAssertion<String>] = []
-        let expectedDeletionIndexes = [4, 2, 1, 0]
-
-        for index in expectedDeletionIndexes {
-            let expected = "\(index)"
-            let deletionExpectation = expectation(description:expected)
-            let deletionAssertion = ExpectedAssertion<String>(expectation: deletionExpectation) { deleted in XCTAssertEqual(deleted, expected) }
-            deletionAssertions.append(deletionAssertion)
-        }
-
-        let collectionView = TestCollectionView(insertionAssertions: insertionAssertions, deletionAssertions: deletionAssertions)
-        let viewController = TestCollectionViewController(collectionView: collectionView, rows: [0, 1, 2, 5, 8, 9, 0])
-
-        viewController.rows = [4, 5, 9, 8, 3, 1, 0]
-
-        waitForExpectations(timeout: 1.0, handler: nil)
+        return insertionAssertions
     }
 }
 
