@@ -15,6 +15,9 @@
 		041EBBB21B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */; };
 		041EBBB31B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */; };
 		04AC329F1E88AEB000EF63DD /* SwiftCheck.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04AC329E1E88AEB000EF63DD /* SwiftCheck.framework */; };
+		D297A6641E968160008B9FD5 /* TableViewDiffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D297A6631E968160008B9FD5 /* TableViewDiffTests.swift */; };
+		D297A6661E9681B8008B9FD5 /* CollectionViewDiffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D297A6651E9681B8008B9FD5 /* CollectionViewDiffTests.swift */; };
+		D297A6681E9699CA008B9FD5 /* ExpectedAssertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D297A6671E9699CA008B9FD5 /* ExpectedAssertions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +40,9 @@
 		041EBBAE1B8967C300E113B3 /* Dwifft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dwifft.swift; sourceTree = "<group>"; };
 		041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dwifft+UIKit.swift"; sourceTree = "<group>"; };
 		04AC329E1E88AEB000EF63DD /* SwiftCheck.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftCheck.framework; path = Carthage/Build/iOS/SwiftCheck.framework; sourceTree = SOURCE_ROOT; };
+		D297A6631E968160008B9FD5 /* TableViewDiffTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewDiffTests.swift; sourceTree = "<group>"; };
+		D297A6651E9681B8008B9FD5 /* CollectionViewDiffTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewDiffTests.swift; sourceTree = "<group>"; };
+		D297A6671E9699CA008B9FD5 /* ExpectedAssertions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpectedAssertions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +106,9 @@
 			isa = PBXGroup;
 			children = (
 				041EBBA41B89679200E113B3 /* DwifftTests.swift */,
+				D297A6651E9681B8008B9FD5 /* CollectionViewDiffTests.swift */,
+				D297A6631E968160008B9FD5 /* TableViewDiffTests.swift */,
+				D297A6671E9699CA008B9FD5 /* ExpectedAssertions.swift */,
 				04AC329E1E88AEB000EF63DD /* SwiftCheck.framework */,
 				041EBBA21B89679200E113B3 /* Supporting Files */,
 			);
@@ -252,9 +261,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D297A6681E9699CA008B9FD5 /* ExpectedAssertions.swift in Sources */,
 				041EBBB11B8967C300E113B3 /* Dwifft.swift in Sources */,
 				041EBBA51B89679200E113B3 /* DwifftTests.swift in Sources */,
+				D297A6641E968160008B9FD5 /* TableViewDiffTests.swift in Sources */,
 				041EBBB31B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */,
+				D297A6661E9681B8008B9FD5 /* CollectionViewDiffTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
