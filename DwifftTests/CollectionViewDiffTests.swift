@@ -9,36 +9,18 @@
 import UIKit
 import XCTest
 
-struct ExpectedAssertion<T> {
-    let expectation: XCTestExpectation
-    let assertion: (_ expectedValue: T) -> Void
-}
-
 final class CollectionViewDiffTests: XCTestCase {
     func testCollectionViewDiffCalculator() {
         let expectedIndexesForInsertions = [0, 3, 4, 5]
         let expectedIndexesForDeletions = [4, 2, 1, 0]
 
-        let collectionView = TestCollectionView(insertionAssertions: assertions(for: expectedIndexesForInsertions),
-                                                deletionAssertions: assertions(for: expectedIndexesForDeletions))
+        let collectionView = TestCollectionView(insertionAssertions: equalAssertions(for: expectedIndexesForInsertions),
+                                                deletionAssertions: equalAssertions(for: expectedIndexesForDeletions))
         let viewController = TestCollectionViewController(collectionView: collectionView, rows: [0, 1, 2, 5, 8, 9, 0])
 
         viewController.rows = [4, 5, 9, 8, 3, 1, 0]
 
         waitForExpectations(timeout: 1.0, handler: nil)
-    }
-
-    private func assertions(for indexes: [Int]) -> [ExpectedAssertion<Int>] {
-        var assertions: [ExpectedAssertion<Int>] = []
-
-        for index in indexes {
-            let expected = index
-            let assertionExpectation = expectation(description: "expected \(index)")
-            let assertion = ExpectedAssertion<Int>(expectation: assertionExpectation) { result in XCTAssertEqual(result, expected) }
-            assertions.append(assertion)
-        }
-
-        return assertions
     }
 }
 
