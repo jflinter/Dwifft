@@ -28,25 +28,25 @@ final class CollectionViewDiffTests: XCTestCase {
         waitForExpectations(timeout: 1.0, handler: nil)
     }
 
-    private func assertions(for indexes: [Int]) -> [ExpectedAssertion<String>] {
-        var insertionAssertions: [ExpectedAssertion<String>] = []
+    private func assertions(for indexes: [Int]) -> [ExpectedAssertion<Int>] {
+        var assertions: [ExpectedAssertion<Int>] = []
 
         for index in indexes {
-            let expected = "\(index)"
-            let insertionExpectation = expectation(description:expected)
-            let insertionAssertion = ExpectedAssertion<String>(expectation: insertionExpectation) { inserted in XCTAssertEqual(inserted, expected) }
-            insertionAssertions.append(insertionAssertion)
+            let expected = index
+            let assertionExpectation = expectation(description: "expected \(index)")
+            let assertion = ExpectedAssertion<Int>(expectation: assertionExpectation) { result in XCTAssertEqual(result, expected) }
+            assertions.append(assertion)
         }
 
-        return insertionAssertions
+        return assertions
     }
 }
 
 final class TestCollectionView: UICollectionView {
-    let insertionAssertions: [ExpectedAssertion<String>]
-    let deletionAssertions: [ExpectedAssertion<String>]
+    let insertionAssertions: [ExpectedAssertion<Int>]
+    let deletionAssertions: [ExpectedAssertion<Int>]
 
-    init(insertionAssertions: [ExpectedAssertion<String>], deletionAssertions: [ExpectedAssertion<String>]) {
+    init(insertionAssertions: [ExpectedAssertion<Int>], deletionAssertions: [ExpectedAssertion<Int>]) {
         self.insertionAssertions = insertionAssertions
         self.deletionAssertions = deletionAssertions
         super.init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -61,7 +61,7 @@ final class TestCollectionView: UICollectionView {
 
         indexPaths.enumerated().forEach { index, indexPath in
             let assertion = insertionAssertions[index]
-            assertion.assertion("\(indexPath.item)")
+            assertion.assertion(indexPath.item)
             assertion.expectation.fulfill()
         }
     }
@@ -71,7 +71,7 @@ final class TestCollectionView: UICollectionView {
 
         indexPaths.enumerated().forEach { index, indexPath in
             let assertion = deletionAssertions[index]
-            assertion.assertion("\(indexPath.item)")
+            assertion.assertion(indexPath.item)
             assertion.expectation.fulfill()
         }
     }
@@ -105,7 +105,7 @@ final class TestCollectionViewController: UIViewController, UICollectionViewData
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return diffCalculator.rows.count
+        return rows.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

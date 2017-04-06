@@ -11,34 +11,40 @@ import XCTest
 
 final class TableViewDiffTests: XCTestCase {
     func testTableViewDiffCalculator() {
-        var insertionExpectations: [Int: XCTestExpectation] = [:]
-        for i in [0, 3, 4, 5] {
-            let x: XCTestExpectation = expectation(description: "+\(i)")
-            insertionExpectations[i] = x
-        }
+        let expectedIndexesForInsertions = [0, 3, 4, 5]
+        let expectedIndexesForDeletions = [4, 2, 1, 0]
 
-        var deletionExpectations: [Int: XCTestExpectation] = [:]
-        for i in [0, 1, 2, 4] {
-            let x: XCTestExpectation = expectation(description: "+\(i)")
-            deletionExpectations[i] = x
-        }
-
-        let tableView = TestTableView(insertionExpectations: insertionExpectations, deletionExpectations: deletionExpectations)
+        let tableView = TestTableView(insertionAssertions: assertions(for: expectedIndexesForInsertions),
+                                      deletionAssertions: assertions(for: expectedIndexesForDeletions))
         let viewController = TestTableViewController(tableView: tableView, rows: [0, 1, 2, 5, 8, 9, 0])
+
         viewController.rows = [4, 5, 9, 8, 3, 1, 0]
+
         waitForExpectations(timeout: 1.0, handler: nil)
+    }
+
+    private func assertions(for indexes: [Int]) -> [ExpectedAssertion<Int>] {
+        var assertions: [ExpectedAssertion<Int>] = []
+
+        for index in indexes {
+            let expected = index
+            let assertionExpectation = expectation(description: "expected \(index)")
+            let assertion = ExpectedAssertion<Int>(expectation: assertionExpectation) { result in XCTAssertEqual(result, expected) }
+            assertions.append(assertion)
+        }
+
+        return assertions
     }
 }
 
 final class TestTableView: UITableView {
+    let insertionAssertions: [ExpectedAssertion<Int>]
+    let deletionAssertions: [ExpectedAssertion<Int>]
 
-    let insertionExpectations: [Int: XCTestExpectation]
-    let deletionExpectations: [Int: XCTestExpectation]
-
-    init(insertionExpectations: [Int: XCTestExpectation], deletionExpectations: [Int: XCTestExpectation]) {
-        self.insertionExpectations = insertionExpectations
-        self.deletionExpectations = deletionExpectations
-        super.init(frame: CGRect.zero, style: UITableViewStyle.plain)
+    init(insertionAssertions: [ExpectedAssertion<Int>], deletionAssertions: [ExpectedAssertion<Int>]) {
+        self.insertionAssertions = insertionAssertions
+        self.deletionAssertions = deletionAssertions
+        super.init(frame: .zero, style: .plain)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -46,49 +52,59 @@ final class TestTableView: UITableView {
     }
 
     override func insertRows(at indexPaths: [IndexPath], with animation: UITableViewRowAnimation) {
-        XCTAssertEqual(animation, UITableViewRowAnimation.left, "incorrect insertion animation")
-        for indexPath in indexPaths {
-            self.insertionExpectations[(indexPath as NSIndexPath).row]!.fulfill()
+        XCTAssertEqual(animation, .left, "incorrect insertion animation")
+
+        indexPaths.enumerated().forEach { index, indexPath in
+            let assertion = insertionAssertions[index]
+            assertion.assertion(indexPath.item)
+            assertion.expectation.fulfill()
         }
     }
 
     override func deleteRows(at indexPaths: [IndexPath], with animation: UITableViewRowAnimation) {
-        XCTAssertEqual(animation, UITableViewRowAnimation.right, "incorrect insertion animation")
-        for indexPath in indexPaths {
-            self.deletionExpectations[(indexPath as NSIndexPath).row]!.fulfill()
+        XCTAssertEqual(animation, .right, "incorrect insertion animation")
+
+        indexPaths.enumerated().forEach { index, indexPath in
+            let assertion = deletionAssertions[index]
+            assertion.assertion(indexPath.item)
+            assertion.expectation.fulfill()
         }
     }
-
 }
 
 final class TestTableViewController: UIViewController, UITableViewDataSource {
-
     let tableView: TestTableView
     let diffCalculator: TableViewDiffCalculator<Int>
+
     var rows: [Int] {
         didSet {
-            self.diffCalculator.rows = rows
+            diffCalculator.rows = rows
         }
     }
 
     init(tableView: TestTableView, rows: [Int]) {
         self.tableView = tableView
         self.diffCalculator = TableViewDiffCalculator<Int>(tableView: tableView, initialRows: rows)
-        self.diffCalculator.insertionAnimation = .left
-        self.diffCalculator.deletionAnimation = .right
         self.rows = rows
         super.init(nibName: nil, bundle: nil)
+        setup()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("not implemented")
     }
 
-    @objc func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+    private func setup() {
+        tableView.dataSource = self
+        diffCalculator.insertionAnimation = .left
+        diffCalculator.deletionAnimation = .right
     }
 
-    @objc func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return rows.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return UITableViewCell()
     }
 }
