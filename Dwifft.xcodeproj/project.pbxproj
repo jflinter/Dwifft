@@ -104,10 +104,10 @@
 			isa = PBXGroup;
 			children = (
 				041EBBA41B89679200E113B3 /* DwifftTests.swift */,
+				D297A6651E9681B8008B9FD5 /* CollectionViewDiffTests.swift */,
+				D297A6631E968160008B9FD5 /* TableViewDiffTests.swift */,
 				04AC329E1E88AEB000EF63DD /* SwiftCheck.framework */,
 				041EBBA21B89679200E113B3 /* Supporting Files */,
-				D297A6631E968160008B9FD5 /* TableViewDiffTests.swift */,
-				D297A6651E9681B8008B9FD5 /* CollectionViewDiffTests.swift */,
 			);
 			path = DwifftTests;
 			sourceTree = "<group>";
