@@ -9,7 +9,7 @@
 import XCTest
 import SwiftCheck
 
-class DwifftSwiftCheckTests: XCTestCase {
+final class DwifftSwiftCheckTests: XCTestCase {
     func testAll() {
         property("Diffing two arrays, then applying the diff to the first, yields the second") <- forAll { (a1 : ArrayOf<Int>, a2 : ArrayOf<Int>) in
             let diff = a1.getArray.diff(a2.getArray)
@@ -20,35 +20,16 @@ class DwifftSwiftCheckTests: XCTestCase {
 }
 
 final class DwifftTests: XCTestCase {
-    
-    struct TestCase {
-        let array1: [Character]
-        let array2: [Character]
-        let expectedLCS: [Character]
-        let expectedDiff: String
+    let testCases = [TestCase(array1: "1234", array2: "23", expectedLCS: "23", expectedDiff: "-4@3-1@0"),
+                     TestCase(array1: "0125890", array2: "4598310", expectedLCS: "590", expectedDiff: "-8@4-2@2-1@1-0@0+4@0+8@3+3@4+1@5"),
+                     TestCase(array1: "BANANA", array2: "KATANA", expectedLCS: "AANA", expectedDiff: "-N@2-B@0+K@0+T@2"),
+                     TestCase(array1: "1234", array2: "1224533324", expectedLCS: "1234", expectedDiff: "+2@2+4@3+5@4+3@6+3@7+2@8"),
+                     TestCase(array1: "thisisatest", array2: "testing123testing", expectedLCS: "tsitest", expectedDiff: "-a@6-s@5-i@2-h@1+e@1+t@3+n@5+g@6+1@7+2@8+3@9+i@14+n@15+g@16"),
+                     TestCase(array1: "HUMAN", array2: "CHIMPANZEE", expectedLCS: "HMAN", expectedDiff: "-U@1+C@0+I@2+P@4+Z@7+E@8+E@9")]
 
-        init(_ a: String, _ b: String, _ expected: String, _ expectedDiff: String) {
-            self.array1 = Array(a.characters)
-            self.array2 = Array(b.characters)
-            self.expectedLCS = Array(expected.characters)
-            self.expectedDiff = expectedDiff
-        }
-    }
-    
     func testDiff() {
-        let tests: [TestCase] = [
-            TestCase("1234", "23", "23", "-4@3-1@0"),
-            TestCase("0125890", "4598310", "590", "-8@4-2@2-1@1-0@0+4@0+8@3+3@4+1@5"),
-            TestCase("BANANA", "KATANA", "AANA", "-N@2-B@0+K@0+T@2"),
-            TestCase("1234", "1224533324", "1234", "+2@2+4@3+5@4+3@6+3@7+2@8"),
-            TestCase("thisisatest", "testing123testing", "tsitest", "-a@6-s@5-i@2-h@1+e@1+t@3+n@5+g@6+1@7+2@8+3@9+i@14+n@15+g@16"),
-            TestCase("HUMAN", "CHIMPANZEE", "HMAN", "-U@1+C@0+I@2+P@4+Z@7+E@8+E@9"),
-        ]
-        
-        for test in tests {
-
+        for test in testCases {
             XCTAssertEqual(test.array1.LCS(test.array2), test.expectedLCS, "incorrect LCS")
-            
             let diff = test.array1.diff(test.array2)
             let printableDiff = diff.results.map({ $0.debugDescription }).joined(separator: "")
             XCTAssertEqual(printableDiff, test.expectedDiff, "incorrect diff")
@@ -61,5 +42,19 @@ final class DwifftTests: XCTestCase {
         measure {
             let _ = a.diff(b)
         }
+    }
+}
+
+struct TestCase {
+    let array1: [Character]
+    let array2: [Character]
+    let expectedLCS: [Character]
+    let expectedDiff: String
+
+    init(array1: String, array2: String, expectedLCS: String, expectedDiff: String) {
+        self.array1 = Array(array1.characters)
+        self.array2 = Array(array2.characters)
+        self.expectedLCS = Array(expectedLCS.characters)
+        self.expectedDiff = expectedDiff
     }
 }
