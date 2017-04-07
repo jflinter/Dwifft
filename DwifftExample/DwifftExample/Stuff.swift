@@ -12,7 +12,7 @@ struct Stuff {
 
     // I shamelessly stole this list of things from my friend Pasquale's blog post because I thought it was funny. You can see it at https://medium.com/elepath-exports/spatial-interfaces-886bccc5d1e9
     static func wordStuff() -> [DwifftSection] {
-        let possibleStuff: [(String, [Diffable])] = [
+        let possibleStuff: [(String, [AnyHashable])] = [
             ("foods", [
                 "Onions",
                 "Pineapples",
@@ -37,7 +37,7 @@ struct Stuff {
                 "Self-flying car"
             ])
         ]
-        var mutable = [(String, [Diffable])]()
+        var mutable = [(String, [AnyHashable])]()
         for (key, values) in possibleStuff {
             let filtered = values.filter { _ in arc4random_uniform(2) == 0 }
             if !filtered.isEmpty { mutable.append((key, filtered)) }

@@ -61,7 +61,7 @@ class StuffTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return self.diffCalculator?.value(forSection: section).identifier
+        return self.diffCalculator?.value(forSection: section).identifier as? String
     }
 
 }

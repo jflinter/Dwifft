@@ -10,14 +10,10 @@
 
 import UIKit
 
-public protocol Diffable {
-    var diffRepresentation: String { get }
-}
-
 public enum DwifftSection {
-    case section(identifier: String, values: [Diffable])
-    case placeholder(identifier: String, numberOfRows: Int)
-    public var identifier: String {
+    case section(identifier: AnyHashable, values: [AnyHashable])
+    case placeholder(identifier: AnyHashable, numberOfRows: Int)
+    public var identifier: AnyHashable {
         switch self {
         case .section(let identifier, _): return identifier
         case .placeholder(let identifier, _): return identifier
@@ -26,20 +22,12 @@ public enum DwifftSection {
 }
 
 private extension DwifftSection {
-    var asTuple: (String, [String]) {
+    var asTuple: (AnyHashable, [AnyHashable]) {
         switch self {
-        case .section(let identifier, let values): return (identifier, values.map({$0.diffRepresentation}))
+        case .section(let identifier, let values): return (identifier, values)
         case .placeholder(let identifier, _): return (identifier, [])
         }
     }
-}
-
-extension String: Diffable {
-    public var diffRepresentation: String { get { return self } }
-}
-
-extension Int: Diffable {
-    public var diffRepresentation: String { get { return String(self) } }
 }
 
 public protocol DiffCalculator: class {
@@ -47,7 +35,7 @@ public protocol DiffCalculator: class {
     func numberOfSections() -> Int
     func value(forSection: Int) -> DwifftSection
     func numberOfObjects(inSection section: Int) -> Int
-    func value(atIndexPath indexPath: IndexPath) -> Diffable?
+    func value(atIndexPath indexPath: IndexPath) -> AnyHashable?
 
     func processChanges(
         newState: [DwifftSection],
@@ -76,7 +64,7 @@ public extension DiffCalculator {
         }
     }
 
-    public func value(atIndexPath indexPath: IndexPath) -> Diffable? {
+    public func value(atIndexPath indexPath: IndexPath) -> AnyHashable? {
         let section = self.sections[indexPath.section]
         switch section {
         case .placeholder: return nil
