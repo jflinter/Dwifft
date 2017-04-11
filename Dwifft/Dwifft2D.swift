@@ -40,6 +40,7 @@ public struct SectionedValues<S: Equatable, T: Equatable>: Equatable {
     }
 }
 
+// TODO demonstrate usage in example app
 extension SectionedValues where S: Comparable, S: Hashable, T: Comparable {
     init(values: [T], valueToSection: ((T) -> S)) {
         let dictionary: [S: [T]] = values.reduce([:]) { (accum, value) in

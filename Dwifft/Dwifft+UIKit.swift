@@ -6,55 +6,52 @@
 //  Copyright (c) 2015 Places. All rights reserved.
 //
 
-#if os(iOS)
+//#if os(iOS) TODO
 
 import UIKit
 
 public protocol DiffCalculator: class {
-    associatedtype S: Equatable
-    associatedtype T: Equatable
-    var rowsAndSections: SectionedValues<S, T> { get set }
+    var sections: SectionedValues<AnyHashable, AnyHashable> { get set }
     func numberOfSections() -> Int
-    func value(forSection: Int) -> S
+    func value(forSection: Int) -> AnyHashable
     func numberOfObjects(inSection section: Int) -> Int
-    func value(atIndexPath indexPath: IndexPath) -> T
+    func value(atIndexPath indexPath: IndexPath) -> AnyHashable
 
     func processChanges(
-        newState: SectionedValues<S, T>,
+        newState: SectionedValues<AnyHashable, AnyHashable>,
         deletionIndexPaths: [IndexPath],
         sectionDeletionIndices: IndexSet,
         sectionInsertionIndices: IndexSet,
         insertionIndexPaths: [IndexPath]
     )
-
-    func internalRowsAndSections() -> SectionedValues<S, T>
+    func internalSections() -> SectionedValues<AnyHashable, AnyHashable>
 }
 
 public extension DiffCalculator {
     public func numberOfSections() -> Int {
-        return self.rowsAndSections.count
+        return self.sections.count
     }
 
-    public func value(forSection: Int) -> S {
-        return self.rowsAndSections[forSection].0
+    public func value(forSection section: Int) -> AnyHashable {
+        return self.sections[section].0
     }
 
     public func numberOfObjects(inSection section: Int) -> Int {
-        return self.rowsAndSections[section].1.count
+        return self.sections[section].1.count
     }
 
-    public func value(atIndexPath indexPath: IndexPath) -> T {
-        return self.rowsAndSections[indexPath.section].1[indexPath.row]
+    public func value(atIndexPath indexPath: IndexPath) -> AnyHashable {
+        return self.sections[indexPath.section].1[indexPath.row]
     }
 
-    public var rowsAndSections : SectionedValues<S, T> {
+    public var sections: SectionedValues<AnyHashable, AnyHashable> {
         get {
-            return internalRowsAndSections()
+            return internalSections()
         }
         set {
-            let oldRowsAndSections = rowsAndSections
-            let newRowsAndSections = newValue
-            let diff = Diff2D.diff(lhs: oldRowsAndSections, rhs: newRowsAndSections)
+            let oldSections = sections
+            let newSections = newValue
+            let diff = Diff2D.diff(lhs: oldSections, rhs: newSections)
             if (diff.results.count > 0) {
 
                 let deletionIndexPaths: [IndexPath] = diff.deletions.flatMap { d in
@@ -79,47 +76,48 @@ public extension DiffCalculator {
                 // TODO does rendering offscreen changes without animation improve performance meaningfully?
 
                 self.processChanges(
-                    newState: newRowsAndSections,
+                    newState: newValue,
                     deletionIndexPaths: deletionIndexPaths,
                     sectionDeletionIndices: sectionDeletionIndices,
                     sectionInsertionIndices: sectionInsertionIndices,
                     insertionIndexPaths: insertionIndexPaths
                 )
-
+                
             }
+
         }
     }
 
 }
 
-public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator {
+public class TableViewDiffCalculator: DiffCalculator {
 
     public weak var tableView: UITableView?
 
-    private var _rowsAndSections: SectionedValues<S, T>
+    private var _sections: SectionedValues<AnyHashable, AnyHashable>
 
-    public init(tableView: UITableView, initialRowsAndSections: SectionedValues<S, T> = SectionedValues()) {
+    public init(tableView: UITableView, initialSections: SectionedValues<AnyHashable, AnyHashable> = SectionedValues()) {
         self.tableView = tableView
-        self._rowsAndSections = initialRowsAndSections
+        self._sections = initialSections
     }
 
     /// You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
     public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
 
-    public func internalRowsAndSections() -> SectionedValues<S, T> {
-        return self._rowsAndSections
+    public func internalSections() -> SectionedValues<AnyHashable, AnyHashable> {
+        return self._sections
     }
 
     public func processChanges(
-        newState: SectionedValues<S, T>,
+        newState: SectionedValues<AnyHashable, AnyHashable>,
         deletionIndexPaths: [IndexPath],
         sectionDeletionIndices: IndexSet,
         sectionInsertionIndices: IndexSet,
         insertionIndexPaths: [IndexPath]
-    ) {
+    ){
         guard let tableView = self.tableView else { return }
         tableView.beginUpdates()
-        self._rowsAndSections = newState
+        self._sections = newState
         tableView.deleteSections(sectionDeletionIndices, with: self.deletionAnimation)
         tableView.insertSections(sectionInsertionIndices, with: self.insertionAnimation)
         tableView.deleteRows(at: deletionIndexPaths, with: self.deletionAnimation)
@@ -128,23 +126,23 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator
     }
 }
 
-public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalculator {
+public class CollectionViewDiffCalculator : DiffCalculator {
 
     public weak var collectionView: UICollectionView?
 
-    public init(collectionView: UICollectionView, initialRowsAndSections: SectionedValues<S, T> = SectionedValues()) {
+    public init(collectionView: UICollectionView, initialSections: SectionedValues<AnyHashable, AnyHashable> = SectionedValues()) {
         self.collectionView = collectionView
-        _rowsAndSections = initialRowsAndSections
+        _sections = initialSections
     }
 
     // Since UICollectionView (unlike UITableView) takes a block which must update its data source and trigger animations, we need to trigger the changes on set, instead of explicitly before and after set. This backing array lets us use a getter/setter in the exposed property.
-    private var _rowsAndSections: SectionedValues<S, T>
-    public func internalRowsAndSections() -> SectionedValues<S, T> {
-        return self._rowsAndSections
+    private var _sections: SectionedValues<AnyHashable, AnyHashable>
+    public func internalSections() -> SectionedValues<AnyHashable, AnyHashable> {
+        return _sections
     }
 
     public func processChanges(
-        newState: SectionedValues<S, T>,
+        newState: SectionedValues<AnyHashable, AnyHashable>,
         deletionIndexPaths: [IndexPath],
         sectionDeletionIndices: IndexSet,
         sectionInsertionIndices: IndexSet,
@@ -152,7 +150,7 @@ public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalc
     ) {
         guard let collectionView = self.collectionView else { return }
         collectionView.performBatchUpdates({ () -> Void in
-            self._rowsAndSections = newState
+            self._sections = newState
             collectionView.deleteSections(sectionDeletionIndices)
             collectionView.insertSections(sectionInsertionIndices)
             collectionView.deleteItems(at: deletionIndexPaths)
@@ -162,4 +160,4 @@ public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalc
 
 }
 
-#endif
+//#endif
