@@ -1,5 +1,5 @@
 //
-//  TableViewDiffCalculator.swift
+//  Dwifft+UIKit.swift
 //  Dwifft
 //
 //  Created by Jack Flintermann on 3/13/15.
@@ -21,10 +21,7 @@ public protocol DiffCalculator: class {
 
     func processChanges(
         newState: SectionedValues<S, T>,
-        deletionIndexPaths: [IndexPath],
-        sectionDeletionIndices: IndexSet,
-        sectionInsertionIndices: IndexSet,
-        insertionIndexPaths: [IndexPath]
+        diff: [DiffStep2D<S, T>]
     )
 
     func internalRowsAndSections() -> SectionedValues<S, T>
@@ -56,42 +53,10 @@ public extension DiffCalculator {
             let newRowsAndSections = newValue
             let diff = Diff2D.diff(lhs: oldRowsAndSections, rhs: newRowsAndSections)
             if (diff.results.count > 0) {
-
-                let deletionIndexPaths: [IndexPath] = diff.deletions.flatMap { d in
-                    guard let row = d.row else { return nil }
-                    return IndexPath(row: row, section: d.section)
-                }
-
-                // todo this reduce is slow
-                let sectionDeletionIndices: IndexSet = diff.sectionDeletions.reduce(IndexSet()) { accum, d in
-                    var next = accum
-                    next.insert(d.section)
-                    return next
-                }
-                let sectionInsertionIndices: IndexSet = diff.sectionInsertions.reduce(IndexSet()) { accum, d in
-                    var next = accum
-                    next.insert(d.section)
-                    return next
-                }
-                let insertionIndexPaths: [IndexPath] = diff.insertions.flatMap { d in
-                    guard let row = d.row else { return nil }
-                    return IndexPath(row: row, section: d.section)
-                }
-
-                // TODO does rendering offscreen changes without animation improve performance meaningfully?
-
-                self.processChanges(
-                    newState: newRowsAndSections,
-                    deletionIndexPaths: deletionIndexPaths,
-                    sectionDeletionIndices: sectionDeletionIndices,
-                    sectionInsertionIndices: sectionInsertionIndices,
-                    insertionIndexPaths: insertionIndexPaths
-                )
-
+                self.processChanges(newState: newRowsAndSections, diff: diff.results)
             }
         }
     }
-
 }
 
 public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator {
@@ -112,20 +77,18 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: DiffCalculator
         return self._rowsAndSections
     }
 
-    public func processChanges(
-        newState: SectionedValues<S, T>,
-        deletionIndexPaths: [IndexPath],
-        sectionDeletionIndices: IndexSet,
-        sectionInsertionIndices: IndexSet,
-        insertionIndexPaths: [IndexPath]
-    ) {
+    public func processChanges(newState: SectionedValues<S, T>, diff: [DiffStep2D<S, T>]) {
         guard let tableView = self.tableView else { return }
         tableView.beginUpdates()
         self._rowsAndSections = newState
-        tableView.deleteSections(sectionDeletionIndices, with: self.deletionAnimation)
-        tableView.insertSections(sectionInsertionIndices, with: self.insertionAnimation)
-        tableView.deleteRows(at: deletionIndexPaths, with: self.deletionAnimation)
-        tableView.insertRows(at: insertionIndexPaths, with: self.insertionAnimation)
+        for result in diff {
+            switch result {
+            case let .delete(section, row, _): tableView.deleteRows(at: [IndexPath(row: row, section: section)], with: self.deletionAnimation)
+            case let .insert(section, row, _): tableView.insertRows(at: [IndexPath(row: row, section: section)], with: self.insertionAnimation)
+            case let .sectionDelete(section, _): tableView.deleteSections(IndexSet(integer: section), with: self.deletionAnimation)
+            case let .sectionInsert(section, _): tableView.insertSections(IndexSet(integer: section), with: self.insertionAnimation)
+            }
+        }
         tableView.endUpdates()
     }
 }
@@ -145,23 +108,21 @@ public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalc
         return self._rowsAndSections
     }
 
-    public func processChanges(
-        newState: SectionedValues<S, T>,
-        deletionIndexPaths: [IndexPath],
-        sectionDeletionIndices: IndexSet,
-        sectionInsertionIndices: IndexSet,
-        insertionIndexPaths: [IndexPath]
-    ) {
+    public func processChanges(newState: SectionedValues<S, T>, diff: [DiffStep2D<S, T>]) {
         guard let collectionView = self.collectionView else { return }
+        self._rowsAndSections = newState
         collectionView.performBatchUpdates({
             self._rowsAndSections = newState
-            collectionView.deleteSections(sectionDeletionIndices)
-            collectionView.insertSections(sectionInsertionIndices)
-            collectionView.deleteItems(at: deletionIndexPaths)
-            collectionView.insertItems(at: insertionIndexPaths)
+            for result in diff {
+                switch result {
+                case let .delete(section, row, _): collectionView.deleteItems(at: [IndexPath(row: row, section: section)])
+                case let .insert(section, row, _): collectionView.insertItems(at: [IndexPath(row: row, section: section)])
+                case let .sectionDelete(section, _): collectionView.deleteSections(IndexSet(integer: section))
+                case let .sectionInsert(section, _): collectionView.insertSections(IndexSet(integer: section))
+                }
+            }
         }, completion: nil)
     }
-
 }
 
 typealias SimpleTableViewDiffCalculator = TableViewDiffCalculator<AnyHashable, AnyHashable>

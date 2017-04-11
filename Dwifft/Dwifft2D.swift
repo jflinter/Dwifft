@@ -68,57 +68,36 @@ public func ==<Section, Value>(lhs: SectionedValues<Section, Value>, rhs: Sectio
     return true
 }
 
-fileprivate struct DiffResults<Section, Value> {
-    let deletions: [DiffStep2D<Section, Value>]
-    let sectionDeletions: [DiffStep2D<Section, Value>]
-    let sectionInsertions: [DiffStep2D<Section, Value>]
-    let insertions: [DiffStep2D<Section, Value>]
-}
-
 public struct Diff2D<Section: Equatable, Value: Equatable>: CustomDebugStringConvertible {
     public static func diff(lhs: SectionedValues<Section, Value>, rhs: SectionedValues<Section, Value>) -> Diff2D {
         let results = Diff2D.buildResults(lhs, rhs)
         return Diff2D(
             lhs: lhs,
             rhs: rhs,
-            sectionDeletions: results.sectionDeletions,
-            sectionInsertions: results.sectionInsertions,
-            deletions: results.deletions,
-            insertions: results.insertions
+            results: results
         )
     }
 
     private init(
         lhs: SectionedValues<Section, Value>,
         rhs: SectionedValues<Section, Value>,
-        sectionDeletions: [DiffStep2D<Section, Value>],
-        sectionInsertions: [DiffStep2D<Section, Value>],
-        deletions: [DiffStep2D<Section, Value>],
-        insertions: [DiffStep2D<Section, Value>]
+        results: [DiffStep2D<Section, Value>]
     ) {
         self.lhs = lhs
         self.rhs = rhs
-        self.sectionDeletions = sectionDeletions
-        self.sectionInsertions = sectionInsertions
-        self.deletions = deletions
-        self.insertions = insertions
-        self.results = deletions + sectionDeletions + sectionInsertions + insertions
+        self.results = results
     }
 
     private let lhs: SectionedValues<Section, Value>
     private let rhs: SectionedValues<Section, Value>
     let results: [DiffStep2D<Section, Value>]
-    let deletions: [DiffStep2D<Section, Value>]
-    let sectionDeletions: [DiffStep2D<Section, Value>]
-    let sectionInsertions: [DiffStep2D<Section, Value>]
-    let insertions: [DiffStep2D<Section, Value>]
 
 
     public func reversed() -> Diff2D<Section, Value> {
         return Diff2D.diff(lhs: self.rhs, rhs: self.lhs)
     }
 
-    private static func buildResults(_ lhs: SectionedValues<Section, Value>, _ rhs: SectionedValues<Section, Value>) -> DiffResults<Section, Value> {
+    private static func buildResults(_ lhs: SectionedValues<Section, Value>, _ rhs: SectionedValues<Section, Value>) -> [DiffStep2D<Section, Value>] {
         if lhs.sections == rhs.sections {
             let allResults: [[DiffStep2D<Section, Value>]] = (0..<lhs.sections.count).map { i in
                 let lValues = lhs.sectionsAndValues[i].1
@@ -141,12 +120,7 @@ public struct Diff2D<Section: Equatable, Value: Equatable>: CustomDebugStringCon
                 if case .delete = result { return true }
                 return false
             }
-            return DiffResults<Section, Value>(
-                deletions: deletions,
-                sectionDeletions: [],
-                sectionInsertions: [],
-                insertions: insertions
-            )
+            return deletions + insertions
 
         } else {
             var middleSectionsAndValues = lhs.sectionsAndValues
@@ -182,18 +156,28 @@ public struct Diff2D<Section: Equatable, Value: Equatable>: CustomDebugStringCon
                 mapping[i] = j
             }
 
-            let mappedDeletions: [DiffStep2D<Section, Value>] = rowResults.deletions.map { deletion in
+            let deletions = rowResults.filter { result in
+                if case .delete = result {
+                    return true
+                }
+                return false
+            }
+
+            let insertions = rowResults.filter { result in
+                if case .insert = result {
+                    return true
+                }
+                return false
+            }
+
+            let mappedDeletions: [DiffStep2D<Section, Value>] = deletions.map { deletion in
                 guard case .delete(let section, let row, let val) = deletion else { fatalError("not possible") }
                 guard let newIndex = mapping[section], newIndex != -1 else { fatalError("not possible") }
                 return .delete(newIndex, row, val)
             }
 
-            return DiffResults<Section, Value>(
-                deletions: mappedDeletions,
-                sectionDeletions: sectionDeletions,
-                sectionInsertions: sectionInsertions,
-                insertions: rowResults.insertions
-            )
+            return mappedDeletions + sectionDeletions + sectionInsertions + insertions
+
         }
     }
 
