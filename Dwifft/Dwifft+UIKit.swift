@@ -61,6 +61,8 @@ public extension DiffCalculator {
                     guard let row = d.row else { return nil }
                     return IndexPath(row: row, section: d.section)
                 }
+
+                // todo this reduce is slow
                 let sectionDeletionIndices: IndexSet = diff.sectionDeletions.reduce(IndexSet()) { accum, d in
                     var next = accum
                     next.insert(d.section)
@@ -151,7 +153,7 @@ public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalc
         insertionIndexPaths: [IndexPath]
     ) {
         guard let collectionView = self.collectionView else { return }
-        collectionView.performBatchUpdates({ () -> Void in
+        collectionView.performBatchUpdates({
             self._rowsAndSections = newState
             collectionView.deleteSections(sectionDeletionIndices)
             collectionView.insertSections(sectionInsertionIndices)
@@ -161,5 +163,8 @@ public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalc
     }
 
 }
+
+typealias SimpleTableViewDiffCalculator = TableViewDiffCalculator<AnyHashable, AnyHashable>
+typealias SimpleCollectionViewDiffCalculator = CollectionViewDiffCalculator<AnyHashable, AnyHashable>
 
 #endif

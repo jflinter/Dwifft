@@ -6,24 +6,24 @@
 //  Copyright (c) 2015 jflinter. All rights reserved.
 //
 
-public struct Diff<T>: CustomDebugStringConvertible {
-    public let results: [DiffStep<T>]
-    public let insertions: [DiffStep<T>]
-    public let deletions: [DiffStep<T>]
+public struct Diff<Value>: CustomDebugStringConvertible {
+    public let results: [DiffStep<Value>]
+    public let insertions: [DiffStep<Value>]
+    public let deletions: [DiffStep<Value>]
 
-    init(results: [DiffStep<T>]) {
+    init(results: [DiffStep<Value>]) {
         let insertions = results.filter({ $0.isInsertion }).sorted(by: { $0.idx < $1.idx })
         let deletions = results.filter({ !$0.isInsertion }).sorted(by: { $0.idx > $1.idx })
         self.init(sortedInsertions: insertions, sortedDeletions: deletions)
     }
 
-    fileprivate init(sortedInsertions: [DiffStep<T>], sortedDeletions: [DiffStep<T>]) {
+    fileprivate init(sortedInsertions: [DiffStep<Value>], sortedDeletions: [DiffStep<Value>]) {
         self.insertions = sortedInsertions
         self.deletions = sortedDeletions
         self.results = sortedDeletions + sortedInsertions
     }
 
-    public func reversed() -> Diff<T> {
+    public func reversed() -> Diff<Value> {
         return Diff(results: self.results.reversed().map({ $0.inverted }))
     }
 
@@ -33,9 +33,9 @@ public struct Diff<T>: CustomDebugStringConvertible {
 }
 
 /// These get returned from calls to Array.diff(). They represent insertions or deletions that need to happen to transform array a into array b.
-public enum DiffStep<T> : CustomDebugStringConvertible {
-    case insert(Int, T)
-    case delete(Int, T)
+public enum DiffStep<Value> : CustomDebugStringConvertible {
+    case insert(Int, Value)
+    case delete(Int, Value)
     var isInsertion: Bool {
         switch(self) {
         case .insert:
@@ -60,7 +60,7 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
             return i
         }
     }
-    public var value: T {
+    public var value: Value {
         switch(self) {
         case .insert(let j):
             return j.1
@@ -69,7 +69,7 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
         }
     }
 
-    fileprivate var inverted: DiffStep<T> {
+    fileprivate var inverted: DiffStep<Value> {
         switch self {
         case .insert(let i, let j):
             return .delete(i, j)
@@ -142,7 +142,7 @@ public extension Array where Element: Equatable {
 
     /// Applies a generated diff to an array. The following should always be true:
     /// Given x: [T], y: [T], x.apply(x.diff(y)) == y
-    public func apply(_ diff: Diff<Element>) -> Array<Element> {
+    public func apply(_ diff: Diff<Element>) -> [Element] {
         var copy = self
         for result in diff.results {
             switch result {
@@ -185,6 +185,7 @@ internal struct MemoizedSequenceComparison<T: Equatable> {
         var table = Array(repeating: Array(repeating: 0, count: m + 1), count: n + 1)
         for i in 0...n {
             for j in 0...m {
+                // TODO https://t.co/d8J5QgFSXx
                 if (i == 0 || j == 0) {
                     table[i][j] = 0
                 }
