@@ -10,41 +10,21 @@
 
 import UIKit
 
-public enum DwifftSection {
-    case section(identifier: AnyHashable, values: [AnyHashable])
-    case placeholder(identifier: AnyHashable, numberOfRows: Int)
-    public var identifier: AnyHashable {
-        switch self {
-        case .section(let identifier, _): return identifier
-        case .placeholder(let identifier, _): return identifier
-        }
-    }
-}
-
-private extension DwifftSection {
-    var asTuple: (AnyHashable, [AnyHashable]) {
-        switch self {
-        case .section(let identifier, let values): return (identifier, values)
-        case .placeholder(let identifier, _): return (identifier, [])
-        }
-    }
-}
-
 public protocol DiffCalculator: class {
-    var sections: [DwifftSection] { get set }
+    var sections: SectionedValues<AnyHashable, AnyHashable> { get set }
     func numberOfSections() -> Int
-    func value(forSection: Int) -> DwifftSection
+    func value(forSection: Int) -> AnyHashable
     func numberOfObjects(inSection section: Int) -> Int
-    func value(atIndexPath indexPath: IndexPath) -> AnyHashable?
+    func value(atIndexPath indexPath: IndexPath) -> AnyHashable
 
     func processChanges(
-        newState: [DwifftSection],
+        newState: SectionedValues<AnyHashable, AnyHashable>,
         deletionIndexPaths: [IndexPath],
         sectionDeletionIndices: IndexSet,
         sectionInsertionIndices: IndexSet,
         insertionIndexPaths: [IndexPath]
     )
-    func internalSections() -> [DwifftSection]
+    func internalSections() -> SectionedValues<AnyHashable, AnyHashable>
 }
 
 public extension DiffCalculator {
@@ -52,33 +32,25 @@ public extension DiffCalculator {
         return self.sections.count
     }
 
-    public func value(forSection: Int) -> DwifftSection {
-        return self.sections[forSection]
+    public func value(forSection section: Int) -> AnyHashable {
+        return self.sections[section].0
     }
 
     public func numberOfObjects(inSection section: Int) -> Int {
-        let section = self.sections[section]
-        switch section {
-        case .placeholder(_, let numberOfRows): return numberOfRows
-        case .section(_, let values): return values.count
-        }
+        return self.sections[section].1.count
     }
 
-    public func value(atIndexPath indexPath: IndexPath) -> AnyHashable? {
-        let section = self.sections[indexPath.section]
-        switch section {
-        case .placeholder: return nil
-        case .section(_, let values): return values[indexPath.row]
-        }
+    public func value(atIndexPath indexPath: IndexPath) -> AnyHashable {
+        return self.sections[indexPath.section].1[indexPath.row]
     }
 
-    public var sections: [DwifftSection] {
+    public var sections: SectionedValues<AnyHashable, AnyHashable> {
         get {
             return internalSections()
         }
         set {
-            let oldSections = SectionedValues(sections.map { $0.asTuple })
-            let newSections = SectionedValues(newValue.map { $0.asTuple })
+            let oldSections = sections
+            let newSections = newValue
             let diff = Diff2D.diff(lhs: oldSections, rhs: newSections)
             if (diff.results.count > 0) {
 
@@ -122,9 +94,9 @@ public class TableViewDiffCalculator: DiffCalculator {
 
     public weak var tableView: UITableView?
 
-    private var _sections: [DwifftSection]
+    private var _sections: SectionedValues<AnyHashable, AnyHashable>
 
-    public init(tableView: UITableView, initialSections: [DwifftSection] = []) {
+    public init(tableView: UITableView, initialSections: SectionedValues<AnyHashable, AnyHashable> = SectionedValues()) {
         self.tableView = tableView
         self._sections = initialSections
     }
@@ -132,12 +104,12 @@ public class TableViewDiffCalculator: DiffCalculator {
     /// You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
     public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
 
-    public func internalSections() -> [DwifftSection] {
+    public func internalSections() -> SectionedValues<AnyHashable, AnyHashable> {
         return self._sections
     }
 
     public func processChanges(
-        newState: [DwifftSection],
+        newState: SectionedValues<AnyHashable, AnyHashable>,
         deletionIndexPaths: [IndexPath],
         sectionDeletionIndices: IndexSet,
         sectionInsertionIndices: IndexSet,
@@ -154,23 +126,23 @@ public class TableViewDiffCalculator: DiffCalculator {
     }
 }
 
-public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : DiffCalculator {
+public class CollectionViewDiffCalculator : DiffCalculator {
 
     public weak var collectionView: UICollectionView?
 
-    public init(collectionView: UICollectionView, initialSections: [DwifftSection] = []) {
+    public init(collectionView: UICollectionView, initialSections: SectionedValues<AnyHashable, AnyHashable> = SectionedValues()) {
         self.collectionView = collectionView
         _sections = initialSections
     }
 
     // Since UICollectionView (unlike UITableView) takes a block which must update its data source and trigger animations, we need to trigger the changes on set, instead of explicitly before and after set. This backing array lets us use a getter/setter in the exposed property.
-    private var _sections: [DwifftSection]
-    public func internalSections() -> [DwifftSection] {
+    private var _sections: SectionedValues<AnyHashable, AnyHashable>
+    public func internalSections() -> SectionedValues<AnyHashable, AnyHashable> {
         return _sections
     }
 
     public func processChanges(
-        newState: [DwifftSection],
+        newState: SectionedValues<AnyHashable, AnyHashable>,
         deletionIndexPaths: [IndexPath],
         sectionDeletionIndices: IndexSet,
         sectionInsertionIndices: IndexSet,

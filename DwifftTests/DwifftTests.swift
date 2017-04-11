@@ -10,18 +10,8 @@ import UIKit
 import XCTest
 import SwiftCheck
 
-extension DwifftSection: Arbitrary {
-    public static var arbitrary: Gen<DwifftSection> {
-        let numbers = Gen<Int>.fromElements(in: 0...10)
-        let arrayOfNumbers = numbers.proliferate.suchThat({ $0.count <= 100 })
-        return numbers.map { i in
-            return DwifftSection.section(identifier: String(i), values: arrayOfNumbers.generate)
-        }
-    }
-}
-
 struct SectionedValuesWrapper: Arbitrary {
-    let values: SectionedValues<Int, Int>
+    let values: SectionedValues<AnyHashable, AnyHashable>
 
     public static var arbitrary: Gen<SectionedValuesWrapper> {
         let arrayOfNumbers = Gen<Int>.fromElements(in: 0...10).proliferate.suchThat({ $0.count <= 100 })
@@ -30,7 +20,7 @@ struct SectionedValuesWrapper: Arbitrary {
                 return (i, arrayOfNumbers.generate)
             }
             }.map { val in
-                return SectionedValuesWrapper(values: SectionedValues<Int, Int>(val))
+                return SectionedValuesWrapper(values: SectionedValues(val))
         }
     }
 }
@@ -68,13 +58,13 @@ class DwifftSwiftCheckTests: XCTestCase {
             }
         }
 
-        property("Updating a TableViewDiffCalculator never raises an exception") <- forAll { (lhs: ArrayOf<DwifftSection>, rhs: ArrayOf<DwifftSection>) in
+        property("Updating a TableViewDiffCalculator never raises an exception") <- forAll { (lhs: SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
             let tableView = UITableView()
-            let diffCalculator = TableViewDiffCalculator(tableView: tableView, initialSections: lhs.getArray)
+            let diffCalculator = TableViewDiffCalculator(tableView: tableView, initialSections: lhs.values)
             let dataSource = DataSource(diffCalculator)
             tableView.dataSource = dataSource
             tableView.reloadData()
-            diffCalculator.sections = rhs.getArray
+            diffCalculator.sections = rhs.values
             return true <?> "no exception was raised"
         }
     }
@@ -261,13 +251,13 @@ class DwifftTests: XCTestCase {
             let diffCalculator: TableViewDiffCalculator
             var rows: [Int] {
                 didSet {
-                    self.diffCalculator.sections = [.section(identifier: "", values: rows)]
+                    self.diffCalculator.sections = SectionedValues([(0, rows)])
                 }
             }
 
             init(tableView: TestTableView, rows: [Int]) {
                 self.tableView = tableView
-                self.diffCalculator = TableViewDiffCalculator(tableView: tableView, initialSections: [.section(identifier: "", values: rows)])
+                self.diffCalculator = TableViewDiffCalculator(tableView: tableView, initialSections: SectionedValues([(0, rows)]))
                 self.diffCalculator.insertionAnimation = .left
                 self.diffCalculator.deletionAnimation = .right
                 self.rows = rows
@@ -346,16 +336,16 @@ class DwifftTests: XCTestCase {
         class TestViewController: UIViewController, UICollectionViewDataSource {
 
             let testCollectionView: TestCollectionView
-            let diffCalculator: CollectionViewDiffCalculator<Int, Int>
+            let diffCalculator: CollectionViewDiffCalculator
             var rows: [Int] {
                 didSet {
-                    self.diffCalculator.sections = [.section(identifier: "", values: rows)]
+                    self.diffCalculator.sections = SectionedValues([(0, rows)])
                 }
             }
 
             init(collectionView: TestCollectionView, rows: [Int]) {
                 self.testCollectionView = collectionView
-                self.diffCalculator = CollectionViewDiffCalculator(collectionView: self.testCollectionView, initialSections: [.section(identifier: "", values: rows)])
+                self.diffCalculator = CollectionViewDiffCalculator(collectionView: self.testCollectionView, initialSections: SectionedValues([(0, rows)]))
                 self.rows = rows
                 super.init(nibName: nil, bundle: nil)
 

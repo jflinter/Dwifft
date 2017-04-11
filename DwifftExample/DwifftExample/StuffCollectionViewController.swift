@@ -41,14 +41,14 @@ class StuffCollectionViewController: UICollectionViewController {
         self.stuff = Stuff.emojiStuff()
     }
 
-    var stuff: [DwifftSection] = Stuff.emojiStuff() {
+    var stuff: SectionedValues<AnyHashable, AnyHashable> = Stuff.emojiStuff() {
         // So, whenever your datasource's array of things changes, just let the diffCalculator know and it'll do the rest.
         didSet {
             self.diffCalculator?.sections = stuff
         }
     }
 
-    var diffCalculator: CollectionViewDiffCalculator<String, String>?
+    var diffCalculator: CollectionViewDiffCalculator?
 
     override func viewDidLoad() {
         // TODO make me slightly prettier

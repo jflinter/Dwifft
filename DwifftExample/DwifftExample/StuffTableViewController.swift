@@ -22,7 +22,7 @@ class StuffTableViewController: UITableViewController {
     
     var diffCalculator: TableViewDiffCalculator?
     
-    var stuff: [DwifftSection] = Stuff.wordStuff() {
+    var stuff: SectionedValues<AnyHashable, AnyHashable> = Stuff.wordStuff() {
         // So, whenever your datasource's array of things changes, just let the diffCalculator know and it'll do the rest.
         didSet {
             self.diffCalculator?.sections = stuff
@@ -61,7 +61,7 @@ class StuffTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return self.diffCalculator?.value(forSection: section).identifier as? String
+        return self.diffCalculator?.value(forSection: section) as? String
     }
 
 }
