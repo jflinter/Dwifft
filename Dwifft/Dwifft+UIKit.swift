@@ -10,9 +10,9 @@
 
 import UIKit
 
-class AbstractDiffCalculator<S: Equatable, T:Equatable> {
+class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
 
-    init(initialRowsAndSections: SectionedValues<S, T>) {
+    init(initialRowsAndSections: SectionedValues<Section, Value>) {
         self._rowsAndSections = initialRowsAndSections
     }
 
@@ -20,7 +20,7 @@ class AbstractDiffCalculator<S: Equatable, T:Equatable> {
         return self.rowsAndSections.count
     }
 
-    public func value(forSection: Int) -> S {
+    public func value(forSection: Int) -> Section {
         return self.rowsAndSections[forSection].0
     }
 
@@ -28,12 +28,12 @@ class AbstractDiffCalculator<S: Equatable, T:Equatable> {
         return self.rowsAndSections[section].1.count
     }
 
-    public func value(atIndexPath indexPath: IndexPath) -> T {
+    public func value(atIndexPath indexPath: IndexPath) -> Value {
         return self.rowsAndSections[indexPath.section].1[indexPath.row]
     }
 
     // Since UICollectionView (unlike UITableView) takes a block which must update its data source and trigger animations, we need to trigger the changes on set, instead of explicitly before and after set. This backing array lets us use a getter/setter in the exposed property. TODO
-    public var rowsAndSections : SectionedValues<S, T> {
+    public var rowsAndSections : SectionedValues<Section, Value> {
         get {
             return _rowsAndSections
         }
@@ -48,17 +48,17 @@ class AbstractDiffCalculator<S: Equatable, T:Equatable> {
     }
 
 
-    fileprivate var _rowsAndSections: SectionedValues<S, T>
-    fileprivate func processChanges(newState: SectionedValues<S, T>, diff: [DiffStep2D<S, T>]){
+    fileprivate var _rowsAndSections: SectionedValues<Section, Value>
+    fileprivate func processChanges(newState: SectionedValues<Section, Value>, diff: [DiffStep2D<Section, Value>]){
         fatalError("override me")
     }
 }
 
-public class TableViewDiffCalculator<S: Equatable, T: Equatable>: AbstractDiffCalculator<S, T> {
+public class TableViewDiffCalculator<Section: Equatable, Value: Equatable>: AbstractDiffCalculator<Section, Value> {
 
     public weak var tableView: UITableView?
 
-    public init(tableView: UITableView, initialRowsAndSections: SectionedValues<S, T> = SectionedValues()) {
+    public init(tableView: UITableView, initialRowsAndSections: SectionedValues<Section, Value> = SectionedValues()) {
         self.tableView = tableView
         super.init(initialRowsAndSections: initialRowsAndSections)
     }
@@ -66,7 +66,7 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: AbstractDiffCa
     /// You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
     public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
 
-    override public func processChanges(newState: SectionedValues<S, T>, diff: [DiffStep2D<S, T>]) {
+    override public func processChanges(newState: SectionedValues<Section, Value>, diff: [DiffStep2D<Section, Value>]) {
         guard let tableView = self.tableView else { return }
         tableView.beginUpdates()
         self._rowsAndSections = newState
@@ -82,16 +82,16 @@ public class TableViewDiffCalculator<S: Equatable, T: Equatable>: AbstractDiffCa
     }
 }
 
-public class CollectionViewDiffCalculator<S: Equatable, T: Equatable> : AbstractDiffCalculator<S, T> {
+public class CollectionViewDiffCalculator<Section: Equatable, Value: Equatable> : AbstractDiffCalculator<Section, Value> {
 
     public weak var collectionView: UICollectionView?
 
-    public init(collectionView: UICollectionView, initialRowsAndSections: SectionedValues<S, T> = SectionedValues()) {
+    public init(collectionView: UICollectionView, initialRowsAndSections: SectionedValues<Section, Value> = SectionedValues()) {
         self.collectionView = collectionView
         super.init(initialRowsAndSections: initialRowsAndSections)
     }
 
-    override func processChanges(newState: SectionedValues<S, T>, diff: [DiffStep2D<S, T>]) {
+    override func processChanges(newState: SectionedValues<Section, Value>, diff: [DiffStep2D<Section, Value>]) {
         guard let collectionView = self.collectionView else { return }
         self._rowsAndSections = newState
         collectionView.performBatchUpdates({
