@@ -27,21 +27,23 @@ struct SectionedValuesWrapper: Arbitrary {
 
 class DwifftSwiftCheckTests: XCTestCase {
 
-    func testAll() {
+    func testDiff() {
         property("Diffing two arrays, then applying the diff to the first, yields the second") <- forAll { (a1 : ArrayOf<Int>, a2 : ArrayOf<Int>) in
             let diff = a1.getArray.diff(a2.getArray)
             let x = (a1.getArray.apply(diff) == a2.getArray) <?> "diff applies in forward order"
             let y = (a2.getArray.apply(diff.reversed()) == a1.getArray) <?> "diff applies in reverse order"
             return  x ^&&^ y
         }
-
+    }
+    func test2DDiff() {
         property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- forAll { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
             let diff = Diff2D.diff(lhs: lhs.values, rhs: rhs.values)
-            let x = (lhs.values.apply(diff) == rhs.values) <?> "2d diff applies in forward order"
-            let y = (rhs.values.apply(diff.reversed()) == lhs.values) <?> "2d diff applies in reverse order"
+            let x = (lhs.values.applying(diff) == rhs.values) <?> "2d diff applies in forward order"
+            let y = (rhs.values.applying(diff.reversed()) == lhs.values) <?> "2d diff applies in reverse order"
             return  x ^&&^ y
         }
-
+    }
+    func testUIKit() {
         class DataSource: NSObject, UITableViewDataSource {
             let diffCalculator: TableViewDiffCalculator<Int, Int>
             init(_ diffCalculator: TableViewDiffCalculator<Int, Int>) {

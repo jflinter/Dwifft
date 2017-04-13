@@ -11,7 +11,7 @@ public struct Diff<Value>: CustomDebugStringConvertible {
     public let insertions: [DiffStep<Value>]
     public let deletions: [DiffStep<Value>]
 
-    init(results: [DiffStep<Value>]) {
+    fileprivate init(results: [DiffStep<Value>]) {
         let insertions = results.filter({ $0.isInsertion }).sorted(by: { $0.idx < $1.idx })
         let deletions = results.filter({ !$0.isInsertion }).sorted(by: { $0.idx > $1.idx })
         self.init(sortedInsertions: insertions, sortedDeletions: deletions)
@@ -46,34 +46,34 @@ public enum DiffStep<Value> : CustomDebugStringConvertible {
     }
     public var debugDescription: String {
         switch(self) {
-        case .insert(let i, let j):
+        case let .insert(i, j):
             return "+\(j)@\(i)"
-        case .delete(let i, let j):
+        case let .delete(i, j):
             return "-\(j)@\(i)"
         }
     }
     public var idx: Int {
         switch(self) {
-        case .insert(let i, _):
+        case let .insert(i, _):
             return i
-        case .delete(let i, _):
+        case let .delete(i, _):
             return i
         }
     }
     public var value: Value {
         switch(self) {
-        case .insert(let j):
+        case let .insert(j):
             return j.1
-        case .delete(let j):
+        case let .delete(j):
             return j.1
         }
     }
 
     fileprivate var inverted: DiffStep<Value> {
         switch self {
-        case .insert(let i, let j):
+        case let .insert(i, j):
             return .delete(i, j)
-        case .delete(let i, let j):
+        case let .delete(i, j):
             return .insert(i, j)
         }
     }
@@ -130,7 +130,7 @@ public extension Array where Element: Equatable {
 
         let table = MemoizedSequenceComparison.buildTable(self, other, self.count, other.count)
         var result = diffInternal(table, self, other, self.count, other.count, ([], []))
-        while case .call(let f) = result {
+        while case let .call(f) = result {
             result = f()
         }
         if case let .done(accum) = result {
@@ -146,9 +146,9 @@ public extension Array where Element: Equatable {
         var copy = self
         for result in diff.results {
             switch result {
-            case .delete(let idx, _):
+            case let .delete(idx, _):
                 copy.remove(at: idx)
-            case .insert(let idx, let val):
+            case let .insert(idx, val):
                 copy.insert(val, at: idx)
             }
         }
@@ -183,16 +183,20 @@ public extension Array where Element: Equatable {
 internal struct MemoizedSequenceComparison<T: Equatable> {
     static func buildTable(_ x: [T], _ y: [T], _ n: Int, _ m: Int) -> [[Int]] {
         var table = Array(repeating: Array(repeating: 0, count: m + 1), count: n + 1)
-        for i in 0...n {
-            for j in 0...m {
-                // TODO https://t.co/d8J5QgFSXx
-                if (i == 0 || j == 0) {
-                    table[i][j] = 0
-                }
-                else if x[i-1] == y[j-1] {
-                    table[i][j] = table[i-1][j-1] + 1
-                } else {
-                    table[i][j] = max(table[i-1][j], table[i][j-1])
+        // using unsafe pointers lets us avoid swift array bounds-checking, which results in a considerable speed boost.
+        table.withUnsafeMutableBufferPointer { unsafeTable in
+            x.withUnsafeBufferPointer { unsafeX in
+                y.withUnsafeBufferPointer { unsafeY in
+                    for i in 1...n {
+                        for j in 1...m {
+                            if unsafeX[i&-1] == unsafeY[j&-1] {
+                                unsafeTable[i][j] = unsafeTable[i&-1][j&-1] + 1
+                            } else {
+                                unsafeTable[i][j] = max(unsafeTable[i&-1][j], unsafeTable[i][j&-1])
+                            }
+                        }
+                    }
+                    
                 }
             }
         }

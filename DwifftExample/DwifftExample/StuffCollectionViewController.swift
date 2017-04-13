@@ -11,7 +11,7 @@ import Dwifft
 
 private let reuseIdentifier = "Cell"
 
-class StuffCollectionViewCell: UICollectionViewCell {
+final class StuffCollectionViewCell: UICollectionViewCell {
     let label = UILabel()
 
     override init(frame: CGRect) {
@@ -30,7 +30,7 @@ class StuffCollectionViewCell: UICollectionViewCell {
     }
 }
 
-class StuffCollectionViewController: UICollectionViewController {
+final class StuffCollectionViewController: UICollectionViewController {
 
     required init!(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)

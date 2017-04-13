@@ -9,7 +9,7 @@
 import UIKit
 import Dwifft
 
-class StuffTableViewController: UITableViewController {
+final class StuffTableViewController: UITableViewController {
 
     required init!(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)

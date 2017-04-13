@@ -6,40 +6,73 @@
 //  Copyright © 2017 jflinter. All rights reserved.
 //
 
+// TODO document me please
+
+
+/// SectionedValues represents, well, a bunch of sections and the values they represent.
+/// You can think of it sort of like an "ordered dictionary", or an order of key-pairs.
+/// If you are diffing a multidimensional structure of values (what might normally be,
+/// for example, a 2D array), you will want to use this.
 public struct SectionedValues<Section: Equatable, Value: Equatable>: Equatable {
+
+    /// Initializes the struct with an array of key-pairs.
+    ///
+    /// - Parameter sectionsAndValues: An array of tuples. The first element in the tuple is
+    /// the value of the section. The second element is an array of values to be associated with
+    /// that section. Ordering matters, obviously. Note, it's totally ok if `sectionsAndValues`
+    /// contains duplicate sections (or duplicate values within those sections).
     public init(_ sectionsAndValues: [(Section, [Value])] = []) {
         self.sectionsAndValues = sectionsAndValues
     }
-    public var sectionsAndValues: [(Section, [Value])]
-
-    public var sections: [Section] { get { return self.sectionsAndValues.map { $0.0 } } }
+    public let sectionsAndValues: [(Section, [Value])]
     public var count: Int { return self.sectionsAndValues.count }
-    public subscript(i: Int) -> (Section, [Value]) {
+
+    internal var sections: [Section] { get { return self.sectionsAndValues.map { $0.0 } } }
+    internal subscript(i: Int) -> (Section, [Value]) {
         return self.sectionsAndValues[i]
     }
 
-    public func apply(_ diff: Diff2D<Section, Value>) -> SectionedValues<Section, Value> {
+    public func appending(sectionAndValue: (Section, [Value])) -> SectionedValues<Section, Value> {
+        return SectionedValues(self.sectionsAndValues + [sectionAndValue])
+    }
+
+    public func applying(_ diff: Diff2D<Section, Value>) -> SectionedValues<Section, Value> {
         var tmp = self
         for result in diff.results {
-            tmp.applyStep(step: result)
+            tmp = tmp.applyingStep(step: result)
         }
         return tmp
     }
 
-    public mutating func applyStep(step: DiffStep2D<Section, Value>) {
+    internal mutating func applyingStep(step: DiffStep2D<Section, Value>) -> SectionedValues<Section, Value> {
+        var sectionsAndValues = self.sectionsAndValues
         switch step {
-        case .sectionInsert(let sectionIndex, let val):
-            self.sectionsAndValues.insert((val, []), at: sectionIndex)
-        case .sectionDelete(let sectionIndex, _):
-            self.sectionsAndValues.remove(at: sectionIndex)
-        case .insert(let sectionIndex, let rowIndex, let val):
-            self.sectionsAndValues[sectionIndex].1.insert(val, at: rowIndex)
-        case .delete(let sectionIndex, let rowIndex, _):
-            self.sectionsAndValues[sectionIndex].1.remove(at: rowIndex)
+        case let .sectionInsert(sectionIndex, val):
+            sectionsAndValues.insert((val, []), at: sectionIndex)
+        case let .sectionDelete(sectionIndex, _):
+            sectionsAndValues.remove(at: sectionIndex)
+        case let .insert(sectionIndex, rowIndex, val):
+            sectionsAndValues[sectionIndex].1.insert(val, at: rowIndex)
+        case let .delete(sectionIndex, rowIndex, _):
+            sectionsAndValues[sectionIndex].1.remove(at: rowIndex)
         }
+        return SectionedValues(sectionsAndValues)
+    }
+
+    public static func ==(lhs: SectionedValues<Section, Value>, rhs: SectionedValues<Section, Value>) -> Bool {
+        if lhs.sectionsAndValues.count != rhs.sectionsAndValues.count { return false }
+        for i in 0..<(lhs.sectionsAndValues.count) {
+            let ltuple = lhs.sectionsAndValues[i]
+            let rtuple = rhs.sectionsAndValues[i]
+            if (ltuple.0 != rtuple.0 || ltuple.1 != rtuple.1) {
+                return false
+            }
+        }
+        return true
     }
 }
 
+// TODO example app
 extension SectionedValues where Section: Comparable, Section: Hashable, Value: Comparable {
     init(values: [Value], valueToSection: ((Value) -> Section)) {
         let dictionary: [Section: [Value]] = values.reduce([:]) { (accum, value) in
@@ -56,17 +89,6 @@ extension SectionedValues where Section: Comparable, Section: Hashable, Value: C
     }
 }
 
-public func ==<Section, Value>(lhs: SectionedValues<Section, Value>, rhs: SectionedValues<Section, Value>) -> Bool {
-    if lhs.sectionsAndValues.count != rhs.sectionsAndValues.count { return false }
-    for i in 0..<(lhs.sectionsAndValues.count) {
-        let ltuple = lhs.sectionsAndValues[i]
-        let rtuple = rhs.sectionsAndValues[i]
-        if (ltuple.0 != rtuple.0 || ltuple.1 != rtuple.1) {
-            return false
-        }
-    }
-    return true
-}
 
 public struct Diff2D<Section: Equatable, Value: Equatable>: CustomDebugStringConvertible {
     public static func diff(lhs: SectionedValues<Section, Value>, rhs: SectionedValues<Section, Value>) -> Diff2D {
@@ -105,8 +127,8 @@ public struct Diff2D<Section: Equatable, Value: Equatable>: CustomDebugStringCon
                 let rowDiff = lValues.diff(rValues)
                 let results: [DiffStep2D<Section, Value>] = rowDiff.results.map { result in
                     switch result {
-                    case .insert(let j, let t): return DiffStep2D.insert(i, j, t)
-                    case .delete(let j, let t): return DiffStep2D.delete(i, j, t)
+                    case let .insert(j, t): return DiffStep2D.insert(i, j, t)
+                    case let .delete(j, t): return DiffStep2D.delete(i, j, t)
                     }
                 }
                 return results
@@ -129,10 +151,10 @@ public struct Diff2D<Section: Equatable, Value: Equatable>: CustomDebugStringCon
             var sectionDeletions: [DiffStep2D<Section, Value>] = []
             for result in sectionDiff.results {
                 switch result {
-                case .insert(let i, let s):
+                case let .insert(i, s):
                     sectionInsertions.append(DiffStep2D.sectionInsert(i, s))
                     middleSectionsAndValues.insert((s, []), at: i)
-                case .delete(let i, let s):
+                case let .delete(i, s):
                     sectionDeletions.append(DiffStep2D.sectionDelete(i, s))
                     middleSectionsAndValues.remove(at: i)
                 }
@@ -171,7 +193,7 @@ public struct Diff2D<Section: Equatable, Value: Equatable>: CustomDebugStringCon
             }
 
             let mappedDeletions: [DiffStep2D<Section, Value>] = deletions.map { deletion in
-                guard case .delete(let section, let row, let val) = deletion else { fatalError("not possible") }
+                guard case let .delete(section, row, val) = deletion else { fatalError("not possible") }
                 guard let newIndex = mapping[section], newIndex != -1 else { fatalError("not possible") }
                 return .delete(newIndex, row, val)
             }
@@ -192,29 +214,29 @@ public enum DiffStep2D<Section, Value>: CustomDebugStringConvertible {
     case sectionInsert(Int, Section)
     case sectionDelete(Int, Section)
 
-    var section: Int {
+    public var section: Int {
         switch self {
-        case .insert(let s, _, _): return s
-        case .delete(let s, _, _): return s
-        case .sectionInsert(let s, _): return s
-        case .sectionDelete(let s, _): return s
+        case let .insert(s, _, _): return s
+        case let .delete(s, _, _): return s
+        case let .sectionInsert(s, _): return s
+        case let .sectionDelete(s, _): return s
         }
     }
 
-    var row: Int? {
+    public var row: Int? {
         switch self {
-        case .insert(_, let r, _): return r
-        case .delete(_, let r, _): return r
+        case let .insert(_, r, _): return r
+        case let .delete(_, r, _): return r
         case .sectionInsert, .sectionDelete: return nil
         }
     }
 
     public var debugDescription: String {
         switch self {
-        case .sectionDelete(let s, _): return "ds(\(s))"
-        case .sectionInsert(let s, _): return "is(\(s))"
-        case .delete(let section, let row, _): return "d(\(section) \(row))"
-        case .insert(let section, let row, _): return "i(\(section) \(row))"
+        case let .sectionDelete(s, _): return "ds(\(s))"
+        case let .sectionInsert(s, _): return "is(\(s))"
+        case let .delete(section, row, _): return "d(\(section) \(row))"
+        case let .insert(section, row, _): return "i(\(section) \(row))"
         }
     }
 }
