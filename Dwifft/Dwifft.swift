@@ -6,18 +6,12 @@
 //  Copyright (c) 2015 jflinter. All rights reserved.
 //
 
-/// These get returned from calls to Array.diff(). They represent insertions or deletions that need to happen to transform array a into array b.
+/// These get returned from calls to Dwifft.diff(). They represent insertions or deletions
+/// that need to happen to transform one array into another.
 public enum DiffStep<Value> : CustomDebugStringConvertible {
     case insert(Int, Value)
     case delete(Int, Value)
-    var isInsertion: Bool {
-        switch(self) {
-        case .insert:
-            return true
-        case .delete:
-            return false
-        }
-    }
+
     public var debugDescription: String {
         switch(self) {
         case let .insert(i, j):
@@ -50,40 +44,14 @@ private enum Result<T>{
 }
 
 public struct Dwifft {
-    public static func diff<Value: Equatable>(lhs: [Value], rhs: [Value]) -> [DiffStep<Value>] {
-        func diffInternal(
-            _ table: [[Int]],
-            _ x: [Value],
-            _ y: [Value],
-            _ i: Int,
-            _ j: Int,
-            _ currentResults: ([DiffStep<Value>], [DiffStep<Value>])
-            ) -> Result<([DiffStep<Value>], [DiffStep<Value>])> {
-            if i == 0 && j == 0 {
-                return .done(currentResults)
-            }
-            else {
-                return .call {
-                    var nextResults = currentResults
-                    if i == 0 {
-                        nextResults.0 = [DiffStep.insert(j-1, y[j-1])] + nextResults.0
-                        return diffInternal(table, x, y, i, j-1, nextResults)
-                    } else if j == 0 {
-                        nextResults.1 = nextResults.1 + [DiffStep.delete(i-1, x[i-1])]
-                        return diffInternal(table, x, y, i - 1, j, nextResults)
-                    } else if table[i][j] == table[i][j-1] {
-                        nextResults.0 = [DiffStep.insert(j-1, y[j-1])] + nextResults.0
-                        return diffInternal(table, x, y, i, j-1, nextResults)
-                    } else if table[i][j] == table[i-1][j] {
-                        nextResults.1 = nextResults.1 + [DiffStep.delete(i-1, x[i-1])]
-                        return diffInternal(table, x, y, i - 1, j, nextResults)
-                    } else {
-                        return diffInternal(table, x, y, i-1, j-1, nextResults)
-                    }
-                }
-            }
-        }
 
+    /// Returns the sequence of `DiffStep`s required to transform one array into another.
+    ///
+    /// - Parameters:
+    ///   - lhs: an array
+    ///   - rhs: another, uh, array
+    /// - Returns: the series of transformations that, when applied to `lhs`, will yield `lhs`.
+    public static func diff<Value: Equatable>(lhs: [Value], rhs: [Value]) -> [DiffStep<Value>] {
         if lhs.isEmpty {
             return rhs.enumerated().map(DiffStep.insert)
         } else if rhs.isEmpty {
@@ -102,6 +70,8 @@ public struct Dwifft {
         }
     }
 
+    /// Applies a diff to an array. The following should always be true:
+    /// Given x: [T], y: [T], Dwifft.apply(Dwifft.diff(lhs: x, rhs: y), toArray: x) == y
     public static func apply<Value>(diff: [DiffStep<Value>], toArray lhs: [Value]) -> [Value] {
         var copy = lhs
         for result in diff {
@@ -114,10 +84,43 @@ public struct Dwifft {
         }
         return copy
     }
+
+    private static func diffInternal<Value: Equatable>(
+        _ table: [[Int]],
+        _ x: [Value],
+        _ y: [Value],
+        _ i: Int,
+        _ j: Int,
+        _ currentResults: ([DiffStep<Value>], [DiffStep<Value>])
+        ) -> Result<([DiffStep<Value>], [DiffStep<Value>])> {
+        if i == 0 && j == 0 {
+            return .done(currentResults)
+        }
+        else {
+            return .call {
+                var nextResults = currentResults
+                if i == 0 {
+                    nextResults.0 = [DiffStep.insert(j-1, y[j-1])] + nextResults.0
+                    return diffInternal(table, x, y, i, j-1, nextResults)
+                } else if j == 0 {
+                    nextResults.1 = nextResults.1 + [DiffStep.delete(i-1, x[i-1])]
+                    return diffInternal(table, x, y, i - 1, j, nextResults)
+                } else if table[i][j] == table[i][j-1] {
+                    nextResults.0 = [DiffStep.insert(j-1, y[j-1])] + nextResults.0
+                    return diffInternal(table, x, y, i, j-1, nextResults)
+                } else if table[i][j] == table[i-1][j] {
+                    nextResults.1 = nextResults.1 + [DiffStep.delete(i-1, x[i-1])]
+                    return diffInternal(table, x, y, i - 1, j, nextResults)
+                } else {
+                    return diffInternal(table, x, y, i-1, j-1, nextResults)
+                }
+            }
+        }
+    }
 }
 
 
-internal struct MemoizedSequenceComparison<T: Equatable> {
+fileprivate struct MemoizedSequenceComparison<T: Equatable> {
     static func buildTable(_ x: [T], _ y: [T], _ n: Int, _ m: Int) -> [[Int]] {
         var table = Array(repeating: Array(repeating: 0, count: m + 1), count: n + 1)
         // using unsafe pointers lets us avoid swift array bounds-checking, which results in a considerable speed boost.
@@ -143,13 +146,14 @@ internal struct MemoizedSequenceComparison<T: Equatable> {
 
 public extension Array where Element: Equatable {
 
-    /// Returns the sequence of ArrayDiffResults required to transform one array into another.
+    @available(*, deprecated)
+    /// Deprecated in favor of `Dwifft.diff`.
     public func diff(_ other: [Element]) -> [DiffStep<Element>] {
         return Dwifft.diff(lhs: self, rhs: other)
     }
 
-    /// Applies a generated diff to an array. The following should always be true:
-    /// Given x: [T], y: [T], x.apply(x.diff(y)) == y
+    @available(*, deprecated)
+    /// Deprecated in favor of `Dwifft.apply`.
     public func apply(_ diff: [DiffStep<Element>]) -> [Element] {
         return Dwifft.apply(diff: diff, toArray: self)
     }

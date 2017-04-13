@@ -29,8 +29,8 @@ class DwifftSwiftCheckTests: XCTestCase {
 
     func testDiff() {
         property("Diffing two arrays, then applying the diff to the first, yields the second") <- forAll { (a1 : ArrayOf<Int>, a2 : ArrayOf<Int>) in
-            let diff = a1.getArray.diff(a2.getArray)
-            return (a1.getArray.apply(diff) == a2.getArray) <?> "diff applies"
+            let diff = Dwifft.diff(lhs: a1.getArray, rhs: a2.getArray)
+            return (Dwifft.apply(diff: diff, toArray: a1.getArray) == a2.getArray) <?> "diff applies"
         }
     }
     func test2DDiff() {
@@ -92,7 +92,7 @@ class DwifftTests: XCTestCase {
             ]
 
         for test in tests {
-            let diff = test.array1.diff(test.array2)
+            let diff = Dwifft.diff(lhs: test.array1, rhs: test.array2)
             let printableDiff = diff.map({ $0.debugDescription }).joined(separator: "")
             XCTAssertEqual(printableDiff, test.expectedDiff, "incorrect diff")
         }
@@ -104,7 +104,7 @@ class DwifftTests: XCTestCase {
         let a: [Int] = (0...1000).map({ _ in Int(arc4random_uniform(100)) }).filter({ _ in arc4random_uniform(2) == 0})
         let b: [Int] = (0...1000).map({ _ in Int(arc4random_uniform(100)) }).filter({ _ in arc4random_uniform(2) == 0})
         measure {
-            let _ = a.diff(b)
+            let _ = Dwifft.diff(lhs: a, rhs: b)
         }
     }
 

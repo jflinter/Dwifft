@@ -72,7 +72,7 @@ extension Dwifft {
             let allResults: [[SectionedDiffStep<Section, Value>]] = (0..<lhs.sections.count).map { i in
                 let lValues = lhs.sectionsAndValues[i].1
                 let rValues = rhs.sectionsAndValues[i].1
-                let rowDiff = lValues.diff(rValues)
+                let rowDiff = Dwifft.diff(lhs: lValues, rhs: rValues)
                 let results: [SectionedDiffStep<Section, Value>] = rowDiff.map { result in
                     switch result {
                     case let .insert(j, t): return SectionedDiffStep.insert(i, j, t)
@@ -94,7 +94,7 @@ extension Dwifft {
 
         } else {
             var middleSectionsAndValues = lhs.sectionsAndValues
-            let sectionDiff = lhs.sections.diff(rhs.sections)
+            let sectionDiff = Dwifft.diff(lhs: lhs.sections, rhs: rhs.sections)
             var sectionInsertions: [SectionedDiffStep<Section, Value>] = []
             var sectionDeletions: [SectionedDiffStep<Section, Value>] = []
             for result in sectionDiff {
@@ -151,8 +151,8 @@ extension Dwifft {
         }
     }
 
-    public static func apply<Section, Value>(diff: [SectionedDiffStep<Section, Value>], toSectionedValues sectionedValues: SectionedValues<Section, Value>) -> SectionedValues<Section, Value> {
-        var sectionsAndValues = sectionedValues.sectionsAndValues
+    public static func apply<Section, Value>(diff: [SectionedDiffStep<Section, Value>], toSectionedValues lhs: SectionedValues<Section, Value>) -> SectionedValues<Section, Value> {
+        var sectionsAndValues = lhs.sectionsAndValues
         for result in diff {
             switch result {
             case let .sectionInsert(sectionIndex, val):
