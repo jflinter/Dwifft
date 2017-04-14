@@ -239,11 +239,6 @@ public struct Dwifft {
         return SectionedValues(sectionsAndValues)
     }
 
-    private enum Result<T>{
-        case done(T)
-        case call(() -> Result<T>)
-    }
-
     private static func diffInternal<Value: Equatable>(
         _ table: [[Int]],
         _ x: [Value],
@@ -278,6 +273,10 @@ public struct Dwifft {
     }
 }
 
+fileprivate enum Result<T>{
+    case done(T)
+    case call(() -> Result<T>)
+}
 
 fileprivate struct MemoizedSequenceComparison<T: Equatable> {
     static func buildTable(_ x: [T], _ y: [T], _ n: Int, _ m: Int) -> [[Int]] {
