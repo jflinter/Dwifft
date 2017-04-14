@@ -16,7 +16,7 @@ The first thing (found in `Dwifft.swift`) is an algorithm that calculates the di
 
 The second thing (found in `Dwifft+UIKit.swift`) is a series of diff calculators for `UITableView`s and `UICollectionView`s. Let's say you have a `UITableView` that's backed by a simple array of values (like a list of names, e.g. `["Alice", "Bob", "Carol"]`. If that array changes (maybe Bob leaves, and is replaced by Dave, so our list is now `["Alice, "Carol", "Dave"]`), we'll want to update the table. The easiest way to do this is by calling `reloadData` on it. This has a couple of downsides: the transition isn't animated, and it'll cause your user to lose their scroll position if they've scrolled the table. The nicer way is to use the `insertRowsAtIndexPaths:withRowAnimation` and `deleteRowsAtIndexPaths:withRowAnimation` methods on `UITableView`, but this requires you to figure out which index paths have changed in your array (in our example, you'd have to figure out that the row at index 1 should be removed, and a new row should be inserted at index 2 should then be added). If only we had a way to diff the previous value of our array with it's new value. Wait a minute.
 
-When you wire up a `TableViewDiffCalculator` to your `UITableView` (or a `CollectionViewDiffCalculator` to your `UICollectionView`, it'll _automatically_ calculate diffs and trigger the necessary animations on it whenever you change its `sectionedValues` property. Neat, right? Notably, as of Dwifft 0.6, Dwifft will also figure out _section_ insertions and deletions, as well as how to efficiently insert and delete rows across different sections, which is just so massively useful if you have a multi-section table. If you're currently using a <0.6 version of Dwifft and want to do this, read the [0.6 release notes](TODO).
+When you wire up a `TableViewDiffCalculator` to your `UITableView` (or a `CollectionViewDiffCalculator` to your `UICollectionView`, it'll _automatically_ calculate diffs and trigger the necessary animations on it whenever you change its `sectionedValues` property. Neat, right? Notably, as of Dwifft 0.6, Dwifft will also figure out _section_ insertions and deletions, as well as how to efficiently insert and delete rows across different sections, which is just so massively useful if you have a multi-section table. If you're currently using a <0.6 version of Dwifft and want to do this, read the [0.6 release notes](https://github.com/jflinter/Dwifft/releases/tag/0.6).
 
 Even longer version
 ---
@@ -32,12 +32,12 @@ Why you should use Dwifft
 How to get started
 ---
 - First, you should take a look at the example app, to get a feel for how Dwifft is meant to be used.
-- Next, you should just sit down and read the [entire documentation](TODO) - it will take you <10 minutes, and you'll leave knowing everything there is to know about Dwifft.
+- Next, you should just sit down and read the [entire documentation](https://jackflintermann.com/Dwifft) - it will take you <10 minutes, and you'll leave knowing everything there is to know about Dwifft.
 - Then, install Dwifft via cocoapods or carthage or whatever people are using these days.
 - Then get to Dwiffing.
 
 Contributing
 ---
-Contributions are welcome, with some caveats - please read the [contributing guidelines](TODO) before opening a PR to avoid wasting both our time.
+Contributions are welcome, with some caveats - please read the [contributing guidelines](https://github.com/jflinter/Dwifft/blob/master/CONTRIBUTING.md) before opening a PR to avoid wasting both our time.
 
 Ok, that's it, there's nothing more here.

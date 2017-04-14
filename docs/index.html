@@ -91,29 +91,45 @@
         <section>
           <section class="section">
             
-            <p><a href="https://travis-ci.org/jflinter/Dwifft"><img src="https://travis-ci.org/jflinter/Dwifft.svg?branch=master" alt="Build Status"></a>
+            <p><a href="https://travis-ci.org/jflinter/Dwifft"><img src="https://img.shields.io/travis/jflinter/Dwifft/master.svg" alt="Build Status"></a>
 <img src="https://img.shields.io/github/tag/jflinter/dwifft.svg?label=Current%20Version" alt="Current Version"></p>
 <a href='#dwifft' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h1 id='dwifft'>Dwifft!</h1>
+<a href='#in-10-seconds' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='in-10-seconds'>In 10 seconds</h2>
 
-<p>OK. Dwifft is a Swift library that does two things. The first thing sounds interesting but perhaps only abstractly useful, and the other thing is a very concretely useful thing based off the first thing.</p>
+<p>Dwifft is a small Swift library that tells you what the <q>diff</q> is between two collections, namely, the series of <q>edit operations</q> required to turn one into the other. It also comes with UIKit bindings, to automatically, animatedly keep a UITableView/UICollectionView in sync with a piece of data by making the necessary row/section insertion/deletion calls for you as the data changes.</p>
+<a href='#longer-version' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='longer-version'>Longer version</h2>
 
-<p>The first thing (found in <code>Dwifft.swift</code>) is an algorithm that solves the <a href="https://en.wikipedia.org/wiki/Longest_common_subsequence_problem">Longest Common Subsequence problem</a>. Pragmatically, the problem of finding the difference between two arrays is trivially reducable to the LCS problem, i.e. if you can find the longest common subsequence between two arrays, you&rsquo;ve also found a series of transforms to apply to array 1 that will result in array 2. This algorithm is written purely in Swift, and uses dynamic programming to achieve substantial performance improvements over a naïve approach (that being said, there are several ways it could probably be sped up.) Perhaps by now you&rsquo;ve figured out that Dwifft is a terrible/brilliant portmanteau of <q>Swift</q> and <q>Diff</q>. If this kind of thing is interesting to you, there&rsquo;s a pretty great paper on diffing algorithms: <a href="http://www.xmailserver.org/diff2.pdf">http://www.xmailserver.org/diff2.pdf</a></p>
+<p>Dwifft is a Swift library that does two things. The first thing sounds interesting but perhaps only abstractly useful, and the other thing is a very concretely useful thing based off the first thing.</p>
+
+<p>The first thing (found in <code>Dwifft.swift</code>) is an algorithm that calculates the diff between two collections using the <a href="https://en.wikipedia.org/wiki/Longest_common_subsequence_problem">Longest Common Subsequence method</a>. If this kind of thing is interesting to you, there&rsquo;s a pretty great paper on diffing algorithms: <a href="http://www.xmailserver.org/diff2.pdf">http://www.xmailserver.org/diff2.pdf</a></p>
 
 <p>The second thing (found in <code>Dwifft+UIKit.swift</code>) is a series of diff calculators for <code>UITableView</code>s and <code>UICollectionView</code>s. Let&rsquo;s say you have a <code>UITableView</code> that&rsquo;s backed by a simple array of values (like a list of names, e.g. <code>[&quot;Alice&quot;, &quot;Bob&quot;, &quot;Carol&quot;]</code>. If that array changes (maybe Bob leaves, and is replaced by Dave, so our list is now <code>[&quot;Alice, &quot;Carol&quot;, &quot;Dave&quot;]</code>), we&rsquo;ll want to update the table. The easiest way to do this is by calling <code>reloadData</code> on it. This has a couple of downsides: the transition isn&rsquo;t animated, and it&rsquo;ll cause your user to lose their scroll position if they&rsquo;ve scrolled the table. The nicer way is to use the <code>insertRowsAtIndexPaths:withRowAnimation</code> and <code>deleteRowsAtIndexPaths:withRowAnimation</code> methods on <code>UITableView</code>, but this requires you to figure out which index paths have changed in your array (in our example, you&rsquo;d have to figure out that the row at index 1 should be removed, and a new row should be inserted at index 2 should then be added). If only we had a way to diff the previous value of our array with it&rsquo;s new value. Wait a minute.</p>
 
-<p>When you wire up a <code>TableViewDiffCalculator</code> to your <code>UITableView</code> (or a <code>CollectionViewDiffCalculator</code> to your <code>UICollectionView</code>, it&rsquo;ll <em>automatically</em> calculate diffs and trigger the necessary animations on it whenever you change its <code>rows</code> property. Neat, right? Usually, this <code>rows</code> object will be the same thing you&rsquo;re using in your <code>UITableViewDataSource</code> methods. The only constraint is that the items in that <code>rows</code> array have to conform to <code>Equatable</code>, because, you know, how else could you compare them?</p>
+<p>When you wire up a <code>TableViewDiffCalculator</code> to your <code>UITableView</code> (or a <code>CollectionViewDiffCalculator</code> to your <code>UICollectionView</code>, it&rsquo;ll <em>automatically</em> calculate diffs and trigger the necessary animations on it whenever you change its <code>sectionedValues</code> property. Neat, right? Notably, as of Dwifft 0.6, Dwifft will also figure out <em>section</em> insertions and deletions, as well as how to efficiently insert and delete rows across different sections, which is just so massively useful if you have a multi-section table. If you&rsquo;re currently using a &lt;0.6 version of Dwifft and want to do this, read the <a href="https://github.com/jflinter/Dwifft/releases/tag/0.6">0.6 release notes</a>.</p>
+<a href='#even-longer-version' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='even-longer-version'>Even longer version</h2>
 
-<p>This makes slightly more sense in code, so check out the tests (which show <code>LCS</code>/<code>Diff</code> in action) and the example app (which demonstrates the use of <code>TableViewDiffCalculator</code>). You can quickly run the example with <code>pod try Dwifft</code>.</p>
+<p>Learn more about the history of Dwifft, and how it works, in this <a href="https://vimeo.com/211194798">exciting video of a talk</a> recorded at the Brooklyn Swift meetup in March 2017.</p>
+<a href='#why-you-should-use-dwifft' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='why-you-should-use-dwifft'>Why you should use Dwifft</h2>
 
-<p>Thanks for reading! PRs and such are of course welcome, but I want to keep this pretty tightly-scoped, so I&rsquo;d politely request you open an issue before going off and implementing any new functionality so we can talk things over first.</p>
+<ul>
+<li>Dwifft is <em>useful</em> - it can help you build a substantially better user experience if you have table/collection views with dynamic content in your app.</li>
+<li>Dwifft is <em>safe</em> - there is some non-trivial index math inside of this diff algorithm that is easy to screw up. Dwifft has 100% test coverage on all of its core algorithms. Additionally, all of Dwifft&rsquo;s core functionality is tested with <a href="https://github.com/typelift/SwiftCheck">SwiftCheck</a>, meaning it has been shown to behave correctly under an exhausting set of inputs and edge cases.</li>
+<li>Dwifft is <em>fast</em> - a lot of time has been spent making Dwifft considerably (many orders of magnitude) faster than a naïve implementation. It almost certainly won&rsquo;t be the bottleneck in your UI code.</li>
+<li>Dwifft is <em>small</em> - Dwifft believes (to the extent that a software library can <q>believe</q> in things) in the unix philosophy of small, easily-composed tools. It&rsquo;s unopinionated and flexible enough to fit into most apps, and leaves a lot of control in your hands as a developer. As such, you can probably cram it into your app in less than 5 minutes. Also, because it&rsquo;s small, it can actually achieve nice goals like 100% test and documentation coverage.</li>
+</ul>
+<a href='#how-to-get-started' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='how-to-get-started'>How to get started</h2>
 
-<p>Happy dwiffing!</p>
-<a href='#oh-right-how-to-install' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='oh-right-how-to-install'>Oh right, how to install</h2>
+<ul>
+<li>First, you should take a look at the example app, to get a feel for how Dwifft is meant to be used.</li>
+<li>Next, you should just sit down and read the <a href="https://jackflintermann.com/Dwifft">entire documentation</a> - it will take you &lt;10 minutes, and you&rsquo;ll leave knowing everything there is to know about Dwifft.</li>
+<li>Then, install Dwifft via cocoapods or carthage or whatever people are using these days.</li>
+<li>Then get to Dwiffing.</li>
+</ul>
+<a href='#contributing' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='contributing'>Contributing</h2>
 
-<p>Cocoapods or Carthage. You&rsquo;ll need to use cocoapods frameworks because Swift. Version 0.1 is written in Swift 1.2, versions 0.2-0.3.1 are Swift 2, beyond that is Swift 3.</p>
-<a href='#a-fun-gif' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='a-fun-gif'>A fun gif</h2>
+<p>Contributions are welcome, with some caveats - please read the <a href="https://github.com/jflinter/Dwifft/blob/master/CONTRIBUTING.md">contributing guidelines</a> before opening a PR to avoid wasting both our time.</p>
 
-<p><img src="dwifft.gif" alt="Dwifft" style="width: 375px !important;"/></p>
+<p>Ok, that&rsquo;s it, there&rsquo;s nothing more here.</p>
 
           </section>
         </section>
