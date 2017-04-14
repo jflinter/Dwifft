@@ -50,8 +50,8 @@ public struct Dwifft {
     /// - Parameters:
     ///   - lhs: an array
     ///   - rhs: another, uh, array
-    /// - Returns: the series of transformations that, when applied to `lhs`, will yield `lhs`.
-    public static func diff<Value: Equatable>(lhs: [Value], rhs: [Value]) -> [DiffStep<Value>] {
+    /// - Returns: the series of transformations that, when applied to `lhs`, will yield `rhs`.
+    public static func diff<Value: Equatable>(_ lhs: [Value], _ rhs: [Value]) -> [DiffStep<Value>] {
         if lhs.isEmpty {
             return rhs.enumerated().map(DiffStep.insert)
         } else if rhs.isEmpty {
@@ -71,7 +71,14 @@ public struct Dwifft {
     }
 
     /// Applies a diff to an array. The following should always be true:
-    /// Given x: [T], y: [T], Dwifft.apply(Dwifft.diff(lhs: x, rhs: y), toArray: x) == y
+    /// Given `x: [T], y: [T]`, `Dwifft.apply(Dwifft.diff(x, y), toArray: x) == y`
+    ///
+    /// - Parameters:
+    ///   - diff: a diff, as computed by calling `Dwifft.diff`. Note that you *must* be careful to
+    ///   not modify said diff before applying it, and to only apply it to the left hand side of a
+    ///   previous call to `Dwifft.diff`. If not, this can (and probably will) trigger an array out of bounds exception.
+    ///   - lhs: an array.
+    /// - Returns: `lhs`, transformed by `diff`.
     public static func apply<Value>(diff: [DiffStep<Value>], toArray lhs: [Value]) -> [Value] {
         var copy = lhs
         for result in diff {
@@ -146,14 +153,14 @@ fileprivate struct MemoizedSequenceComparison<T: Equatable> {
 
 public extension Array where Element: Equatable {
 
-    @available(*, deprecated)
     /// Deprecated in favor of `Dwifft.diff`.
+    @available(*, deprecated)
     public func diff(_ other: [Element]) -> [DiffStep<Element>] {
-        return Dwifft.diff(lhs: self, rhs: other)
+        return Dwifft.diff(self, other)
     }
 
-    @available(*, deprecated)
     /// Deprecated in favor of `Dwifft.apply`.
+    @available(*, deprecated)
     public func apply(_ diff: [DiffStep<Element>]) -> [Element] {
         return Dwifft.apply(diff: diff, toArray: self)
     }

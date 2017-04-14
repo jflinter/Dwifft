@@ -6,9 +6,6 @@
 //  Copyright © 2017 jflinter. All rights reserved.
 //
 
-// TODO document me please
-
-
 /// SectionedValues represents, well, a bunch of sections and their associated values.
 /// You can think of it sort of like an "ordered dictionary", or an order of key-pairs.
 /// If you are diffing a multidimensional structure of values (what might normally be,
@@ -32,6 +29,12 @@ public struct SectionedValues<Section: Equatable, Value: Equatable>: Equatable {
         return self.sectionsAndValues[i]
     }
 
+
+    /// Returns a new SectionedValues appending a new key-value pair. I think this might be useful
+    /// if you're building up a SectionedValues conditionally? (Well, I hope it is, anyway.)
+    ///
+    /// - Parameter sectionAndValue: the new key-value pair
+    /// - Returns: a new SectionedValues containing the receiever's contents plus the new pair.
     public func appending(sectionAndValue: (Section, [Value])) -> SectionedValues<Section, Value> {
         return SectionedValues(self.sectionsAndValues + [sectionAndValue])
     }
@@ -50,7 +53,21 @@ public struct SectionedValues<Section: Equatable, Value: Equatable>: Equatable {
 }
 
 // TODO example app
+// TODO test please
 extension SectionedValues where Section: Comparable, Section: Hashable, Value: Comparable {
+
+    /// This is a "convenience initializer" of sorts for SectionedValues. It acknowledges
+    /// that sometimes you have an array of things that are naturally "groupable" - maybe
+    /// a list of names in an address book, that can be grouped into their first initial,
+    /// or a bunch of events that can be grouped into buckets of timestamps. The sections
+    /// in the resultant `SectionedValues` will be returned in sorted order, according to
+    /// their implementation of `Comparable`.
+    ///
+    /// - Parameters:
+    ///   - values: All of the values that will end up in the `SectionedValues` you're making.
+    ///   - valueToSection: A function that maps each value to the section it will inhabit.
+    ///     In the above examples, this would take a name and return its first initial,
+    ///     or take an event and return its bucketed timestamp.
     init(values: [Value], valueToSection: ((Value) -> Section)) {
         let dictionary: [Section: [Value]] = values.reduce([:]) { (accum, value) in
             var next = accum
@@ -67,12 +84,19 @@ extension SectionedValues where Section: Comparable, Section: Hashable, Value: C
 }
 
 extension Dwifft {
+
+    /// Returns the sequence of `SectionedDiffStep`s required to transform one `SectionedValues` into another.
+    ///
+    /// - Parameters:
+    ///   - lhs: a `SectionedValues`
+    ///   - rhs: another, uh, `SectionedValues`
+    /// - Returns: the series of transformations that, when applied to `lhs`, will yield `rhs`.
     public static func diff<Section: Equatable, Value: Equatable>(lhs: SectionedValues<Section, Value>, rhs: SectionedValues<Section, Value>) -> [SectionedDiffStep<Section, Value>] {
         if lhs.sections == rhs.sections {
             let allResults: [[SectionedDiffStep<Section, Value>]] = (0..<lhs.sections.count).map { i in
                 let lValues = lhs.sectionsAndValues[i].1
                 let rValues = rhs.sectionsAndValues[i].1
-                let rowDiff = Dwifft.diff(lhs: lValues, rhs: rValues)
+                let rowDiff = Dwifft.diff(lValues, rValues)
                 let results: [SectionedDiffStep<Section, Value>] = rowDiff.map { result in
                     switch result {
                     case let .insert(j, t): return SectionedDiffStep.insert(i, j, t)
@@ -94,7 +118,7 @@ extension Dwifft {
 
         } else {
             var middleSectionsAndValues = lhs.sectionsAndValues
-            let sectionDiff = Dwifft.diff(lhs: lhs.sections, rhs: rhs.sections)
+            let sectionDiff = Dwifft.diff(lhs.sections, rhs.sections)
             var sectionInsertions: [SectionedDiffStep<Section, Value>] = []
             var sectionDeletions: [SectionedDiffStep<Section, Value>] = []
             for result in sectionDiff {
@@ -151,6 +175,16 @@ extension Dwifft {
         }
     }
 
+    /// Applies a diff to a `SectionedValues`. The following should always be true:
+    /// Given `x: SectionedValues<S,T>, y: SectionedValues<S,T>`,
+    /// `Dwifft.apply(Dwifft.diff(lhs: x, rhs: y), toSectionedValues: x) == y`
+    ///
+    /// - Parameters:
+    ///   - diff: a diff, as computed by calling `Dwifft.diff`. Note that you *must* be careful to
+    ///   not modify said diff before applying it, and to only apply it to the left hand side of a
+    ///   previous call to `Dwifft.diff`. If not, this can (and probably will) trigger an array out of bounds exception.
+    ///   - lhs: a `SectionedValues`.
+    /// - Returns: `lhs`, transformed by `diff`.
     public static func apply<Section, Value>(diff: [SectionedDiffStep<Section, Value>], toSectionedValues lhs: SectionedValues<Section, Value>) -> SectionedValues<Section, Value> {
         var sectionsAndValues = lhs.sectionsAndValues
         for result in diff {
@@ -169,6 +203,8 @@ extension Dwifft {
     }
 }
 
+/// These get returned from calls to Dwifft.diff(). They represent insertions or deletions
+/// that need to happen to transform one `SectionedValues` into another.
 public enum SectionedDiffStep<Section, Value>: CustomDebugStringConvertible {
     case insert(Int, Int, Value)
     case delete(Int, Int, Value)
