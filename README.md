@@ -32,7 +32,7 @@ Why you should use Dwifft
 How to get started
 ---
 - First, you should take a look at the example app, to get a feel for how Dwifft is meant to be used.
-- Next, you should just sit down and read the [entire documentation](https://jackflintermann.com/Dwifft) - it will take you <10 minutes, and you'll leave knowing everything there is to know about Dwifft.
+- Next, you should just sit down and read the [entire documentation](https://www.jackflintermann.com/Dwifft) - it will take you <10 minutes, and you'll leave knowing everything there is to know about Dwifft.
 - Then, install Dwifft via cocoapods or carthage or whatever people are using these days.
 - Then get to Dwiffing.
 
