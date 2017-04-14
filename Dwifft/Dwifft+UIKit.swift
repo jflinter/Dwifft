@@ -3,12 +3,11 @@
 //  Dwifft
 //
 //  Created by Jack Flintermann on 3/13/15.
-//  Copyright (c) 2015 Places. All rights reserved.
+//  Copyright (c) 2015 jflinter. All rights reserved.
 //
 
-// TODO document all of me please
 // TODO update readme please
-// TODO example app shouldn't be empty on launch
+// TODO jazzy
 
 #if os(iOS)
 

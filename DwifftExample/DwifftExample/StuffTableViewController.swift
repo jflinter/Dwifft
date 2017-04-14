@@ -32,7 +32,7 @@ final class StuffTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
-        self.diffCalculator = TableViewDiffCalculator<String, String>(tableView: self.tableView)
+        self.diffCalculator = TableViewDiffCalculator(tableView: self.tableView, initialRowsAndSections: self.stuff)
         
         // You can change insertion/deletion animations like this! Automatic works for most situations. Fade works well too. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
         self.diffCalculator?.insertionAnimation = .fade

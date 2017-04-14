@@ -10,6 +10,7 @@ import UIKit
 import Dwifft
 
 private let reuseIdentifier = "Cell"
+private let headerReuseIdentifier = "Header"
 
 final class StuffCollectionViewCell: UICollectionViewCell {
     let label = UILabel()
@@ -27,6 +28,26 @@ final class StuffCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         self.label.frame = self.bounds
+    }
+}
+
+final class StuffSectionHeaderView: UICollectionReusableView {
+    let label = UILabel()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        label.textAlignment = .left
+        label.font = UIFont.italicSystemFont(ofSize: 14)
+        self.addSubview(label)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        label.frame = self.bounds.insetBy(dx: 10, dy: 0)
     }
 }
 
@@ -51,21 +72,29 @@ final class StuffCollectionViewController: UICollectionViewController {
     var diffCalculator: CollectionViewDiffCalculator<String, String>?
 
     override func viewDidLoad() {
-        // TODO make me slightly prettier
         super.viewDidLoad()
         guard let collectionView = self.collectionView else { return }
         self.diffCalculator = CollectionViewDiffCalculator(collectionView: collectionView, initialRowsAndSections: self.stuff)
 
         // Register cell classes
-        self.collectionView!.register(StuffCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-
-        // Do any additional setup after loading the view.
+        collectionView.register(StuffCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        collectionView.register(
+            StuffSectionHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionElementKindSectionHeader,
+            withReuseIdentifier: headerReuseIdentifier
+        )
     }
 
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return self.diffCalculator?.numberOfSections() ?? 0
+    }
+
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerReuseIdentifier, for: indexPath) as! StuffSectionHeaderView
+        header.label.text = diffCalculator?.value(forSection: indexPath.section)
+        return header
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

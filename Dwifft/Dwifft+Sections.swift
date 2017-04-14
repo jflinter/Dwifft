@@ -52,9 +52,8 @@ public struct SectionedValues<Section: Equatable, Value: Equatable>: Equatable {
     }
 }
 
-// TODO example app
 // TODO test please
-extension SectionedValues where Section: Comparable, Section: Hashable, Value: Comparable {
+public extension SectionedValues where Section: Comparable, Section: Hashable, Value: Comparable {
 
     /// This is a "convenience initializer" of sorts for SectionedValues. It acknowledges
     /// that sometimes you have an array of things that are naturally "groupable" - maybe
@@ -68,7 +67,15 @@ extension SectionedValues where Section: Comparable, Section: Hashable, Value: C
     ///   - valueToSection: A function that maps each value to the section it will inhabit.
     ///     In the above examples, this would take a name and return its first initial,
     ///     or take an event and return its bucketed timestamp.
-    init(values: [Value], valueToSection: ((Value) -> Section)) {
+    ///   - sortSections: If specified, this is a custom function you can use to sort your
+    ///     sections instead of their `Comparable` implementation.
+    ///   - sortValues: If specified, this is a custom function you can use to sort the values
+    ///     in each section instead of their `Comparable` implementation.
+    public init(
+        values: [Value],
+        valueToSection: ((Value) -> Section),
+        sortSections: ((Section, Section) -> Bool)? = nil,
+        sortValues: ((Value, Value) -> Bool)? = nil) {
         let dictionary: [Section: [Value]] = values.reduce([:]) { (accum, value) in
             var next = accum
             let section = valueToSection(value)
@@ -77,8 +84,21 @@ extension SectionedValues where Section: Comparable, Section: Hashable, Value: C
             next[section] = current
             return next
         }
-        self.init(dictionary.keys.sorted().map { section in
-            (section, dictionary[section]?.sorted() ?? [])
+        let sortedSections: [Section]
+        if let sortSections = sortSections {
+            sortedSections = dictionary.keys.sorted(by: sortSections)
+        } else {
+            sortedSections = dictionary.keys.sorted()
+        }
+        self.init(sortedSections.map { section in
+            let values = dictionary[section] ?? []
+            let sortedValues: [Value]
+            if let sortValues = sortValues {
+                sortedValues = values.sorted(by: sortValues)
+            } else {
+                sortedValues = values.sorted()
+            }
+            return (section, sortedValues)
         })
     }
 }

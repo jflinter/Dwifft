@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0401A2091EA08151003C82E5 /* EventsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0401A2081EA08151003C82E5 /* EventsTableViewController.swift */; };
 		045501F91B898C3200F5614D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045501F81B898C3200F5614D /* AppDelegate.swift */; };
 		045501FE1B898C3200F5614D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 045501FC1B898C3200F5614D /* Main.storyboard */; };
 		045502001B898C3200F5614D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 045501FF1B898C3200F5614D /* Images.xcassets */; };
@@ -64,6 +65,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0401A2081EA08151003C82E5 /* EventsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsTableViewController.swift; sourceTree = "<group>"; };
 		045501F31B898C3200F5614D /* DwifftExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DwifftExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		045501F71B898C3200F5614D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		045501F81B898C3200F5614D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 				045501F81B898C3200F5614D /* AppDelegate.swift */,
 				0455022A1B898CF000F5614D /* StuffTableViewController.swift */,
 				046EA89F1E8CB1AA00FBD07D /* StuffCollectionViewController.swift */,
+				0401A2081EA08151003C82E5 /* EventsTableViewController.swift */,
 				046EA8A21E8CBB9400FBD07D /* Stuff.swift */,
 				045501FC1B898C3200F5614D /* Main.storyboard */,
 				045501FF1B898C3200F5614D /* Images.xcassets */,
@@ -238,6 +241,7 @@
 				045501F91B898C3200F5614D /* AppDelegate.swift in Sources */,
 				046EA8A01E8CB1AA00FBD07D /* StuffCollectionViewController.swift in Sources */,
 				046EA8A31E8CBB9400FBD07D /* Stuff.swift in Sources */,
+				0401A2091EA08151003C82E5 /* EventsTableViewController.swift in Sources */,
 				0455022B1B898CF000F5614D /* StuffTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -368,7 +372,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				IBC_NOTICES = NO;
+				IBC_WARNINGS = NO;
+				IBSC_NOTICES = NO;
+				IBSC_WARNINGS = NO;
 				INFOPLIST_FILE = DwifftExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jflinter.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -380,7 +389,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				IBC_NOTICES = NO;
+				IBC_WARNINGS = NO;
+				IBSC_NOTICES = NO;
+				IBSC_WARNINGS = NO;
 				INFOPLIST_FILE = DwifftExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jflinter.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
