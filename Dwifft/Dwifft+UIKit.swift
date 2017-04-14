@@ -7,7 +7,6 @@
 //
 
 // TODO update readme please
-// TODO jazzy
 
 #if os(iOS)
 
