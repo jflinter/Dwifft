@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>TableViewDiffCalculator Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/TableViewDiffCalculator" class="dashAnchor"></a>
+    <a title="TableViewDiffCalculator Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">Dwifft Docs</a> (100% documented)</p>
+        <p class="header-right"><a href="https://github.com/jflinter/Dwifft"><img src="../img/gh.png"/>View on GitHub</a></p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">Dwifft Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        TableViewDiffCalculator Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/CollectionViewDiffCalculator.html">CollectionViewDiffCalculator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SingleSectionCollectionViewDiffCalculator.html">SingleSectionCollectionViewDiffCalculator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SingleSectionTableViewDiffCalculator.html">SingleSectionTableViewDiffCalculator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/TableViewDiffCalculator.html">TableViewDiffCalculator</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enums</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/DiffStep.html">DiffStep</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/SectionedDiffStep.html">SectionedDiffStep</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/Array.html">Array</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structs</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/Dwifft.html">Dwifft</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SectionedValues.html">SectionedValues</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Typealiases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:6Dwifft34SimpleCollectionViewDiffCalculator">SimpleCollectionViewDiffCalculator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:6Dwifft29SimpleTableViewDiffCalculator">SimpleTableViewDiffCalculator</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>TableViewDiffCalculator</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">TableViewDiffCalculator</span><span class="o">&lt;</span><span class="kt">Section</span><span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Value</span><span class="p">:</span> <span class="kt">Equatable</span><span class="o">&gt;</span><span class="p">:</span> <span class="kt">AbstractDiffCalculator</span><span class="o">&lt;</span><span class="kt">Section</span><span class="p">,</span> <span class="kt">Value</span><span class="o">&gt;</span></code></pre>
+
+                </div>
+              </div>
+            <p>This class manages a <code>UITableView</code>&rsquo;s rows and sections. It will make the necessary calls to
+the table view to ensure that its UI is kept in sync with the contents of the <code>sectionedValues</code> property.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC6Dwifft23TableViewDiffCalculator9tableViewXwGSqCSo11UITableView_"></a>
+                    <a name="//apple_ref/swift/Property/tableView" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC6Dwifft23TableViewDiffCalculator9tableViewXwGSqCSo11UITableView_">tableView</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The table view to be managed</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">tableView</span><span class="p">:</span> <span class="kt">UITableView</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC6Dwifft23TableViewDiffCalculatorcFT9tableViewGSqCSo11UITableView_22initialSectionedValuesGVS_15SectionedValuesxq___GS0_xq__"></a>
+                    <a name="//apple_ref/swift/Method/init(tableView:initialSectionedValues:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC6Dwifft23TableViewDiffCalculatorcFT9tableViewGSqCSo11UITableView_22initialSectionedValuesGVS_15SectionedValuesxq___GS0_xq__">init(tableView:initialSectionedValues:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initializes a new diff calculator.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">tableView</span><span class="p">:</span> <span class="kt">UITableView</span><span class="p">?,</span> <span class="nv">initialSectionedValues</span><span class="p">:</span> <span class="kt"><a href="../Structs/SectionedValues.html">SectionedValues</a></span><span class="o">&lt;</span><span class="kt">Section</span><span class="p">,</span> <span class="kt">Value</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt"><a href="../Structs/SectionedValues.html">SectionedValues</a></span><span class="p">())</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tableView</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the table view to be managed</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>initialSectionedValues</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>optional - if specified, these will be the initial contents of the diff calculator.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC6Dwifft23TableViewDiffCalculator18insertionAnimationOSC23UITableViewRowAnimation"></a>
+                    <a name="//apple_ref/swift/Property/insertionAnimation" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC6Dwifft23TableViewDiffCalculator18insertionAnimationOSC23UITableViewRowAnimation">insertionAnimation</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>You can change insertion/deletion animations like this! Fade works well.
+So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">insertionAnimation</span> <span class="o">=</span> <span class="kt">UITableViewRowAnimation</span><span class="o">.</span><span class="n">automatic</span><span class="p">,</span> <span class="n">deletionAnimation</span> <span class="o">=</span> <span class="kt">UITableViewRowAnimation</span><span class="o">.</span><span class="n">automatic</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2017 <a class="link" href="https://jackflintermann.com" target="_blank" rel="external">Jack</a>. All rights reserved. (Last updated: 2017-04-14)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

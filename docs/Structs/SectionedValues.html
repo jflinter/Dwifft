@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SectionedValues Struct Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Struct/SectionedValues" class="dashAnchor"></a>
+    <a title="SectionedValues Struct Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">Dwifft Docs</a> (100% documented)</p>
+        <p class="header-right"><a href="https://github.com/jflinter/Dwifft"><img src="../img/gh.png"/>View on GitHub</a></p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">Dwifft Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        SectionedValues Struct Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/CollectionViewDiffCalculator.html">CollectionViewDiffCalculator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SingleSectionCollectionViewDiffCalculator.html">SingleSectionCollectionViewDiffCalculator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SingleSectionTableViewDiffCalculator.html">SingleSectionTableViewDiffCalculator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/TableViewDiffCalculator.html">TableViewDiffCalculator</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enums</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/DiffStep.html">DiffStep</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/SectionedDiffStep.html">SectionedDiffStep</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/Array.html">Array</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structs</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/Dwifft.html">Dwifft</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SectionedValues.html">SectionedValues</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Typealiases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:6Dwifft34SimpleCollectionViewDiffCalculator">SimpleCollectionViewDiffCalculator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:6Dwifft29SimpleTableViewDiffCalculator">SimpleTableViewDiffCalculator</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>SectionedValues</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionedValues</span><span class="o">&lt;</span><span class="kt">Section</span><span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Value</span><span class="p">:</span> <span class="kt">Equatable</span><span class="o">&gt;</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+
+                </div>
+              </div>
+            <p>SectionedValues represents, well, a bunch of sections and their associated values.
+You can think of it sort of like an <q>ordered dictionary</q>, or an order of key-pairs.
+If you are diffing a multidimensional structure of values (what might normally be,
+for example, a 2D array), you will want to use this.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FV6Dwifft15SectionedValuescFGSaTxGSaq____GS0_xq__"></a>
+                    <a name="//apple_ref/swift/Method/init(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FV6Dwifft15SectionedValuescFGSaTxGSaq____GS0_xq__">init(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initializes the struct with an array of key-pairs.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">_</span> <span class="nv">sectionsAndValues</span><span class="p">:</span> <span class="p">[(</span><span class="kt">Section</span><span class="p">,</span> <span class="p">[</span><span class="kt">Value</span><span class="p">])]</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sectionsAndValues</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An array of tuples. The first element in the tuple is the value of the section. The second element is an array of values to be associated with that section. Ordering matters, obviously. Note, it’s totally ok if <code>sectionsAndValues</code> contains duplicate sections (or duplicate values within those sections).</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vV6Dwifft15SectionedValues17sectionsAndValuesGSaTxGSaq____"></a>
+                    <a name="//apple_ref/swift/Property/sectionsAndValues" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vV6Dwifft15SectionedValues17sectionsAndValuesGSaTxGSaq____">sectionsAndValues</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The underlying tuples contained in the receiver</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">sectionsAndValues</span><span class="p">:</span> <span class="p">[(</span><span class="kt">Section</span><span class="p">,</span> <span class="p">[</span><span class="kt">Value</span><span class="p">])]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FV6Dwifft15SectionedValues9appendingFT15sectionAndValueTxGSaq____GS0_xq__"></a>
+                    <a name="//apple_ref/swift/Method/appending(sectionAndValue:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FV6Dwifft15SectionedValues9appendingFT15sectionAndValueTxGSaq____GS0_xq__">appending(sectionAndValue:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns a new SectionedValues appending a new key-value pair. I think this might be useful
+if you&rsquo;re building up a SectionedValues conditionally? (Well, I hope it is, anyway.)</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">appending</span><span class="p">(</span><span class="nv">sectionAndValue</span><span class="p">:</span> <span class="p">(</span><span class="kt">Section</span><span class="p">,</span> <span class="p">[</span><span class="kt">Value</span><span class="p">]))</span> <span class="o">-&gt;</span> <span class="kt">SectionedValues</span><span class="o">&lt;</span><span class="kt">Section</span><span class="p">,</span> <span class="kt">Value</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sectionAndValue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the new key-value pair</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>a new SectionedValues containing the receiever’s contents plus the new pair.</p>
+
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:ZFV6Dwifft15SectionedValuesoi2eeFTGS0_xq__GS0_xq___Sb"></a>
+                    <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:ZFV6Dwifft15SectionedValuesoi2eeFTGS0_xq__GS0_xq___Sb">==(_:_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Compares two <code>SectionedValues</code> instances</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span><span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="kt">SectionedValues</span><span class="o">&lt;</span><span class="kt">Section</span><span class="p">,</span> <span class="kt">Value</span><span class="o">&gt;</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="kt">SectionedValues</span><span class="o">&lt;</span><span class="kt">Section</span><span class="p">,</span> <span class="kt">Value</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:Fe6Dwifft0_Rxs8Hashable_s9EquatablerVS_15SectionedValuescFT6valuesGSaq__14valueToSectionFq_x12sortSectionsFTxx_Sb10sortValuesFTq_q__Sb_GS2_xq__"></a>
+                    <a name="//apple_ref/swift/Method/init(values:valueToSection:sortSections:sortValues:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:Fe6Dwifft0_Rxs8Hashable_s9EquatablerVS_15SectionedValuescFT6valuesGSaq__14valueToSectionFq_x12sortSectionsFTxx_Sb10sortValuesFTq_q__Sb_GS2_xq__">init(values:valueToSection:sortSections:sortValues:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>This is a convenience initializer of sorts for <code>SectionedValues</code>. It acknowledges
+that sometimes you have an array of things that are naturally <q>groupable</q> - maybe
+a list of names in an address book, that can be grouped into their first initial,
+or a bunch of events that can be grouped into buckets of timestamps. This will handle
+clumping all of your values into the correct sections, and ordering everything correctly.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
+        <span class="nv">values</span><span class="p">:</span> <span class="p">[</span><span class="kt">Value</span><span class="p">],</span>
+        <span class="nv">valueToSection</span><span class="p">:</span> <span class="p">((</span><span class="kt">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Section</span><span class="p">),</span>
+        <span class="nv">sortSections</span><span class="p">:</span> <span class="p">((</span><span class="kt">Section</span><span class="p">,</span> <span class="kt">Section</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span><span class="p">),</span>
+        <span class="nv">sortValues</span><span class="p">:</span> <span class="p">((</span><span class="kt">Value</span><span class="p">,</span> <span class="kt">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span><span class="p">))</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>values</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>All of the values that will end up in the <code>SectionedValues</code> you’re making.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>valueToSection</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A function that maps each value to the section it will inhabit. In the above examples, this would take a name and return its first initial, or take an event and return its bucketed timestamp.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sortSections</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A function that compares two sections, and returns true if the first should be sorted before the second. Used to sort the sections in the returned <code>SectionedValues</code>.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sortValues</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A function that compares two values, and returns true if the first should be sorted before the second. Used to sort the values in each section of the returned <code>SectionedValues</code>.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2017 <a class="link" href="https://jackflintermann.com" target="_blank" rel="external">Jack</a>. All rights reserved. (Last updated: 2017-04-14)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>
