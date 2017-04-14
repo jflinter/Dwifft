@@ -87,8 +87,10 @@ final class StuffCollectionViewController: UICollectionViewController {
 
     // MARK: UICollectionViewDataSource
 
+    /// IMPORTANT: you *must* implement `numberOfSections` this way (meaning, using this function on your diff calculator) in your app, to avoid a lot of gotchas around UICollectionView's internal assertions.
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return self.diffCalculator?.numberOfSections() ?? 0
+        guard let diffCalculator = diffCalculator else { return 0 }
+        return diffCalculator.numberOfSections()
     }
 
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -97,8 +99,10 @@ final class StuffCollectionViewController: UICollectionViewController {
         return header
     }
 
+    /// IMPORTANT: you *must* implement `numberOfItemsInSection` this way (meaning, using this function on your diff calculator) in your app, to avoid a lot of gotchas around UICollectionView's internal assertions.
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.diffCalculator?.numberOfObjects(inSection: section) ?? 0
+        guard let diffCalculator = self.diffCalculator else { return 0 }
+        return diffCalculator.numberOfObjects(inSection: section)
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

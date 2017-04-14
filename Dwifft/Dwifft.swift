@@ -63,11 +63,8 @@ public struct Dwifft {
         while case let .call(f) = result {
             result = f()
         }
-        if case let .done(accum) = result {
-            return accum.1 + accum.0
-        } else {
-            fatalError("unreachable code")
-        }
+        guard case let .done(accum) = result else { fatalError("unreachable code") }
+        return accum.1 + accum.0
     }
 
     /// Applies a diff to an array. The following should always be true:

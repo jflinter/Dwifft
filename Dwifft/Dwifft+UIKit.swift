@@ -173,6 +173,13 @@ public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
     /// So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
     public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
 
+    public func numberOfRows(inSection section: Int) -> Int {
+        guard section == self.sectionIndex else {
+            fatalError("trying to get the number of items for a section that isn't yours!")
+        }
+        return rows.count
+    }
+
     /// Set this variable to automatically trigger the correct row insertion/deletions
     /// on your table view.
     public var rows : [Value] {
@@ -209,6 +216,13 @@ public final class SingleSectionCollectionViewDiffCalculator<Value: Equatable> {
 
     /// All insertion/deletion calls will be made for items at this section.
     public let sectionIndex: Int
+
+    public func numberOfItems(inSection section: Int) -> Int {
+        guard section == self.sectionIndex else {
+            fatalError("trying to get the number of items for a section that isn't yours!")
+        }
+        return items.count
+    }
 
     /// Set this variable to automatically trigger the correct item insertion/deletions
     /// on your collection view.

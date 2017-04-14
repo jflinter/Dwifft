@@ -39,7 +39,27 @@ class DwifftSwiftCheckTests: XCTestCase {
             return (Dwifft.apply(diff: diff, toSectionedValues: lhs.values) == rhs.values) <?> "2d diff applies"
         }
     }
-    func testUIKit() {
+    func testUIKit2D() {
+
+        class SingleSectionDataSource: NSObject, UITableViewDataSource {
+            let diffCalculator: SingleSectionTableViewDiffCalculator<Int>
+            init(_ diffCalculator: SingleSectionTableViewDiffCalculator<Int>) {
+                self.diffCalculator = diffCalculator
+            }
+            func numberOfSections(in tableView: UITableView) -> Int {
+                return 2
+            }
+            func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+                if section == 1 {
+                    return self.diffCalculator.numberOfRows(inSection: section)
+                }
+                return 0
+            }
+            func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+                return UITableViewCell()
+            }
+        }
+
         class DataSource: NSObject, UITableViewDataSource {
             let diffCalculator: TableViewDiffCalculator<Int, Int>
             init(_ diffCalculator: TableViewDiffCalculator<Int, Int>) {
@@ -63,6 +83,12 @@ class DwifftSwiftCheckTests: XCTestCase {
             tableView.dataSource = dataSource
             tableView.reloadData()
             diffCalculator.rowsAndSections = rhs.values
+
+            let singleSection = SingleSectionTableViewDiffCalculator(tableView: tableView, initialRows: lhs.values.sections, sectionIndex: 1)
+            let dataSource2 = SingleSectionDataSource(singleSection)
+            tableView.dataSource = dataSource2
+            tableView.reloadData()
+            singleSection.rows = rhs.values.sections
             return true <?> "no exception was raised"
         }
     }
@@ -200,6 +226,40 @@ class DwifftTests: XCTestCase {
         measure {
             let _ = Dwifft.diff(lhs: lhs, rhs: rhs)
         }
+    }
+
+    func testSectionedValues() {
+        XCTAssertEqual(SectionedValues(values: [1,2,3,11,12,13,21,22,23], valueToSection: { i in
+            return i % 10
+        }, sortSections: {a, b in
+            return a < b
+        }, sortValues: {a, b in
+            return a < b
+        }), SectionedValues([(1, [1, 11, 21]), (2, [2, 12, 22]), (3, [3, 13, 23])]))
+
+        XCTAssertEqual(SectionedValues(values: [1,2,3,11,12,13,21,22,23], valueToSection: { i in
+            return i % 10
+        }, sortSections: {a, b in
+            return b < a
+        }, sortValues: {a, b in
+            return a < b
+        }), SectionedValues([(3, [3, 13, 23]), (2, [2, 12, 22]), (1, [1, 11, 21])]))
+
+        XCTAssertEqual(SectionedValues(values: [1,2,3,11,12,13,21,22,23], valueToSection: { i in
+            return i % 10
+        }, sortSections: {a, b in
+            return a < b
+        }, sortValues: {a, b in
+            return b < a
+        }), SectionedValues([(1, [21, 11, 1]), (2, [22, 12, 2]), (3, [23, 13, 3])]))
+
+        XCTAssertEqual(SectionedValues(values: [1,2,3,11,12,13,21,22,23], valueToSection: { i in
+            return i % 10
+        }, sortSections: {a, b in
+            return b < a
+        }, sortValues: {a, b in
+            return b < a
+        }), SectionedValues([(3, [23, 13, 3]), (2, [22, 12, 2]), (1, [21, 11, 1])]))
     }
 
     func testTableViewDiffCalculator() {

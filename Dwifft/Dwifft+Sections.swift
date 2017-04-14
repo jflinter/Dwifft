@@ -40,7 +40,7 @@ public struct SectionedValues<Section: Equatable, Value: Equatable>: Equatable {
     }
 
     public static func ==(lhs: SectionedValues<Section, Value>, rhs: SectionedValues<Section, Value>) -> Bool {
-        if lhs.sectionsAndValues.count != rhs.sectionsAndValues.count { return false }
+        guard lhs.sectionsAndValues.count == rhs.sectionsAndValues.count else { return false }
         for i in 0..<(lhs.sectionsAndValues.count) {
             let ltuple = lhs.sectionsAndValues[i]
             let rtuple = rhs.sectionsAndValues[i]
@@ -52,55 +52,43 @@ public struct SectionedValues<Section: Equatable, Value: Equatable>: Equatable {
     }
 }
 
-// TODO test please
-public extension SectionedValues where Section: Comparable, Section: Hashable, Value: Comparable {
+public extension SectionedValues where Section: Hashable {
 
-    /// This is a "convenience initializer" of sorts for SectionedValues. It acknowledges
+    /// This is a convenience initializer of sorts for `SectionedValues`. It acknowledges
     /// that sometimes you have an array of things that are naturally "groupable" - maybe
     /// a list of names in an address book, that can be grouped into their first initial,
-    /// or a bunch of events that can be grouped into buckets of timestamps. The sections
-    /// in the resultant `SectionedValues` will be returned in sorted order, according to
-    /// their implementation of `Comparable`.
+    /// or a bunch of events that can be grouped into buckets of timestamps. This will handle
+    /// clumping all of your values into the correct sections, and ordering everything correctly.
     ///
     /// - Parameters:
     ///   - values: All of the values that will end up in the `SectionedValues` you're making.
     ///   - valueToSection: A function that maps each value to the section it will inhabit.
     ///     In the above examples, this would take a name and return its first initial,
     ///     or take an event and return its bucketed timestamp.
-    ///   - sortSections: If specified, this is a custom function you can use to sort your
-    ///     sections instead of their `Comparable` implementation.
-    ///   - sortValues: If specified, this is a custom function you can use to sort the values
-    ///     in each section instead of their `Comparable` implementation.
+    ///   - sortSections: A function that compares two sections, and returns true if the first
+    ///     should be sorted before the second. Used to sort the sections in the returned `SectionedValues`.
+    ///   - sortValues: A function that compares two values, and returns true if the first
+    ///     should be sorted before the second. Used to sort the values in each section of the returned `SectionedValues`.
     public init(
         values: [Value],
         valueToSection: ((Value) -> Section),
-        sortSections: ((Section, Section) -> Bool)? = nil,
-        sortValues: ((Value, Value) -> Bool)? = nil) {
-        let dictionary: [Section: [Value]] = values.reduce([:]) { (accum, value) in
-            var next = accum
+        sortSections: ((Section, Section) -> Bool),
+        sortValues: ((Value, Value) -> Bool)) {
+        var dictionary = [Section: [Value]]()
+        for value in values {
             let section = valueToSection(value)
-            var current = next[section] ?? []
+            var current = dictionary[section] ?? []
             current.append(value)
-            next[section] = current
-            return next
+            dictionary[section] = current
         }
-        let sortedSections: [Section]
-        if let sortSections = sortSections {
-            sortedSections = dictionary.keys.sorted(by: sortSections)
-        } else {
-            sortedSections = dictionary.keys.sorted()
-        }
+        let sortedSections = dictionary.keys.sorted(by: sortSections)
         self.init(sortedSections.map { section in
             let values = dictionary[section] ?? []
-            let sortedValues: [Value]
-            if let sortValues = sortValues {
-                sortedValues = values.sorted(by: sortValues)
-            } else {
-                sortedValues = values.sorted()
-            }
+            let sortedValues = values.sorted(by: sortValues)
             return (section, sortedValues)
         })
     }
+
 }
 
 extension Dwifft {

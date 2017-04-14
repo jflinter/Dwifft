@@ -41,10 +41,13 @@ final class StuffTableViewController: UITableViewController {
 
     // MARK: - Table view data source
     // diff calculators give you nice convenience methods to fill these out.
+
+    /// IMPORTANT: you *must* implement `numberOfSections` this way (meaning, using this function on your diff calculator) in your app, to avoid a lot of gotchas around UITableView's internal assertions.
     override func numberOfSections(in tableView: UITableView) -> Int {
         return self.diffCalculator?.numberOfSections() ?? 0
     }
-
+    
+    /// IMPORTANT: you *must* implement `numberOfSections` this way (meaning, using this function on your diff calculator) in your app, to avoid a lot of gotchas around UITableView's internal assertions.
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.diffCalculator?.numberOfObjects(inSection: section) ?? 0
     }
