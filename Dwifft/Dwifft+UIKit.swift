@@ -15,8 +15,8 @@ import UIKit
 
 internal class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
 
-    fileprivate init(initialRowsAndSections: SectionedValues<Section, Value>) {
-        self._rowsAndSections = initialRowsAndSections
+    fileprivate init(initialSectionedValues: SectionedValues<Section, Value>) {
+        self._sectionedValues = initialSectionedValues
     }
 
     /// The number of sections in the diff calculator. Return this inside
@@ -24,7 +24,7 @@ internal class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
     /// Don't implement that method any other way (see the docs for `numberOfObjects(inSection:)`
     /// for more context).
     public final func numberOfSections() -> Int {
-        return self.rowsAndSections.count
+        return self.sectionedValues.count
     }
 
     /// The section at a given index. If you implement `tableView:titleForHeaderInSection` or
@@ -34,7 +34,7 @@ internal class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
     /// - Parameter forSection: the index of the section you care about.
     /// - Returns: the Section at that index.
     public final func value(forSection: Int) -> Section {
-        return self.rowsAndSections[forSection].0
+        return self.sectionedValues[forSection].0
     }
 
 
@@ -48,7 +48,7 @@ internal class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
     /// - Parameter section: a section of your table/collection view
     /// - Returns: the number of objects in that section.
     public final func numberOfObjects(inSection section: Int) -> Int {
-        return self.rowsAndSections[section].1.count
+        return self.sectionedValues[section].1.count
     }
 
 
@@ -58,28 +58,28 @@ internal class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
     /// - Parameter indexPath: the index path you are interested in
     /// - Returns: the thing at that index path
     public final func value(atIndexPath indexPath: IndexPath) -> Value {
-        return self.rowsAndSections[indexPath.section].1[indexPath.row]
+        return self.sectionedValues[indexPath.section].1[indexPath.row]
     }
 
 
     /// Set this variable to automatically trigger the correct section/row/item insertion/deletions
-    /// on your table/collection view. TODO maybe rename?
-    public final var rowsAndSections: SectionedValues<Section, Value> {
+    /// on your table/collection view.
+    public final var sectionedValues: SectionedValues<Section, Value> {
         get {
-            return _rowsAndSections
+            return _sectionedValues
         }
         set {
-            let oldRowsAndSections = rowsAndSections
-            let newRowsAndSections = newValue
-            let diff = Dwifft.diff(lhs: oldRowsAndSections, rhs: newRowsAndSections)
+            let oldSectionedValues = sectionedValues
+            let newSectionedValues = newValue
+            let diff = Dwifft.diff(lhs: oldSectionedValues, rhs: newSectionedValues)
             if (diff.count > 0) {
-                self.processChanges(newState: newRowsAndSections, diff: diff)
+                self.processChanges(newState: newSectionedValues, diff: diff)
             }
         }
     }
 
-    // UITableView and UICollectionView both perform assertions on the *current* number of rows/items before performing any updates. As such, the `rowsAndSections` property must be backed by an internal value that does not change until *after* `beginUpdates`/`performBatchUpdates` has been called.
-    fileprivate final var _rowsAndSections: SectionedValues<Section, Value>
+    // UITableView and UICollectionView both perform assertions on the *current* number of rows/items before performing any updates. As such, the `sectionedValues` property must be backed by an internal value that does not change until *after* `beginUpdates`/`performBatchUpdates` has been called.
+    fileprivate final var _sectionedValues: SectionedValues<Section, Value>
     fileprivate func processChanges(newState: SectionedValues<Section, Value>, diff: [SectionedDiffStep<Section, Value>]){
         fatalError("override me")
     }
@@ -87,14 +87,14 @@ internal class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
 
 
 /// This class manages a `UITableView`'s rows and sections. It will make the necessary calls to
-/// the table view to ensure that its UI is kept in sync with the contents of the `rowsAndSections` property.
+/// the table view to ensure that its UI is kept in sync with the contents of the `sectionedValues` property.
 public final class TableViewDiffCalculator<Section: Equatable, Value: Equatable>: AbstractDiffCalculator<Section, Value> {
 
     public weak var tableView: UITableView?
 
-    public init(tableView: UITableView?, initialRowsAndSections: SectionedValues<Section, Value> = SectionedValues()) {
+    public init(tableView: UITableView?, initialSectionedValues: SectionedValues<Section, Value> = SectionedValues()) {
         self.tableView = tableView
-        super.init(initialRowsAndSections: initialRowsAndSections)
+        super.init(initialSectionedValues: initialSectionedValues)
     }
 
     /// You can change insertion/deletion animations like this! Fade works well.
@@ -104,7 +104,7 @@ public final class TableViewDiffCalculator<Section: Equatable, Value: Equatable>
     override fileprivate func processChanges(newState: SectionedValues<Section, Value>, diff: [SectionedDiffStep<Section, Value>]) {
         guard let tableView = self.tableView else { return }
         tableView.beginUpdates()
-        self._rowsAndSections = newState
+        self._sectionedValues = newState
         for result in diff {
             switch result {
             case let .delete(section, row, _): tableView.deleteRows(at: [IndexPath(row: row, section: section)], with: self.deletionAnimation)
@@ -119,21 +119,21 @@ public final class TableViewDiffCalculator<Section: Equatable, Value: Equatable>
 
 /// This class manages a `UICollectionView`'s items and sections. It will make the necessary
 /// calls to the collection view to ensure that its UI is kept in sync with the contents 
-/// of the `rowsAndSections` property.
+/// of the `sectionedValues` property.
 public final class CollectionViewDiffCalculator<Section: Equatable, Value: Equatable> : AbstractDiffCalculator<Section, Value> {
 
     public weak var collectionView: UICollectionView?
 
-    public init(collectionView: UICollectionView?, initialRowsAndSections: SectionedValues<Section, Value> = SectionedValues()) {
+    public init(collectionView: UICollectionView?, initialSectionedValues: SectionedValues<Section, Value> = SectionedValues()) {
         self.collectionView = collectionView
-        super.init(initialRowsAndSections: initialRowsAndSections)
+        super.init(initialSectionedValues: initialSectionedValues)
     }
 
     override fileprivate func processChanges(newState: SectionedValues<Section, Value>, diff: [SectionedDiffStep<Section, Value>]) {
         guard let collectionView = self.collectionView else { return }
-        self._rowsAndSections = newState
+        self._sectionedValues = newState
         collectionView.performBatchUpdates({
-            self._rowsAndSections = newState
+            self._sectionedValues = newState
             for result in diff {
                 switch result {
                 case let .delete(section, row, _): collectionView.deleteItems(at: [IndexPath(row: row, section: section)])
@@ -184,16 +184,16 @@ public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
     /// on your table view.
     public var rows : [Value] {
         get {
-            return self.internalDiffCalculator.rowsAndSections[self.sectionIndex].1
+            return self.internalDiffCalculator.sectionedValues[self.sectionIndex].1
         }
         set {
-            self.internalDiffCalculator.rowsAndSections = SingleSectionTableViewDiffCalculator.buildSectionedValues(values: newValue, sectionIndex: self.sectionIndex)
+            self.internalDiffCalculator.sectionedValues = SingleSectionTableViewDiffCalculator.buildSectionedValues(values: newValue, sectionIndex: self.sectionIndex)
         }
     }
 
     public init(tableView: UITableView?, initialRows: [Value] = [], sectionIndex: Int = 0) {
         self.tableView = tableView
-        self.internalDiffCalculator = TableViewDiffCalculator(tableView: tableView, initialRowsAndSections: SingleSectionTableViewDiffCalculator.buildSectionedValues(values: initialRows, sectionIndex: sectionIndex))
+        self.internalDiffCalculator = TableViewDiffCalculator(tableView: tableView, initialSectionedValues: SingleSectionTableViewDiffCalculator.buildSectionedValues(values: initialRows, sectionIndex: sectionIndex))
         self.sectionIndex = sectionIndex
     }
 
@@ -228,16 +228,16 @@ public final class SingleSectionCollectionViewDiffCalculator<Value: Equatable> {
     /// on your collection view.
     public var items : [Value] {
         get {
-            return self.internalDiffCalculator.rowsAndSections[self.sectionIndex].1
+            return self.internalDiffCalculator.sectionedValues[self.sectionIndex].1
         }
         set {
-            self.internalDiffCalculator.rowsAndSections = SingleSectionTableViewDiffCalculator.buildSectionedValues(values: newValue, sectionIndex: self.sectionIndex)
+            self.internalDiffCalculator.sectionedValues = SingleSectionTableViewDiffCalculator.buildSectionedValues(values: newValue, sectionIndex: self.sectionIndex)
         }
     }
 
     public init(collectionView: UICollectionView?, initialItems: [Value] = [], sectionIndex: Int = 0) {
         self.collectionView = collectionView
-        self.internalDiffCalculator = CollectionViewDiffCalculator(collectionView: collectionView, initialRowsAndSections: SingleSectionTableViewDiffCalculator.buildSectionedValues(values: initialItems, sectionIndex: sectionIndex))
+        self.internalDiffCalculator = CollectionViewDiffCalculator(collectionView: collectionView, initialSectionedValues: SingleSectionTableViewDiffCalculator.buildSectionedValues(values: initialItems, sectionIndex: sectionIndex))
         self.sectionIndex = sectionIndex
     }
 

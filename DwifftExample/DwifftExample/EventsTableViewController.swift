@@ -34,10 +34,10 @@ class EventsTableViewController: UITableViewController {
 
     var diffCalculator: TableViewDiffCalculator<Int, Date>?
 
-    // so, we can just store all our events ("button pushes" in this case) in an array. It doesn't even have to be sorted, because `Date` is `Comparable`. When it changes, we will update the `rowsAndSections` property on our diff calculator. To do so, we will construct a SectionedValues by providing an array of values (`buttonPushes`) and a function by which to group them into sections (in this case, a simple function that picks a "time bucket" for each event. SectionedValues will then handle grouping & sorting all the values for us! 
+    // so, we can just store all our events ("button pushes" in this case) in an array. It doesn't even have to be sorted, because `Date` is `Comparable`. When it changes, we will update the `sectionedValues` property on our diff calculator. To do so, we will construct a SectionedValues by providing an array of values (`buttonPushes`) and a function by which to group them into sections (in this case, a simple function that picks a "time bucket" for each event. SectionedValues will then handle grouping & sorting all the values for us! 
     var buttonPushes: [Date] = [] {
         didSet {
-            self.diffCalculator?.rowsAndSections = SectionedValues<Int, Date>(values: buttonPushes, valueToSection: { buttonPush in
+            self.diffCalculator?.sectionedValues = SectionedValues<Int, Date>(values: buttonPushes, valueToSection: { buttonPush in
                 let secondsBetween = Int(Date().timeIntervalSince(buttonPush))
                 return timeBuckets.keys.sorted().filter({$0 <= secondsBetween}).last ?? 0
             }, sortSections: { $0 < $1 }, sortValues: { $0 < $1 })

@@ -25,14 +25,14 @@ final class StuffTableViewController: UITableViewController {
     var stuff: SectionedValues<String, String> = Stuff.wordStuff() {
         // So, whenever your datasource's array of things changes, just let the diffCalculator know and it'll do the rest.
         didSet {
-            self.diffCalculator?.rowsAndSections = stuff
+            self.diffCalculator?.sectionedValues = stuff
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
-        self.diffCalculator = TableViewDiffCalculator(tableView: self.tableView, initialRowsAndSections: self.stuff)
+        self.diffCalculator = TableViewDiffCalculator(tableView: self.tableView, initialSectionedValues: self.stuff)
         
         // You can change insertion/deletion animations like this! Automatic works for most situations. Fade works well too. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
         self.diffCalculator?.insertionAnimation = .fade

@@ -65,7 +65,7 @@ final class StuffCollectionViewController: UICollectionViewController {
     var stuff: SectionedValues<String, String> = Stuff.emojiStuff() {
         // So, whenever your datasource's array of things changes, just let the diffCalculator know and it'll do the rest.
         didSet {
-            self.diffCalculator?.rowsAndSections = stuff
+            self.diffCalculator?.sectionedValues = stuff
         }
     }
 
@@ -74,7 +74,7 @@ final class StuffCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         guard let collectionView = self.collectionView else { return }
-        self.diffCalculator = CollectionViewDiffCalculator(collectionView: collectionView, initialRowsAndSections: self.stuff)
+        self.diffCalculator = CollectionViewDiffCalculator(collectionView: collectionView, initialSectionedValues: self.stuff)
 
         // Register cell classes
         collectionView.register(StuffCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)

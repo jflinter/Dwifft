@@ -78,11 +78,11 @@ class DwifftSwiftCheckTests: XCTestCase {
 
         property("Updating a TableViewDiffCalculator never raises an exception") <- forAll { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
             let tableView = UITableView()
-            let diffCalculator = TableViewDiffCalculator(tableView: tableView, initialRowsAndSections: lhs.values)
+            let diffCalculator = TableViewDiffCalculator(tableView: tableView, initialSectionedValues: lhs.values)
             let dataSource = DataSource(diffCalculator)
             tableView.dataSource = dataSource
             tableView.reloadData()
-            diffCalculator.rowsAndSections = rhs.values
+            diffCalculator.sectionedValues = rhs.values
 
             let singleSection = SingleSectionTableViewDiffCalculator(tableView: tableView, initialRows: lhs.values.sections, sectionIndex: 1)
             let dataSource2 = SingleSectionDataSource(singleSection)
@@ -301,13 +301,13 @@ class DwifftTests: XCTestCase {
             let diffCalculator: TableViewDiffCalculator<Int, Int>
             var rows: [Int] {
                 didSet {
-                    self.diffCalculator.rowsAndSections = SectionedValues([(0, rows)])
+                    self.diffCalculator.sectionedValues = SectionedValues([(0, rows)])
                 }
             }
 
             init(tableView: TestTableView, rows: [Int]) {
                 self.tableView = tableView
-                self.diffCalculator = TableViewDiffCalculator<Int, Int>(tableView: tableView, initialRowsAndSections: SectionedValues([(0, rows)]))
+                self.diffCalculator = TableViewDiffCalculator<Int, Int>(tableView: tableView, initialSectionedValues: SectionedValues([(0, rows)]))
                 self.diffCalculator.insertionAnimation = .left
                 self.diffCalculator.deletionAnimation = .right
                 self.rows = rows
@@ -389,13 +389,13 @@ class DwifftTests: XCTestCase {
             let diffCalculator: CollectionViewDiffCalculator<Int, Int>
             var rows: [Int] {
                 didSet {
-                    self.diffCalculator.rowsAndSections = SectionedValues([(0, rows)])
+                    self.diffCalculator.sectionedValues = SectionedValues([(0, rows)])
                 }
             }
 
             init(collectionView: TestCollectionView, rows: [Int]) {
                 self.testCollectionView = collectionView
-                self.diffCalculator = CollectionViewDiffCalculator<Int, Int>(collectionView: self.testCollectionView, initialRowsAndSections: SectionedValues([(0, rows)]))
+                self.diffCalculator = CollectionViewDiffCalculator<Int, Int>(collectionView: self.testCollectionView, initialSectionedValues: SectionedValues([(0, rows)]))
                 self.rows = rows
                 super.init(nibName: nil, bundle: nil)
 
