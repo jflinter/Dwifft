@@ -6,8 +6,6 @@
 //  Copyright (c) 2015 jflinter. All rights reserved.
 //
 
-// TODO update readme please
-
 #if os(iOS)
 
 import UIKit
