@@ -24,7 +24,7 @@ internal class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
     /// Don't implement that method any other way (see the docs for `numberOfObjects(inSection:)`
     /// for more context).
     public final func numberOfSections() -> Int {
-        return self.sectionedValues.count
+        return self.sectionedValues.sections.count
     }
 
     /// The section at a given index. If you implement `tableView:titleForHeaderInSection` or
@@ -90,8 +90,14 @@ internal class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
 /// the table view to ensure that its UI is kept in sync with the contents of the `sectionedValues` property.
 public final class TableViewDiffCalculator<Section: Equatable, Value: Equatable>: AbstractDiffCalculator<Section, Value> {
 
+    /// The table view to be managed
     public weak var tableView: UITableView?
 
+    /// Initializes a new diff calculator.
+    ///
+    /// - Parameters:
+    ///   - tableView: the table view to be managed
+    ///   - initialSectionedValues: optional - if specified, these will be the initial contents of the diff calculator.
     public init(tableView: UITableView?, initialSectionedValues: SectionedValues<Section, Value> = SectionedValues()) {
         self.tableView = tableView
         super.init(initialSectionedValues: initialSectionedValues)
@@ -122,8 +128,14 @@ public final class TableViewDiffCalculator<Section: Equatable, Value: Equatable>
 /// of the `sectionedValues` property.
 public final class CollectionViewDiffCalculator<Section: Equatable, Value: Equatable> : AbstractDiffCalculator<Section, Value> {
 
+    /// The collection view to be managed.
     public weak var collectionView: UICollectionView?
 
+    /// Initializes a new diff calculator.
+    ///
+    /// - Parameters:
+    ///   - collectionView: the collection view to be managed.
+    ///   - initialSectionedValues: optional - if specified, these will be the initial contents of the diff calculator.
     public init(collectionView: UICollectionView?, initialSectionedValues: SectionedValues<Section, Value> = SectionedValues()) {
         self.collectionView = collectionView
         super.init(initialSectionedValues: initialSectionedValues)
@@ -161,9 +173,10 @@ typealias SimpleCollectionViewDiffCalculator = CollectionViewDiffCalculator<AnyH
 /// If your table view only has a single section, or you only want to power a single section of it with Dwifft,
 /// use a `SingleSectionTableViewDiffCalculator`. Note that this approach is not highly recommended, and you should
 /// do so only if it *really* doesn't make sense to just power your whole table with a `TableViewDiffCalculator`.
-/// You'll be less likely to mess up the index math 😬
+/// You'll be less likely to mess up the index math :P
 public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
 
+    /// The table view to be managed
     public weak var tableView: UITableView?
 
     /// All insertion/deletion calls will be made on this index.
@@ -172,13 +185,6 @@ public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
     /// You can change insertion/deletion animations like this! Fade works well.
     /// So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
     public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
-
-    public func numberOfRows(inSection section: Int) -> Int {
-        guard section == self.sectionIndex else {
-            fatalError("trying to get the number of items for a section that isn't yours!")
-        }
-        return rows.count
-    }
 
     /// Set this variable to automatically trigger the correct row insertion/deletions
     /// on your table view.
@@ -191,6 +197,12 @@ public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
         }
     }
 
+    /// Initializes a new diff calculator.
+    ///
+    /// - Parameters:
+    ///   - tableView: the table view to be managed
+    ///   - initialRows: optional - if specified, these will be the initial contents of the diff calculator.
+    ///   - sectionIndex: optional - all insertion/deletion calls will be made on this index.
     public init(tableView: UITableView?, initialRows: [Value] = [], sectionIndex: Int = 0) {
         self.tableView = tableView
         self.internalDiffCalculator = TableViewDiffCalculator(tableView: tableView, initialSectionedValues: SingleSectionTableViewDiffCalculator.buildSectionedValues(values: initialRows, sectionIndex: sectionIndex))
@@ -209,20 +221,14 @@ public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
 /// If your collection view only has a single section, or you only want to power a single section of it with Dwifft,
 /// use a `SingleSectionCollectionViewDiffCalculator`. Note that this approach is not highly recommended, and you should
 /// do so only if it *really* doesn't make sense to just power your whole view with a `CollectionViewDiffCalculator`.
-/// You'll be less likely to mess up the index math 😬
+/// You'll be less likely to mess up the index math :P
 public final class SingleSectionCollectionViewDiffCalculator<Value: Equatable> {
 
+    /// The collection view to be managed
     public weak var collectionView: UICollectionView?
 
     /// All insertion/deletion calls will be made for items at this section.
     public let sectionIndex: Int
-
-    public func numberOfItems(inSection section: Int) -> Int {
-        guard section == self.sectionIndex else {
-            fatalError("trying to get the number of items for a section that isn't yours!")
-        }
-        return items.count
-    }
 
     /// Set this variable to automatically trigger the correct item insertion/deletions
     /// on your collection view.
@@ -235,6 +241,12 @@ public final class SingleSectionCollectionViewDiffCalculator<Value: Equatable> {
         }
     }
 
+    /// Initializes a new diff calculator.
+    ///
+    /// - Parameters:
+    ///   - tableView: the table view to be managed
+    ///   - initialItems: optional - if specified, these will be the initial contents of the diff calculator.
+    ///   - sectionIndex: optional - all insertion/deletion calls will be made on this index.
     public init(collectionView: UICollectionView?, initialItems: [Value] = [], sectionIndex: Int = 0) {
         self.collectionView = collectionView
         self.internalDiffCalculator = CollectionViewDiffCalculator(collectionView: collectionView, initialSectionedValues: SingleSectionTableViewDiffCalculator.buildSectionedValues(values: initialItems, sectionIndex: sectionIndex))

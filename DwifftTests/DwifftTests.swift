@@ -51,7 +51,7 @@ class DwifftSwiftCheckTests: XCTestCase {
             }
             func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
                 if section == 1 {
-                    return self.diffCalculator.numberOfRows(inSection: section)
+                    return self.diffCalculator.rows.count
                 }
                 return 0
             }
