@@ -181,7 +181,17 @@ public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
 
     /// You can change insertion/deletion animations like this! Fade works well.
     /// So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
-    public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
+    public var insertionAnimation = UITableViewRowAnimation.automatic {
+        didSet {
+            self.internalDiffCalculator.insertionAnimation = self.insertionAnimation 
+        }
+    }
+    
+    public var deletionAnimation = UITableViewRowAnimation.automatic {
+        didSet {
+            self.internalDiffCalculator.deletionAnimation = self.deletionAnimation 
+        }
+    }
 
     /// Set this variable to automatically trigger the correct row insertion/deletions
     /// on your table view.
