@@ -10,7 +10,9 @@
 
 import UIKit
 
-internal class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
+
+/// A parent class for all diff calculators. Don't use it directly.
+public class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
 
     fileprivate init(initialSectionedValues: SectionedValues<Section, Value>) {
         self._sectionedValues = initialSectionedValues
