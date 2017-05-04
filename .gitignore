@@ -4,6 +4,7 @@
 ### Swift ###
 
 ## Build generated
+.build/
 build/
 DerivedData
 
