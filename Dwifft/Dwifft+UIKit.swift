@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 jflinter. All rights reserved.
 //
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 
 import UIKit
 
