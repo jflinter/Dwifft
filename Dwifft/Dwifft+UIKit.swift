@@ -104,18 +104,49 @@ public final class TableViewDiffCalculator<Section: Equatable, Value: Equatable>
 
     /// You can change insertion/deletion animations like this! Fade works well.
     /// So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
-    public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
+    public var insertionAnimation = UITableViewRowAnimation.automatic
+    public var deletionAnimation = UITableViewRowAnimation.automatic
+    public var reloadAnimation = UITableViewRowAnimation.automatic
 
     override fileprivate func processChanges(newState: SectionedValues<Section, Value>, diff: [SectionedDiffStep<Section, Value>]) {
         guard let tableView = self.tableView else { return }
+               
         tableView.beginUpdates()
         self._sectionedValues = newState
-        for result in diff {
+               
+        let descriptions = diff.map { $0.encodedValue }
+        
+        for (index, result) in diff.enumerated() {
+            let previousDescription = index > 0 ? descriptions[index - 1] : ""
+            let currentDescription = descriptions[index]
+            let nextDescription = index < diff.count - 1 ? descriptions[index + 1] : ""
+            
             switch result {
-            case let .delete(section, row, _): tableView.deleteRows(at: [IndexPath(row: row, section: section)], with: self.deletionAnimation)
-            case let .insert(section, row, _): tableView.insertRows(at: [IndexPath(row: row, section: section)], with: self.insertionAnimation)
-            case let .sectionDelete(section, _): tableView.deleteSections(IndexSet(integer: section), with: self.deletionAnimation)
-            case let .sectionInsert(section, _): tableView.insertSections(IndexSet(integer: section), with: self.insertionAnimation)
+            case let .delete(section, row, _):
+                if nextDescription == currentDescription.replacingOccurrences(of: "d(", with: "i(") {
+                    tableView.reloadRows(at: [IndexPath(row: row, section: section)], with: self.reloadAnimation)
+                } else {
+                    tableView.deleteRows(at: [IndexPath(row: row, section: section)], with: self.deletionAnimation)
+                }
+            case let .insert(section, row, _):
+                if previousDescription == currentDescription.replacingOccurrences(of: "i(", with: "d(") {
+                    // handled in .delete
+                } else {
+                    tableView.insertRows(at: [IndexPath(row: row, section: section)], with: self.insertionAnimation)
+                }
+            case let .sectionDelete(section, _):
+                if nextDescription == currentDescription.replacingOccurrences(of: "ds(", with: "is(") {
+                    tableView.reloadSections(IndexSet(integer: section), with: self.reloadAnimation)
+                    print("rs(\(section))")
+                } else {
+                    tableView.deleteSections(IndexSet(integer: section), with: self.deletionAnimation)
+                }
+            case let .sectionInsert(section, _):
+                if previousDescription == currentDescription.replacingOccurrences(of: "is(", with: "ds(") {
+                    // handled in .sectionDelete
+                } else {
+                    tableView.insertSections(IndexSet(integer: section), with: self.insertionAnimation)
+                }
             }
         }
         tableView.endUpdates()

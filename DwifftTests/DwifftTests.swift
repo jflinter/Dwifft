@@ -268,10 +268,12 @@ class DwifftTests: XCTestCase {
 
             let insertionExpectations: [Int: XCTestExpectation]
             let deletionExpectations: [Int: XCTestExpectation]
+            let reloadExpectations: [Int: XCTestExpectation]
 
-            init(insertionExpectations: [Int: XCTestExpectation], deletionExpectations: [Int: XCTestExpectation]) {
+            init(insertionExpectations: [Int: XCTestExpectation], deletionExpectations: [Int: XCTestExpectation], reloadExpectations: [Int: XCTestExpectation]) {
                 self.insertionExpectations = insertionExpectations
                 self.deletionExpectations = deletionExpectations
+                self.reloadExpectations = reloadExpectations
                 super.init(frame: CGRect.zero, style: UITableViewStyle.plain)
             }
 
@@ -292,7 +294,13 @@ class DwifftTests: XCTestCase {
                     self.deletionExpectations[(indexPath as NSIndexPath).row]!.fulfill()
                 }
             }
-
+            
+            override func reloadRows(at indexPaths: [IndexPath], with animation: UITableViewRowAnimation) {
+                XCTAssertEqual(animation, UITableViewRowAnimation.fade, "incorrect reload animation")
+                for indexPath in indexPaths {
+                    self.reloadExpectations[(indexPath as NSIndexPath).row]!.fulfill()
+                }
+            }
         }
 
         class TestViewController: UIViewController, UITableViewDataSource {
@@ -310,6 +318,7 @@ class DwifftTests: XCTestCase {
                 self.diffCalculator = TableViewDiffCalculator<Int, Int>(tableView: tableView, initialSectionedValues: SectionedValues([(0, rows)]))
                 self.diffCalculator.insertionAnimation = .left
                 self.diffCalculator.deletionAnimation = .right
+                self.diffCalculator.reloadAnimation = .fade
                 self.rows = rows
                 super.init(nibName: nil, bundle: nil)
             }
@@ -333,18 +342,25 @@ class DwifftTests: XCTestCase {
         }
 
         var insertionExpectations: [Int: XCTestExpectation] = [:]
-        for i in [0, 3, 4, 5] {
+        for i in [3, 4, 5] {
             let x: XCTestExpectation = expectation(description: "+\(i)")
             insertionExpectations[i] = x
         }
 
         var deletionExpectations: [Int: XCTestExpectation] = [:]
-        for i in [0, 1, 2, 4] {
-            let x: XCTestExpectation = expectation(description: "+\(i)")
+        for i in [1, 2, 4] {
+            let x: XCTestExpectation = expectation(description: "-\(i)")
             deletionExpectations[i] = x
         }
+        
+        var reloadExpectations: [Int: XCTestExpectation] = [:]
+        for i in [0] {
+            let x: XCTestExpectation = expectation(description: "r\(i)")
+            reloadExpectations[i] = x
+        }
 
-        let tableView = TestTableView(insertionExpectations: insertionExpectations, deletionExpectations: deletionExpectations)
+
+        let tableView = TestTableView(insertionExpectations: insertionExpectations, deletionExpectations: deletionExpectations, reloadExpectations: reloadExpectations)
         let viewController = TestViewController(tableView: tableView, rows: [0, 1, 2, 5, 8, 9, 0])
         viewController.rows = [4, 5, 9, 8, 3, 1, 0]
         waitForExpectations(timeout: 1.0, handler: nil)

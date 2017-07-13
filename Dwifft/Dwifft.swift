@@ -64,14 +64,18 @@ public enum SectionedDiffStep<Section, Value>: CustomDebugStringConvertible {
         case let .sectionDelete(s, _): return s
         }
     }
-
-    public var debugDescription: String {
+    
+    public var encodedValue: String {
         switch self {
         case let .sectionDelete(s, _): return "ds(\(s))"
         case let .sectionInsert(s, _): return "is(\(s))"
         case let .delete(section, row, _): return "d(\(section) \(row))"
         case let .insert(section, row, _): return "i(\(section) \(row))"
         }
+    }
+
+    public var debugDescription: String {
+        return encodedValue
     }
 }
 
