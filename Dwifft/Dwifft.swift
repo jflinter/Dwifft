@@ -76,7 +76,7 @@ public enum SectionedDiffStep<Section, Value>: CustomDebugStringConvertible {
 }
 
 /// Namespace for the `diff` and `apply` functions.
-public struct Dwifft {
+public enum Dwifft {
 
     /// Returns the sequence of `DiffStep`s required to transform one array into another.
     ///
