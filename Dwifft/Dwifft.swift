@@ -128,7 +128,7 @@ public enum Dwifft {
     ///   - lhs: a `SectionedValues`
     ///   - rhs: another, uh, `SectionedValues`
     /// - Returns: the series of transformations that, when applied to `lhs`, will yield `rhs`.
-    public static func diff<Section: Equatable, Value: Equatable>(lhs: SectionedValues<Section, Value>, rhs: SectionedValues<Section, Value>) -> [SectionedDiffStep<Section, Value>] {
+    public static func diff<Section, Value>(lhs: SectionedValues<Section, Value>, rhs: SectionedValues<Section, Value>) -> [SectionedDiffStep<Section, Value>] {
         if lhs.sections == rhs.sections {
             let allResults: [[SectionedDiffStep<Section, Value>]] = (0..<lhs.sections.count).map { i in
                 let lValues = lhs.sectionsAndValues[i].1
