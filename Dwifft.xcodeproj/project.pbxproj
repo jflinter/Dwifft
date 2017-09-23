@@ -16,6 +16,11 @@
 		041EBBB31B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */; };
 		0486A2651EA0A5B600D8093E /* SectionedValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0486A2641EA0A5B600D8093E /* SectionedValues.swift */; };
 		0486A2661EA0A64900D8093E /* SectionedValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0486A2641EA0A5B600D8093E /* SectionedValues.swift */; };
+		049A62B51F75E4310060BE26 /* CwlCatchException.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0450C7351F75C6A300916676 /* CwlCatchException.framework */; };
+		049A62B61F75E4350060BE26 /* CwlPreconditionTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0450C7341F75C67D00916676 /* CwlPreconditionTesting.framework */; };
+		049A62B81F75E4B20060BE26 /* SwiftCheck.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04AC329E1E88AEB000EF63DD /* SwiftCheck.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		049A62B91F75E4B20060BE26 /* CwlCatchException.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0450C7351F75C6A300916676 /* CwlCatchException.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		049A62BA1F75E4B20060BE26 /* CwlPreconditionTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0450C7341F75C67D00916676 /* CwlPreconditionTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		04AC329F1E88AEB000EF63DD /* SwiftCheck.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04AC329E1E88AEB000EF63DD /* SwiftCheck.framework */; };
 		94783CB11EFBA21900841579 /* Dwifft_tvOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 94783CAF1EFBA21900841579 /* Dwifft_tvOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		94783CB51EFBA25300841579 /* Dwifft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* Dwifft.swift */; };
@@ -33,6 +38,21 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		049A62B71F75E4A70060BE26 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				049A62B81F75E4B20060BE26 /* SwiftCheck.framework in CopyFiles */,
+				049A62B91F75E4B20060BE26 /* CwlCatchException.framework in CopyFiles */,
+				049A62BA1F75E4B20060BE26 /* CwlPreconditionTesting.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		041EBB921B89679200E113B3 /* Dwifft.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dwifft.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		041EBB961B89679200E113B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -42,6 +62,8 @@
 		041EBBA41B89679200E113B3 /* DwifftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DwifftTests.swift; sourceTree = "<group>"; };
 		041EBBAE1B8967C300E113B3 /* Dwifft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dwifft.swift; sourceTree = "<group>"; };
 		041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dwifft+UIKit.swift"; sourceTree = "<group>"; };
+		0450C7341F75C67D00916676 /* CwlPreconditionTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CwlPreconditionTesting.framework; path = Carthage/Build/iOS/CwlPreconditionTesting.framework; sourceTree = SOURCE_ROOT; };
+		0450C7351F75C6A300916676 /* CwlCatchException.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CwlCatchException.framework; path = Carthage/Build/iOS/CwlCatchException.framework; sourceTree = SOURCE_ROOT; };
 		0486A2641EA0A5B600D8093E /* SectionedValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionedValues.swift; sourceTree = "<group>"; };
 		04AC329E1E88AEB000EF63DD /* SwiftCheck.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftCheck.framework; path = Carthage/Build/iOS/SwiftCheck.framework; sourceTree = SOURCE_ROOT; };
 		94783CAD1EFBA21900841579 /* Dwifft_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dwifft_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -61,8 +83,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				049A62B61F75E4350060BE26 /* CwlPreconditionTesting.framework in Frameworks */,
 				041EBB9E1B89679200E113B3 /* Dwifft.framework in Frameworks */,
 				04AC329F1E88AEB000EF63DD /* SwiftCheck.framework in Frameworks */,
+				049A62B51F75E4310060BE26 /* CwlCatchException.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,6 +145,8 @@
 			children = (
 				041EBBA41B89679200E113B3 /* DwifftTests.swift */,
 				04AC329E1E88AEB000EF63DD /* SwiftCheck.framework */,
+				0450C7351F75C6A300916676 /* CwlCatchException.framework */,
+				0450C7341F75C67D00916676 /* CwlPreconditionTesting.framework */,
 				041EBBA21B89679200E113B3 /* Supporting Files */,
 			);
 			path = DwifftTests;
@@ -188,6 +214,7 @@
 			buildConfigurationList = 041EBBAB1B89679200E113B3 /* Build configuration list for PBXNativeTarget "DwifftTests" */;
 			buildPhases = (
 				041EBB991B89679200E113B3 /* Sources */,
+				049A62B71F75E4A70060BE26 /* CopyFiles */,
 				041EBB9A1B89679200E113B3 /* Frameworks */,
 				041EBB9B1B89679200E113B3 /* Resources */,
 				04AC32A01E88B12D00EF63DD /* ShellScript */,

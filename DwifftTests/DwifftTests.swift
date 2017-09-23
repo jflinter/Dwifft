@@ -9,6 +9,7 @@
 import UIKit
 import XCTest
 import SwiftCheck
+import CwlPreconditionTesting
 
 struct SectionedValuesWrapper: Arbitrary {
     let values: SectionedValues<Int, Int>
@@ -26,15 +27,31 @@ struct SectionedValuesWrapper: Arbitrary {
 }
 
 class DwifftSwiftCheckTests: XCTestCase {
+    
+    func forAllCatchingFatalErrors<A, B>(_ pf : @escaping (A, B) throws -> Testable) -> Property
+        where A : Arbitrary, B : Arbitrary
+    {
+        return forAll { (a: A, b: B) in
+            var x: Testable = false <?> "precondition failure"
+            catchBadInstruction(in: {
+                do {
+                    x = try pf(a, b)
+                } catch {
+                    x = false <?> "Swift error encountered"
+                }
+            })
+            return x
+        }
+    }
 
     func testDiff() {
-        property("Diffing two arrays, then applying the diff to the first, yields the second") <- forAll { (a1 : ArrayOf<Int>, a2 : ArrayOf<Int>) in
+        property("Diffing two arrays, then applying the diff to the first, yields the second") <- self.forAllCatchingFatalErrors { (a1 : ArrayOf<Int>, a2 : ArrayOf<Int>) in
             let diff = Dwifft.diff(a1.getArray, a2.getArray)
             return (Dwifft.apply(diff: diff, toArray: a1.getArray) == a2.getArray) <?> "diff applies"
         }
     }
     func test2DDiff() {
-        property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- forAll { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
+        property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- forAllCatchingFatalErrors { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
             let diff = Dwifft.diff(lhs: lhs.values, rhs: rhs.values)
             return (Dwifft.apply(diff: diff, toSectionedValues: lhs.values) == rhs.values) <?> "2d diff applies"
         }
@@ -76,7 +93,7 @@ class DwifftSwiftCheckTests: XCTestCase {
             }
         }
 
-        property("Updating a TableViewDiffCalculator never raises an exception") <- forAll { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
+        property("Updating a TableViewDiffCalculator never raises an exception") <- forAllCatchingFatalErrors { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
             let tableView = UITableView()
             let diffCalculator = TableViewDiffCalculator(tableView: tableView, initialSectionedValues: lhs.values)
             let dataSource = DataSource(diffCalculator)

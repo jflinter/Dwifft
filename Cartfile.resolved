@@ -1,1 +1,3 @@
 github "jflinter/SwiftCheck" "8cb33343f45bc1b2f621011e096dbdd7e66787d6"
+github "mattgallagher/CwlCatchException" "2a86ba784624a5edd93f1a0a1a4572d48e26d1c4"
+github "mattgallagher/CwlPreconditionTesting" "97a8a5558b3ec92d31f54179e73e09ff6a4834ec"
