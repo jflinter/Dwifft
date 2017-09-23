@@ -51,7 +51,7 @@ class DwifftSwiftCheckTests: XCTestCase {
         }
     }
     func test2DDiff() {
-        property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- forAllCatchingFatalErrors { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
+        property("Diffing two 2D arrays, then applying the diff to the first, yields the second") <- self.forAllCatchingFatalErrors { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
             let diff = Dwifft.diff(lhs: lhs.values, rhs: rhs.values)
             return (Dwifft.apply(diff: diff, toSectionedValues: lhs.values) == rhs.values) <?> "2d diff applies"
         }
@@ -93,7 +93,7 @@ class DwifftSwiftCheckTests: XCTestCase {
             }
         }
 
-        property("Updating a TableViewDiffCalculator never raises an exception") <- forAllCatchingFatalErrors { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
+        property("Updating a TableViewDiffCalculator never raises an exception") <- self.forAllCatchingFatalErrors { (lhs : SectionedValuesWrapper, rhs: SectionedValuesWrapper) in
             let tableView = UITableView()
             let diffCalculator = TableViewDiffCalculator(tableView: tableView, initialSectionedValues: lhs.values)
             let dataSource = DataSource(diffCalculator)
