@@ -61,6 +61,7 @@
 		041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dwifft+UIKit.swift"; sourceTree = "<group>"; };
 		0486A2641EA0A5B600D8093E /* SectionedValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionedValues.swift; sourceTree = "<group>"; };
 		04AC329E1E88AEB000EF63DD /* SwiftCheck.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftCheck.framework; path = Carthage/Build/iOS/SwiftCheck.framework; sourceTree = SOURCE_ROOT; };
+		380FFA421F7C072D00AEF983 /* macOS Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "macOS Info.plist"; sourceTree = "<group>"; };
 		382DEF421F487395007A8FD2 /* Dwifft.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dwifft.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		382DEF441F487395007A8FD2 /* Dwifft_macOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Dwifft_macOS.h; sourceTree = "<group>"; };
 		382DEF451F487395007A8FD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -194,6 +195,7 @@
 			children = (
 				38D317731F7BF1E400A15CD7 /* SwiftCheck.framework */,
 				38E5B5E61F7BDB9800F33285 /* DwifftTests-macOS.swift */,
+				380FFA421F7C072D00AEF983 /* macOS Info.plist */,
 			);
 			name = macOS;
 			sourceTree = "<group>";
@@ -780,7 +782,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "DwifftTests copy-Info.plist";
+				INFOPLIST_FILE = "DwifftTests/macOS Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jflinter.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -797,7 +799,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
-				INFOPLIST_FILE = "DwifftTests copy-Info.plist";
+				INFOPLIST_FILE = "DwifftTests/macOS Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jflinter.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
