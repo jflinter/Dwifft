@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "382DEF411F487395007A8FD2"
-               BuildableName = "Dwifft_macOS.framework"
+               BuildableName = "Dwifft.framework"
                BlueprintName = "Dwifft-macOS"
                ReferencedContainer = "container:Dwifft.xcodeproj">
             </BuildableReference>
@@ -27,16 +27,15 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       language = ""
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      codeCoverageEnabled = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "041EBB9C1B89679200E113B3"
-               BuildableName = "DwifftTests.xctest"
-               BlueprintName = "DwifftTests"
+               BlueprintIdentifier = "38E5B5D21F7BDB5400F33285"
+               BuildableName = "DwifftTests-macOS.xctest"
+               BlueprintName = "DwifftTests-macOS"
                ReferencedContainer = "container:Dwifft.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -45,7 +44,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "382DEF411F487395007A8FD2"
-            BuildableName = "Dwifft_macOS.framework"
+            BuildableName = "Dwifft.framework"
             BlueprintName = "Dwifft-macOS"
             ReferencedContainer = "container:Dwifft.xcodeproj">
          </BuildableReference>
@@ -68,7 +67,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "382DEF411F487395007A8FD2"
-            BuildableName = "Dwifft_macOS.framework"
+            BuildableName = "Dwifft.framework"
             BlueprintName = "Dwifft-macOS"
             ReferencedContainer = "container:Dwifft.xcodeproj">
          </BuildableReference>
@@ -86,7 +85,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "382DEF411F487395007A8FD2"
-            BuildableName = "Dwifft_macOS.framework"
+            BuildableName = "Dwifft.framework"
             BlueprintName = "Dwifft-macOS"
             ReferencedContainer = "container:Dwifft.xcodeproj">
          </BuildableReference>
