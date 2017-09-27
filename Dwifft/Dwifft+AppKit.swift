@@ -84,9 +84,8 @@ public class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
     }
 }
 
-/// This class manages a `NSTableView`'s rows and sections. It will make the necessary calls to
-/// the table view to ensure that its UI is kept in sync with the contents of the `sectionedValues` property.
-public final class TableViewDiffCalculator<Section: Equatable, Value: Equatable>: AbstractDiffCalculator<Section, Value> {
+/// NSTableView does not support sections so we hide this from users.
+private final class SectionedTableViewDiffCalculator<Section: Equatable, Value: Equatable>: AbstractDiffCalculator<Section, Value> {
 
     /// The table view to be managed
     public weak var tableView: NSTableView?
@@ -161,16 +160,11 @@ public final class CollectionViewDiffCalculator<Section: Equatable, Value: Equat
 /// of `Int`s, define a `StringOrInt` enum that conforms to `Equatable`, and fill the `SectionedValues`
 /// that you use to drive your DiffCalculator up with those. Alternatively, if you are lazy, and your
 /// models all conform to `Hashable`, you can use a SimpleTableViewDiffCalculator instead.
-typealias SimpleTableViewDiffCalculator = TableViewDiffCalculator<AnyHashable, AnyHashable>
-
-/// See SimpleTableViewDiffCalculator for explanation
 typealias SimpleCollectionViewDiffCalculator = CollectionViewDiffCalculator<AnyHashable, AnyHashable>
 
-/// If your table view only has a single section, or you only want to power a single section of it with Dwifft,
-/// use a `SingleSectionTableViewDiffCalculator`. Note that this approach is not highly recommended, and you should
-/// do so only if it *really* doesn't make sense to just power your whole table with a `TableViewDiffCalculator`.
-/// You'll be less likely to mess up the index math :P
-public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
+/// This class manages a `NSTableView`'s rows. It will make the necessary
+/// calls to the table view to ensure that its UI is kept in sync with the contents of the `rows` property.
+public final class TableViewDiffCalculator<Value: Equatable> {
 
     /// The table view to be managed
     public weak var tableView: NSTableView?
@@ -199,7 +193,7 @@ public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
             return self.internalDiffCalculator.sectionedValues[self.sectionIndex].1
         }
         set {
-            self.internalDiffCalculator.sectionedValues = SingleSectionTableViewDiffCalculator.buildSectionedValues(values: newValue, sectionIndex: self.sectionIndex)
+            self.internalDiffCalculator.sectionedValues = TableViewDiffCalculator.buildSectionedValues(values: newValue, sectionIndex: self.sectionIndex)
         }
     }
 
@@ -211,7 +205,7 @@ public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
     ///   - sectionIndex: optional - all insertion/deletion calls will be made on this index.
     public init(tableView: NSTableView?, initialRows: [Value] = [], sectionIndex: Int = 0) {
         self.tableView = tableView
-        self.internalDiffCalculator = TableViewDiffCalculator(tableView: tableView, initialSectionedValues: SingleSectionTableViewDiffCalculator.buildSectionedValues(values: initialRows, sectionIndex: sectionIndex))
+        self.internalDiffCalculator = SectionedTableViewDiffCalculator(tableView: tableView, initialSectionedValues: TableViewDiffCalculator.buildSectionedValues(values: initialRows, sectionIndex: sectionIndex))
         self.sectionIndex = sectionIndex
     }
 
@@ -220,7 +214,7 @@ public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
         return SectionedValues(firstRows + [(sectionIndex, values)])
     }
 
-    private let internalDiffCalculator: TableViewDiffCalculator<Int, Value>
+    private let internalDiffCalculator: SectionedTableViewDiffCalculator<Int, Value>
 
 }
 
@@ -243,7 +237,7 @@ public final class SingleSectionCollectionViewDiffCalculator<Value: Equatable> {
             return self.internalDiffCalculator.sectionedValues[self.sectionIndex].1
         }
         set {
-            self.internalDiffCalculator.sectionedValues = SingleSectionTableViewDiffCalculator.buildSectionedValues(values: newValue, sectionIndex: self.sectionIndex)
+            self.internalDiffCalculator.sectionedValues = TableViewDiffCalculator.buildSectionedValues(values: newValue, sectionIndex: self.sectionIndex)
         }
     }
 
@@ -255,7 +249,7 @@ public final class SingleSectionCollectionViewDiffCalculator<Value: Equatable> {
     ///   - sectionIndex: optional - all insertion/deletion calls will be made on this index.
     public init(collectionView: NSCollectionView?, initialItems: [Value] = [], sectionIndex: Int = 0) {
         self.collectionView = collectionView
-        self.internalDiffCalculator = CollectionViewDiffCalculator(collectionView: collectionView, initialSectionedValues: SingleSectionTableViewDiffCalculator.buildSectionedValues(values: initialItems, sectionIndex: sectionIndex))
+        self.internalDiffCalculator = CollectionViewDiffCalculator(collectionView: collectionView, initialSectionedValues: TableViewDiffCalculator.buildSectionedValues(values: initialItems, sectionIndex: sectionIndex))
         self.sectionIndex = sectionIndex
     }
 
