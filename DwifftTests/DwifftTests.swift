@@ -101,8 +101,8 @@ class DwifftTests: XCTestCase {
         let array2: [Character]
         let expectedDiff: String
         init(_ a: String, _ b: String, _ expectedDiff: String) {
-            self.array1 = Array(a.characters)
-            self.array2 = Array(b.characters)
+            self.array1 = a.map { $0 }
+            self.array2 = b.map { $0 }
             self.expectedDiff = expectedDiff
         }
     }
