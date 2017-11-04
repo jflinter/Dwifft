@@ -290,7 +290,6 @@
 				382DEF3D1F487395007A8FD2 /* Sources */,
 				382DEF3E1F487395007A8FD2 /* Frameworks */,
 				382DEF3F1F487395007A8FD2 /* Headers */,
-				382DEF401F487395007A8FD2 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -308,7 +307,6 @@
 				38E5B5D51F7BDB5400F33285 /* Sources */,
 				38E5B5DA1F7BDB5400F33285 /* Frameworks */,
 				38E5B5DD1F7BDB5400F33285 /* Resources */,
-				38E5B5DE1F7BDB5400F33285 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -403,13 +401,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		382DEF401F487395007A8FD2 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		38E5B5DD1F7BDB5400F33285 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -434,20 +425,6 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftCheck.framework",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
-		};
-		38E5B5DE1F7BDB5400F33285 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/Mac/SwiftCheck.framework",
 			);
 			outputPaths = (
 			);
