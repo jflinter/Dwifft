@@ -18,11 +18,16 @@
 		046EA8A01E8CB1AA00FBD07D /* StuffCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046EA89F1E8CB1AA00FBD07D /* StuffCollectionViewController.swift */; };
 		046EA8A31E8CBB9400FBD07D /* Stuff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046EA8A21E8CBB9400FBD07D /* Stuff.swift */; };
 		383AE64D1FADD1AA002B6725 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 383AE64C1FADD1AA002B6725 /* AppDelegate.swift */; };
-		383AE64F1FADD1AA002B6725 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 383AE64E1FADD1AA002B6725 /* ViewController.swift */; };
+		383AE64F1FADD1AA002B6725 /* StuffTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 383AE64E1FADD1AA002B6725 /* StuffTableViewController.swift */; };
 		383AE6511FADD1AA002B6725 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 383AE6501FADD1AA002B6725 /* Assets.xcassets */; };
 		383AE6541FADD1AA002B6725 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 383AE6521FADD1AA002B6725 /* Main.storyboard */; };
 		3869E24B1FADD34400D85AA5 /* Dwifft.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 383AE65E1FADD1AA002B6725 /* Dwifft.framework */; };
 		3869E24C1FADD34400D85AA5 /* Dwifft.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 383AE65E1FADD1AA002B6725 /* Dwifft.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3869E2561FADD5E000D85AA5 /* Stuff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046EA8A21E8CBB9400FBD07D /* Stuff.swift */; };
+		388BB5361FAE0C2200F2952D /* StuffCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388BB5351FAE0C2200F2952D /* StuffCollectionViewController.swift */; };
+		38B70D321FAF328C0049AEA1 /* StuffCollectionViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 38B70D311FAF328C0049AEA1 /* StuffCollectionViewItem.xib */; };
+		38B70D371FAF32DB0049AEA1 /* StuffCollectionHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 38B70D361FAF32DB0049AEA1 /* StuffCollectionHeaderView.xib */; };
+		38B70D391FAF33E70049AEA1 /* StuffCollectionViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38B70D381FAF33E70049AEA1 /* StuffCollectionViewItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -123,11 +128,15 @@
 		046EA8A21E8CBB9400FBD07D /* Stuff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stuff.swift; sourceTree = "<group>"; };
 		383AE64A1FADD1AA002B6725 /* DwifftExample-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DwifftExample-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		383AE64C1FADD1AA002B6725 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		383AE64E1FADD1AA002B6725 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		383AE64E1FADD1AA002B6725 /* StuffTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StuffTableViewController.swift; sourceTree = "<group>"; };
 		383AE6501FADD1AA002B6725 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		383AE6531FADD1AA002B6725 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		383AE6551FADD1AA002B6725 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		383AE6561FADD1AA002B6725 /* DwifftExamples_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DwifftExamples_macOS.entitlements; sourceTree = "<group>"; };
+		388BB5351FAE0C2200F2952D /* StuffCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StuffCollectionViewController.swift; sourceTree = "<group>"; };
+		38B70D311FAF328C0049AEA1 /* StuffCollectionViewItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StuffCollectionViewItem.xib; sourceTree = "<group>"; };
+		38B70D361FAF32DB0049AEA1 /* StuffCollectionHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StuffCollectionHeaderView.xib; sourceTree = "<group>"; };
+		38B70D381FAF33E70049AEA1 /* StuffCollectionViewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StuffCollectionViewItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +163,7 @@
 			isa = PBXGroup;
 			children = (
 				045502181B898C5400F5614D /* Dwifft.xcodeproj */,
+				3869E2551FADD5B600D85AA5 /* Shared */,
 				045501F51B898C3200F5614D /* DwifftExample-iOS */,
 				383AE64B1FADD1AA002B6725 /* DwifftExamples-macOS */,
 				045501F41B898C3200F5614D /* Products */,
@@ -176,7 +186,6 @@
 				0455022A1B898CF000F5614D /* StuffTableViewController.swift */,
 				046EA89F1E8CB1AA00FBD07D /* StuffCollectionViewController.swift */,
 				0401A2081EA08151003C82E5 /* EventsTableViewController.swift */,
-				046EA8A21E8CBB9400FBD07D /* Stuff.swift */,
 				045501FC1B898C3200F5614D /* Main.storyboard */,
 				045502011B898C3200F5614D /* LaunchScreen.xib */,
 				045501F61B898C3200F5614D /* Supporting Files */,
@@ -210,8 +219,12 @@
 			children = (
 				383AE6621FADD237002B6725 /* Supporting Files */,
 				383AE64C1FADD1AA002B6725 /* AppDelegate.swift */,
-				383AE64E1FADD1AA002B6725 /* ViewController.swift */,
+				383AE64E1FADD1AA002B6725 /* StuffTableViewController.swift */,
+				388BB5351FAE0C2200F2952D /* StuffCollectionViewController.swift */,
 				383AE6521FADD1AA002B6725 /* Main.storyboard */,
+				38B70D311FAF328C0049AEA1 /* StuffCollectionViewItem.xib */,
+				38B70D361FAF32DB0049AEA1 /* StuffCollectionHeaderView.xib */,
+				38B70D381FAF33E70049AEA1 /* StuffCollectionViewItem.swift */,
 			);
 			path = "DwifftExamples-macOS";
 			sourceTree = "<group>";
@@ -224,6 +237,14 @@
 				383AE6501FADD1AA002B6725 /* Assets.xcassets */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		3869E2551FADD5B600D85AA5 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				046EA8A21E8CBB9400FBD07D /* Stuff.swift */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -368,6 +389,8 @@
 			files = (
 				383AE6511FADD1AA002B6725 /* Assets.xcassets in Resources */,
 				383AE6541FADD1AA002B6725 /* Main.storyboard in Resources */,
+				38B70D321FAF328C0049AEA1 /* StuffCollectionViewItem.xib in Resources */,
+				38B70D371FAF32DB0049AEA1 /* StuffCollectionHeaderView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,8 +413,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				383AE64F1FADD1AA002B6725 /* ViewController.swift in Sources */,
+				383AE64F1FADD1AA002B6725 /* StuffTableViewController.swift in Sources */,
+				38B70D391FAF33E70049AEA1 /* StuffCollectionViewItem.swift in Sources */,
+				388BB5361FAE0C2200F2952D /* StuffCollectionViewController.swift in Sources */,
 				383AE64D1FADD1AA002B6725 /* AppDelegate.swift in Sources */,
+				3869E2561FADD5E000D85AA5 /* Stuff.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
