@@ -146,7 +146,14 @@ public final class CollectionViewDiffCalculator<Section: Equatable, Value: Equat
                 case let .delete(section, item, _): collectionView.deleteItems(at: [IndexPath(item: item, section: section)])
                 case let .insert(section, item, _): collectionView.insertItems(at: [IndexPath(item: item, section: section)])
                 case let .sectionDelete(section, _): collectionView.deleteSections(IndexSet(integer: section))
-                case let .sectionInsert(section, _): collectionView.insertSections(IndexSet(integer: section))
+                case let .sectionInsert(section, _):
+                  // NSCollectionViews don't seem to like it when inserting sections beyond numberOfSections
+                  // so adjust for that
+                  if section > collectionView.numberOfSections {
+                    collectionView.insertSections(IndexSet(integer: collectionView.numberOfSections))
+                  } else {
+                    collectionView.insertSections(IndexSet(integer: section))
+                  }
                 }
             }
         }, completionHandler: nil)
