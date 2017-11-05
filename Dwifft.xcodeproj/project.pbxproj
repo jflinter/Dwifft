@@ -22,6 +22,8 @@
 		382DEF4B1F487519007A8FD2 /* Dwifft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* Dwifft.swift */; };
 		382DEF4C1F48751B007A8FD2 /* SectionedValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0486A2641EA0A5B600D8093E /* SectionedValues.swift */; };
 		382DEF4D1F48751C007A8FD2 /* Dwifft+AppKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382DEF4A1F4873F9007A8FD2 /* Dwifft+AppKit.swift */; };
+		38B70D3E1FAF4F800049AEA1 /* SwiftCheck.framework in Resources */ = {isa = PBXBuildFile; fileRef = 38D317731F7BF1E400A15CD7 /* SwiftCheck.framework */; };
+		38B70D3F1FAF4F930049AEA1 /* SwiftCheck.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38D317731F7BF1E400A15CD7 /* SwiftCheck.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		38E5B5D61F7BDB5400F33285 /* SectionedValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0486A2641EA0A5B600D8093E /* SectionedValues.swift */; };
 		38E5B5D71F7BDB5400F33285 /* Dwifft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* Dwifft.swift */; };
 		38E5B5E91F7BDBA500F33285 /* Dwifft.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 382DEF421F487395007A8FD2 /* Dwifft.framework */; };
@@ -49,6 +51,19 @@
 			remoteInfo = "Dwifft-macOS";
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		38B70D3D1FAF4F790049AEA1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				38B70D3F1FAF4F930049AEA1 /* SwiftCheck.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		041EBB921B89679200E113B3 /* Dwifft.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Dwifft.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -88,13 +103,6 @@
 			files = (
 				041EBB9E1B89679200E113B3 /* Dwifft.framework in Frameworks */,
 				04AC329F1E88AEB000EF63DD /* SwiftCheck.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		382DEF3E1F487395007A8FD2 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,7 +296,6 @@
 			buildConfigurationList = 382DEF491F487396007A8FD2 /* Build configuration list for PBXNativeTarget "Dwifft-macOS" */;
 			buildPhases = (
 				382DEF3D1F487395007A8FD2 /* Sources */,
-				382DEF3E1F487395007A8FD2 /* Frameworks */,
 				382DEF3F1F487395007A8FD2 /* Headers */,
 			);
 			buildRules = (
@@ -307,6 +314,7 @@
 				38E5B5D51F7BDB5400F33285 /* Sources */,
 				38E5B5DA1F7BDB5400F33285 /* Frameworks */,
 				38E5B5DD1F7BDB5400F33285 /* Resources */,
+				38B70D3D1FAF4F790049AEA1 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -405,6 +413,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				38B70D3E1FAF4F800049AEA1 /* SwiftCheck.framework in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +712,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Dwifft-macOS/Info.plist";
@@ -734,6 +747,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Dwifft-macOS/Info.plist";
