@@ -109,6 +109,9 @@ public final class TableViewDiffCalculator<Section: Equatable, Value: Equatable>
      override fileprivate func processChanges(newState: SectionedValues<Section, Value>, diff: [SectionedDiffStep<Section, Value>]) {
         guard let tableView = self.tableView else { return }
         DispatchQueue.main.async {[unowned self] in
+            if self == nil{
+                return
+            }
             tableView.beginUpdates()
             self._sectionedValues = newState
             for result in diff {
