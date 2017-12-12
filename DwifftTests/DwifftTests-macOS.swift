@@ -327,6 +327,12 @@ class DwifftTests: XCTestCase {
 
   func testCollectionViewDiffCalculator() {
 
+    class TestCollectionViewItem: NSCollectionViewItem {
+        override func loadView() {
+            self.view = NSView()
+        }
+    }
+    
     class TestCollectionView: NSCollectionView {
 
       let insertionExpectations: [Int: XCTestExpectation]
@@ -375,7 +381,7 @@ class DwifftTests: XCTestCase {
         self.rows = rows
         super.init(nibName: nil, bundle: nil)
 
-        collectionView.register(NSCollectionViewItem.self, forItemWithIdentifier: self.itemIdentifier)
+        collectionView.register(TestCollectionViewItem.self, forItemWithIdentifier: self.itemIdentifier)
         collectionView.dataSource = self
       }
 

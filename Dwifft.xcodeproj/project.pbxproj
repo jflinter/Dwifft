@@ -14,9 +14,14 @@
 		041EBBB11B8967C300E113B3 /* Dwifft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* Dwifft.swift */; };
 		041EBBB21B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */; };
 		041EBBB31B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */; };
+		044079181FDF75FF00DDB952 /* AbstractDiffCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044079171FDF75FF00DDB952 /* AbstractDiffCalculator.swift */; };
+		044079191FDF75FF00DDB952 /* AbstractDiffCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044079171FDF75FF00DDB952 /* AbstractDiffCalculator.swift */; };
+		0440791A1FDF75FF00DDB952 /* AbstractDiffCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044079171FDF75FF00DDB952 /* AbstractDiffCalculator.swift */; };
 		0486A2651EA0A5B600D8093E /* SectionedValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0486A2641EA0A5B600D8093E /* SectionedValues.swift */; };
 		0486A2661EA0A64900D8093E /* SectionedValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0486A2641EA0A5B600D8093E /* SectionedValues.swift */; };
 		04AC329F1E88AEB000EF63DD /* SwiftCheck.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04AC329E1E88AEB000EF63DD /* SwiftCheck.framework */; };
+		04CEEB8F1FDF787B00C17562 /* AbstractDiffCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044079171FDF75FF00DDB952 /* AbstractDiffCalculator.swift */; };
+		04CEEB901FDF787D00C17562 /* AbstractDiffCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044079171FDF75FF00DDB952 /* AbstractDiffCalculator.swift */; };
 		380FFA411F7BF2E000AEF983 /* SwiftCheck.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38D317731F7BF1E400A15CD7 /* SwiftCheck.framework */; };
 		382DEF461F487396007A8FD2 /* Dwifft_macOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 382DEF441F487395007A8FD2 /* Dwifft_macOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		382DEF4B1F487519007A8FD2 /* Dwifft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041EBBAE1B8967C300E113B3 /* Dwifft.swift */; };
@@ -74,6 +79,7 @@
 		041EBBA41B89679200E113B3 /* DwifftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DwifftTests.swift; sourceTree = "<group>"; };
 		041EBBAE1B8967C300E113B3 /* Dwifft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dwifft.swift; sourceTree = "<group>"; };
 		041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dwifft+UIKit.swift"; sourceTree = "<group>"; };
+		044079171FDF75FF00DDB952 /* AbstractDiffCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractDiffCalculator.swift; sourceTree = "<group>"; };
 		0486A2641EA0A5B600D8093E /* SectionedValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionedValues.swift; sourceTree = "<group>"; };
 		04AC329E1E88AEB000EF63DD /* SwiftCheck.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftCheck.framework; path = Carthage/Build/iOS/SwiftCheck.framework; sourceTree = SOURCE_ROOT; };
 		380FFA421F7C072D00AEF983 /* macOS Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "macOS Info.plist"; sourceTree = "<group>"; };
@@ -155,6 +161,7 @@
 				041EBB971B89679200E113B3 /* Dwifft.h */,
 				041EBBAE1B8967C300E113B3 /* Dwifft.swift */,
 				0486A2641EA0A5B600D8093E /* SectionedValues.swift */,
+				044079171FDF75FF00DDB952 /* AbstractDiffCalculator.swift */,
 				041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */,
 				382DEF4A1F4873F9007A8FD2 /* Dwifft+AppKit.swift */,
 				041EBB951B89679200E113B3 /* Supporting Files */,
@@ -451,6 +458,7 @@
 				041EBBB01B8967C300E113B3 /* Dwifft.swift in Sources */,
 				0486A2651EA0A5B600D8093E /* SectionedValues.swift in Sources */,
 				041EBBB21B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */,
+				044079181FDF75FF00DDB952 /* AbstractDiffCalculator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,6 +467,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0486A2661EA0A64900D8093E /* SectionedValues.swift in Sources */,
+				04CEEB8F1FDF787B00C17562 /* AbstractDiffCalculator.swift in Sources */,
 				041EBBB11B8967C300E113B3 /* Dwifft.swift in Sources */,
 				041EBBA51B89679200E113B3 /* DwifftTests.swift in Sources */,
 				041EBBB31B8967C300E113B3 /* Dwifft+UIKit.swift in Sources */,
@@ -472,6 +481,7 @@
 				382DEF4B1F487519007A8FD2 /* Dwifft.swift in Sources */,
 				382DEF4C1F48751B007A8FD2 /* SectionedValues.swift in Sources */,
 				382DEF4D1F48751C007A8FD2 /* Dwifft+AppKit.swift in Sources */,
+				0440791A1FDF75FF00DDB952 /* AbstractDiffCalculator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,6 +490,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				38E5B5EB1F7BDBC700F33285 /* DwifftTests-macOS.swift in Sources */,
+				04CEEB901FDF787D00C17562 /* AbstractDiffCalculator.swift in Sources */,
 				38E5B5EA1F7BDBBB00F33285 /* Dwifft+AppKit.swift in Sources */,
 				38E5B5D61F7BDB5400F33285 /* SectionedValues.swift in Sources */,
 				38E5B5D71F7BDB5400F33285 /* Dwifft.swift in Sources */,
@@ -493,6 +504,7 @@
 				94783CB71EFBA25300841579 /* Dwifft+UIKit.swift in Sources */,
 				94783CB61EFBA25300841579 /* SectionedValues.swift in Sources */,
 				94783CB51EFBA25300841579 /* Dwifft.swift in Sources */,
+				044079191FDF75FF00DDB952 /* AbstractDiffCalculator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
