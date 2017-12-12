@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+        <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner"/>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="c22-O7-iKe" customClass="StuffCollectionHeaderView" customModule="DwifftExample_macOS" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="34"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ehT-LL-UG8">
+                    <rect key="frame" x="220" y="8" width="40" height="18"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="18" id="viC-5X-w9G"/>
+                    </constraints>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="bBz-Tm-jfv">
+                        <font key="font" metaFont="systemMedium" size="14"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstItem="ehT-LL-UG8" firstAttribute="centerY" secondItem="c22-O7-iKe" secondAttribute="centerY" id="IPY-GS-NE6"/>
+                <constraint firstItem="ehT-LL-UG8" firstAttribute="centerX" secondItem="c22-O7-iKe" secondAttribute="centerX" id="SKR-Qj-9U9"/>
+            </constraints>
+            <connections>
+                <outlet property="title" destination="ehT-LL-UG8" id="fTw-ZX-hqG"/>
+            </connections>
+            <point key="canvasLocation" x="139" y="211"/>
+        </customView>
+    </objects>
+</document>
