@@ -108,17 +108,24 @@ public final class TableViewDiffCalculator<Section: Equatable, Value: Equatable>
 
     override fileprivate func processChanges(newState: SectionedValues<Section, Value>, diff: [SectionedDiffStep<Section, Value>]) {
         guard let tableView = self.tableView else { return }
-        tableView.beginUpdates()
-        self._sectionedValues = newState
-        for result in diff {
-            switch result {
-            case let .delete(section, row, _): tableView.deleteRows(at: [IndexPath(row: row, section: section)], with: self.deletionAnimation)
-            case let .insert(section, row, _): tableView.insertRows(at: [IndexPath(row: row, section: section)], with: self.insertionAnimation)
-            case let .sectionDelete(section, _): tableView.deleteSections(IndexSet(integer: section), with: self.deletionAnimation)
-            case let .sectionInsert(section, _): tableView.insertSections(IndexSet(integer: section), with: self.insertionAnimation)
+        let updates = {
+            self._sectionedValues = newState
+            for result in diff {
+                switch result {
+                case let .delete(section, row, _): tableView.deleteRows(at: [IndexPath(row: row, section: section)], with: self.deletionAnimation)
+                case let .insert(section, row, _): tableView.insertRows(at: [IndexPath(row: row, section: section)], with: self.insertionAnimation)
+                case let .sectionDelete(section, _): tableView.deleteSections(IndexSet(integer: section), with: self.deletionAnimation)
+                case let .sectionInsert(section, _): tableView.insertSections(IndexSet(integer: section), with: self.insertionAnimation)
+                }
             }
         }
-        tableView.endUpdates()
+        if #available(iOS 11.0, *) {
+            tableView.performBatchUpdates(updates, completion: nil)
+        } else {
+            tableView.beginUpdates()
+            updates()
+            tableView.endUpdates()
+        }
     }
 }
 
