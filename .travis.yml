@@ -8,7 +8,7 @@ matrix:
       before_install:
         export UUID=$(instruments -s | ruby -e "ARGF.each_line{ |ln| ln =~ /$NAME .* \[(.*)\]/; if \$1; puts(\$1); exit; end }");
       before_script:
-        carthage bootstrap --platform $PLATFORM --configuration Debug
+        carthage bootstrap --configuration Debug
       script:
         - set -o pipefail;
         - open -a "simulator" --args -CurrentDeviceUDID "$UUID"
