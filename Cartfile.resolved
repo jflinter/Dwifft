@@ -1,1 +1,2 @@
-github "jflinter/SwiftCheck" "8cb33343f45bc1b2f621011e096dbdd7e66787d6"
+github "trill-lang/FileCheck" "0.0.5"
+github "typelift/SwiftCheck" "0.9.1"

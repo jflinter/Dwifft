@@ -91,7 +91,7 @@ public enum Dwifft {
             return lhs.enumerated().map(DiffStep.delete).reversed()
         }
 
-        let table = MemoizedSequenceComparison.buildTable(lhs, rhs, lhs.count, rhs.count)
+        let table = MemoizedSequenceComparison.buildTable(lhs, rhs)
         var result = diffInternal(table, lhs, rhs, lhs.count, rhs.count, ([], []))
         while case let .call(f) = result {
             result = f()
@@ -279,7 +279,8 @@ fileprivate enum Result<T>{
 }
 
 fileprivate struct MemoizedSequenceComparison<T: Equatable> {
-    static func buildTable(_ x: [T], _ y: [T], _ n: Int, _ m: Int) -> [[Int]] {
+    static func buildTable(_ x: [T], _ y: [T]) -> [[Int]] {
+        let n = x.count, m = y.count
         var table = Array(repeating: Array(repeating: 0, count: m + 1), count: n + 1)
         // using unsafe pointers lets us avoid swift array bounds-checking, which results in a considerable speed boost.
         table.withUnsafeMutableBufferPointer { unsafeTable in
