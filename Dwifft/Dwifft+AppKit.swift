@@ -126,7 +126,7 @@ public final class CollectionViewDiffCalculator<Section: Equatable, Value: Equat
     
     override internal func processChanges(newState: SectionedValues<Section, Value>, diff: [SectionedDiffStep<Section, Value>]) {
         guard let collectionView = self.collectionView else { return }
-        collectionView.performBatchUpdates({
+        collectionView.animator().performBatchUpdates({
             self._sectionedValues = newState
             for result in diff {
                 switch result {
