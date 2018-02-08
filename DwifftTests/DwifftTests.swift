@@ -432,11 +432,11 @@ class DwifftTests: XCTestCase {
             let x: XCTestExpectation = expectation(description: "+\(i)")
             deletionExpectations[i] = x
         }
-        
+
         let collectionView = TestCollectionView(insertionExpectations: insertionExpectations, deletionExpectations: deletionExpectations)
         let viewController = TestViewController(collectionView: collectionView, rows: [0, 1, 2, 5, 8, 9, 0])
         viewController.rows = [4, 5, 9, 8, 3, 1, 0]
         waitForExpectations(timeout: 1.0, handler: nil)
     }
-    
+
 }

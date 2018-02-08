@@ -91,5 +91,4 @@ public extension SectionedValues where Section: Hashable {
             return (section, sortedValues)
         })
     }
-    
 }

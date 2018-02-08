@@ -111,7 +111,7 @@ public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
             self.internalDiffCalculator.insertionAnimation = self.insertionAnimation 
         }
     }
-    
+
     public var deletionAnimation = UITableViewRowAnimation.automatic {
         didSet {
             self.internalDiffCalculator.deletionAnimation = self.deletionAnimation 
@@ -182,7 +182,7 @@ public final class SingleSectionCollectionViewDiffCalculator<Value: Equatable> {
     }
 
     private let internalDiffCalculator: CollectionViewDiffCalculator<Int, Value>
-    
+
 }
 
 #endif

@@ -332,7 +332,7 @@ class DwifftTests: XCTestCase {
             self.view = NSView()
         }
     }
-    
+
     class TestCollectionView: NSCollectionView {
 
       let insertionExpectations: [Int: XCTestExpectation]
