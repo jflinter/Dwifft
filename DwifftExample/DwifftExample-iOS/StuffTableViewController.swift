@@ -13,7 +13,7 @@ final class StuffTableViewController: UITableViewController {
 
     required init!(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .plain, target: self, action: #selector(StuffTableViewController.shuffle))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .plain, target: self, action: #selector(shuffle))
     }
     
     @objc func shuffle() {
