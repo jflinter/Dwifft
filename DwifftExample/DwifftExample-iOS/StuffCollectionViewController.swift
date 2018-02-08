@@ -20,7 +20,7 @@ final class StuffCollectionViewCell: UICollectionViewCell {
         label.textAlignment = .center
         self.addSubview(label)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -40,7 +40,7 @@ final class StuffSectionHeaderView: UICollectionReusableView {
         label.font = UIFont.italicSystemFont(ofSize: 14)
         self.addSubview(label)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -55,7 +55,7 @@ final class StuffCollectionViewController: UICollectionViewController {
 
     required init!(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .plain, target: self, action: #selector(StuffCollectionViewController.shuffle))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Shuffle", style: .plain, target: self, action: #selector(shuffle))
     }
 
     @objc func shuffle() {

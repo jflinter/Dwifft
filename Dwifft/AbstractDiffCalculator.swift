@@ -10,11 +10,11 @@ import Foundation
 
 /// A parent class for all diff calculators. Don't use it directly.
 public class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
-    
+
     internal init(initialSectionedValues: SectionedValues<Section, Value>) {
         self._sectionedValues = initialSectionedValues
     }
-    
+
     /// The number of sections in the diff calculator. Return this inside
     /// `numberOfSections(in: tableView)` or `numberOfSections(in: collectionView)`.
     /// Don't implement that method any other way (see the docs for `numberOfObjects(inSection:)`
@@ -22,7 +22,7 @@ public class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
     public final func numberOfSections() -> Int {
         return self.sectionedValues.sections.count
     }
-    
+
     /// The section at a given index. If you implement `tableView:titleForHeaderInSection` or
     /// `collectionView:viewForSupplementaryElementOfKind:atIndexPath`, you can use this
     /// method to get information about that section out of Dwifft.
@@ -32,8 +32,7 @@ public class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
     public final func value(forSection: Int) -> Section {
         return self.sectionedValues[forSection].0
     }
-    
-    
+
     /// The, uh, number of objects in a given section. Use this to implement
     /// `UITableViewDataSource.numberOfRowsInSection:` or `UICollectionViewDataSource.numberOfItemsInSection:`.
     /// Seriously, don't implement that method any other way - there is some subtle timing stuff
@@ -46,8 +45,7 @@ public class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
     public final func numberOfObjects(inSection section: Int) -> Int {
         return self.sectionedValues[section].1.count
     }
-    
-    
+
     /// The value at a given index path. Use this to implement
     /// `UITableViewDataSource.cellForRowAtIndexPath` or `UICollectionViewDataSource.cellForItemAtIndexPath`.
     ///
@@ -62,8 +60,7 @@ public class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
         #endif
         return self.sectionedValues[indexPath.section].1[row]
     }
-    
-    
+
     /// Set this variable to automatically trigger the correct section/row/item insertion/deletions
     /// on your table/collection view.
     public final var sectionedValues: SectionedValues<Section, Value> {
@@ -79,12 +76,12 @@ public class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
             }
         }
     }
-    
+
     internal static func buildSectionedValues(values: [Value], sectionIndex: Int) -> SectionedValues<Int, Value> {
         let firstRows = (0..<sectionIndex).map { ($0, [Value]()) }
         return SectionedValues(firstRows + [(sectionIndex, values)])
     }
-    
+
     // UITableView and UICollectionView both perform assertions on the *current* number of rows/items before performing any updates. As such, the `sectionedValues` property must be backed by an internal value that does not change until *after* `beginUpdates`/`performBatchUpdates` has been called.
     internal final var _sectionedValues: SectionedValues<Section, Value>
     internal func processChanges(newState: SectionedValues<Section, Value>, diff: [SectionedDiffStep<Section, Value>]){

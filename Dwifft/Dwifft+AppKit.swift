@@ -9,7 +9,7 @@
 #if os(OSX)
 
 import Cocoa
-    
+
 /// This class manages a `NSTableView`'s rows. It will make the necessary
 /// calls to the table view to ensure that its UI is kept in sync with the contents of the `rows` property.
 public final class TableViewDiffCalculator<Value: Equatable>: AbstractDiffCalculator<Int, Value> {
@@ -23,7 +23,7 @@ public final class TableViewDiffCalculator<Value: Equatable>: AbstractDiffCalcul
     /// You can change insertion/deletion animations like this! Fade works well.
     /// So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
     public var insertionAnimation = NSTableView.AnimationOptions.slideUp
-    
+
     public var deletionAnimation = NSTableView.AnimationOptions.slideUp
 
     /// Set this variable to automatically trigger the correct row insertion/deletions
@@ -48,7 +48,7 @@ public final class TableViewDiffCalculator<Value: Equatable>: AbstractDiffCalcul
         self.sectionIndex = sectionIndex
         super.init(initialSectionedValues: AbstractDiffCalculator<Int, Value>.buildSectionedValues(values: initialRows, sectionIndex: sectionIndex))
     }
-    
+
     override internal func processChanges(newState: SectionedValues<Int, Value>, diff: [SectionedDiffStep<Int, Value>]) {
         guard let tableView = self.tableView else { return }
         tableView.beginUpdates()
@@ -102,18 +102,17 @@ public final class SingleSectionCollectionViewDiffCalculator<Value: Equatable> {
     }
 
     private let internalDiffCalculator: CollectionViewDiffCalculator<Int, Value>
-    
+
 }
-    
 
 /// This class manages a `NSCollectionView`'s items and sections. It will make the necessary
 /// calls to the collection view to ensure that its UI is kept in sync with the contents
 /// of the `sectionedValues` property.
 public final class CollectionViewDiffCalculator<Section: Equatable, Value: Equatable> : AbstractDiffCalculator<Section, Value> {
-    
+
     /// The collection view to be managed.
     public weak var collectionView: NSCollectionView?
-    
+
     /// Initializes a new diff calculator.
     ///
     /// - Parameters:
@@ -123,7 +122,7 @@ public final class CollectionViewDiffCalculator<Section: Equatable, Value: Equat
         self.collectionView = collectionView
         super.init(initialSectionedValues: initialSectionedValues)
     }
-    
+
     override internal func processChanges(newState: SectionedValues<Section, Value>, diff: [SectionedDiffStep<Section, Value>]) {
         guard let collectionView = self.collectionView else { return }
         collectionView.animator().performBatchUpdates({
