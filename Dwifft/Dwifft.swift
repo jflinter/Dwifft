@@ -15,7 +15,7 @@ public enum DiffStep<Value> : CustomDebugStringConvertible {
     case delete(Int, Value)
 
     public var debugDescription: String {
-        switch(self) {
+        switch self {
         case let .insert(i, j):
             return "+\(j)@\(i)"
         case let .delete(i, j):
@@ -25,7 +25,7 @@ public enum DiffStep<Value> : CustomDebugStringConvertible {
 
     /// The index to be inserted or deleted.
     public var idx: Int {
-        switch(self) {
+        switch self {
         case let .insert(i, _):
             return i
         case let .delete(i, _):
@@ -35,7 +35,7 @@ public enum DiffStep<Value> : CustomDebugStringConvertible {
 
     /// The value to be inserted or deleted.
     public var value: Value {
-        switch(self) {
+        switch self {
         case let .insert(j):
             return j.1
         case let .delete(j):
