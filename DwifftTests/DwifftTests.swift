@@ -163,6 +163,17 @@ class DwifftTests: XCTestCase {
 
     }
 
+    func testMatchingEndsInfoBenchmark() {
+        let lhs = Gen<Int>.fromElements(in: 0...9).proliferate(withSize:1000).generate
+        let rhs = lhs + [666] + lhs
+        
+        measure {
+            for _ in 0...10000 {
+                let _ = Dwifft.matchingEndsInfo(lhs, rhs)
+            }
+        }
+    }
+    
     func testDiffBenchmark() {
         let a: [Int] = (0...1000).map({ _ in Int(arc4random_uniform(100)) }).filter({ _ in arc4random_uniform(2) == 0})
         let b: [Int] = (0...1000).map({ _ in Int(arc4random_uniform(100)) }).filter({ _ in arc4random_uniform(2) == 0})

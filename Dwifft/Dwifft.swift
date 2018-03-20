@@ -75,16 +75,27 @@ public enum SectionedDiffStep<Section, Value>: CustomDebugStringConvertible {
     }
 }
 
+// Need to be able to count a sequence without materializing as an array in order to keep matchingEndsInfo below as fase as possible
+private extension Sequence {
+    func count() -> Int {
+        var i = 0
+        for _ in self {
+            i += 1
+        }
+        return i
+    }
+}
+
 /// Namespace for the `diff` and `apply` functions.
 public enum Dwifft {
 
     internal static func matchingEndsInfo<Value: Equatable>(_ lhs: [Value], _ rhs: [Value]) -> (Int, ArraySlice<Value>, ArraySlice<Value>) {
         let minTotalCount = min(lhs.count, rhs.count)
-        let matchingHeadCount = zip(lhs, rhs).prefix() { $0.0 == $0.1 }.map() { $0.0 }.count
+        let matchingHeadCount = zip(lhs, rhs).lazy.prefix() { $0.0 == $0.1 }.count()
         let matchingTailCount = matchingHeadCount == minTotalCount
             ? 0 // if the matching head consumed all of either of the arrays, there's no tail
-            : zip(lhs.reversed(), rhs.reversed()).prefix(minTotalCount - matchingHeadCount).prefix() { $0.0 == $0.1 }.reversed().map() { $0.0 }.count
-        
+            : zip(lhs.reversed(), rhs.reversed()).prefix(minTotalCount - matchingHeadCount).lazy.prefix() { $0.0 == $0.1 }.count()
+
         let matchingEndsCount = matchingHeadCount + matchingTailCount
         let lhsMiddle = matchingEndsCount < lhs.count ? lhs[matchingHeadCount..<lhs.count - matchingTailCount] : []
         let rhsMiddle = matchingEndsCount < rhs.count ? rhs[matchingHeadCount..<rhs.count - matchingTailCount] : []
