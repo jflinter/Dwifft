@@ -79,6 +79,7 @@ public final class TableViewDiffCalculator<Value: Equatable>: AbstractDiffCalcul
 /// use a `SingleSectionCollectionViewDiffCalculator`. Note that this approach is not highly recommended, and you should
 /// do so only if it *really* doesn't make sense to just power your whole view with a `CollectionViewDiffCalculator`.
 /// You'll be less likely to mess up the index math :P
+@available(OSX 10.11, *)
 public final class SingleSectionCollectionViewDiffCalculator<Value: Equatable> {
 
     /// The collection view to be managed
@@ -119,6 +120,7 @@ public final class SingleSectionCollectionViewDiffCalculator<Value: Equatable> {
 /// This class manages a `NSCollectionView`'s items and sections. It will make the necessary
 /// calls to the collection view to ensure that its UI is kept in sync with the contents
 /// of the `sectionedValues` property.
+@available(OSX 10.11, *)
 public final class CollectionViewDiffCalculator<Section: Equatable, Value: Equatable> : AbstractDiffCalculator<Section, Value> {
     
     /// The collection view to be managed.
@@ -164,6 +166,7 @@ public final class CollectionViewDiffCalculator<Section: Equatable, Value: Equat
 /// of `Int`s, define a `StringOrInt` enum that conforms to `Equatable`, and fill the `SectionedValues`
 /// that you use to drive your DiffCalculator up with those. Alternatively, if you are lazy, and your
 /// models all conform to `Hashable`, you can use a SimpleTableViewDiffCalculator instead.
+@available(OSX 10.11, *)
 typealias SimpleCollectionViewDiffCalculator = CollectionViewDiffCalculator<AnyHashable, AnyHashable>
 
 #endif
