@@ -28,7 +28,7 @@ public final class TableViewDiffCalculator<Section: Equatable, Value: Equatable>
 
     /// You can change insertion/deletion animations like this! Fade works well.
     /// So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
-    public var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
+    public var insertionAnimation = UITableView.RowAnimation.automatic, deletionAnimation = UITableView.RowAnimation.automatic
 
     override internal func processChanges(newState: SectionedValues<Section, Value>, diff: [SectionedDiffStep<Section, Value>]) {
         guard let tableView = self.tableView else { return }
@@ -106,13 +106,13 @@ public final class SingleSectionTableViewDiffCalculator<Value: Equatable> {
 
     /// You can change insertion/deletion animations like this! Fade works well.
     /// So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
-    public var insertionAnimation = UITableViewRowAnimation.automatic {
+    public var insertionAnimation = UITableView.RowAnimation.automatic {
         didSet {
             self.internalDiffCalculator.insertionAnimation = self.insertionAnimation 
         }
     }
     
-    public var deletionAnimation = UITableViewRowAnimation.automatic {
+    public var deletionAnimation = UITableView.RowAnimation.automatic {
         didSet {
             self.internalDiffCalculator.deletionAnimation = self.deletionAnimation 
         }

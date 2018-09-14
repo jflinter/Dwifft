@@ -188,12 +188,12 @@ class DwifftTests: XCTestCase {
 
   func test2DBenchmark() {
     let n: Int = 70
-    let a: [(Int, [Int])] = (0...n).flatMap { (i: Int) -> (Int, [Int])? in
+    let a: [(Int, [Int])] = (0...n).compactMap { (i: Int) -> (Int, [Int])? in
       guard arc4random_uniform(2) == 0 else { return nil }
       let value: [Int] = (0...arc4random_uniform(UInt32(n))).map { _ in Int(arc4random_uniform(100)) }
       return (i, value)
     }
-    let b: [(Int, [Int])] = (0...n).flatMap { (i: Int) -> (Int, [Int])? in
+    let b: [(Int, [Int])] = (0...n).compactMap { (i: Int) -> (Int, [Int])? in
       guard arc4random_uniform(2) == 0 else { return nil }
       let value: [Int] = (0...arc4random_uniform(UInt32(n))).map { _ in Int(arc4random_uniform(100)) }
       return (i, value)

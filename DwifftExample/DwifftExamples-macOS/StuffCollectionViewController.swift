@@ -20,11 +20,11 @@ final class StuffCollectionViewController: NSViewController {
     collectionView.dataSource = self
     diffCalculator = CollectionViewDiffCalculator(collectionView: collectionView, initialSectionedValues: stuff)
 
-    let itemNib = NSNib(nibNamed: NSNib.Name(rawValue: "StuffCollectionViewItem"), bundle: nil)
+    let itemNib = NSNib(nibNamed: NSNib.Name("StuffCollectionViewItem"), bundle: nil)
     collectionView.register(itemNib, forItemWithIdentifier: itemIdentifier)
 
-    let headerNib = NSNib(nibNamed: NSNib.Name(rawValue: "StuffCollectionHeaderView"), bundle: nil)
-    collectionView.register(headerNib, forSupplementaryViewOfKind: .sectionHeader, withIdentifier: headerIdentifier)
+    let headerNib = NSNib(nibNamed: NSNib.Name("StuffCollectionHeaderView"), bundle: nil)
+    collectionView.register(headerNib, forSupplementaryViewOfKind: NSCollectionView.elementKindSectionHeader, withIdentifier: headerIdentifier)
   }
 
   @IBAction func shuffle(_ sender: NSButton) {
@@ -44,7 +44,7 @@ extension StuffCollectionViewController: NSCollectionViewDataSource {
   func collectionView(_ collectionView: NSCollectionView,
                       viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind,
                       at indexPath: IndexPath) -> NSView {
-    let header = collectionView.makeSupplementaryView(ofKind: .sectionHeader, withIdentifier: headerIdentifier, for: indexPath)
+    let header = collectionView.makeSupplementaryView(ofKind: NSCollectionView.elementKindSectionHeader, withIdentifier: headerIdentifier, for: indexPath)
 
     if let dc = diffCalculator, let stuffHeader = header as? StuffCollectionHeaderView {
       stuffHeader.title.stringValue = dc.value(forSection: indexPath.section)

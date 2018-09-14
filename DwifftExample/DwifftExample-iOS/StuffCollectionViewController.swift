@@ -80,7 +80,7 @@ final class StuffCollectionViewController: UICollectionViewController {
         collectionView.register(StuffCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         collectionView.register(
             StuffSectionHeaderView.self,
-            forSupplementaryViewOfKind: UICollectionElementKindSectionHeader,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: headerReuseIdentifier
         )
     }
