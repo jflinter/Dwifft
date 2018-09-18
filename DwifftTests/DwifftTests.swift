@@ -211,12 +211,12 @@ class DwifftTests: XCTestCase {
 
     func test2DBenchmark() {
         let n: Int = 70
-        let a: [(Int, [Int])] = (0...n).flatMap { (i: Int) -> (Int, [Int])? in
+        let a: [(Int, [Int])] = (0...n).compactMap { (i: Int) -> (Int, [Int])? in
             guard arc4random_uniform(2) == 0 else { return nil }
             let value: [Int] = (0...arc4random_uniform(UInt32(n))).map { _ in Int(arc4random_uniform(100)) }
             return (i, value)
         }
-        let b: [(Int, [Int])] = (0...n).flatMap { (i: Int) -> (Int, [Int])? in
+        let b: [(Int, [Int])] = (0...n).compactMap { (i: Int) -> (Int, [Int])? in
             guard arc4random_uniform(2) == 0 else { return nil }
             let value: [Int] = (0...arc4random_uniform(UInt32(n))).map { _ in Int(arc4random_uniform(100)) }
             return (i, value)
@@ -272,22 +272,22 @@ class DwifftTests: XCTestCase {
             init(insertionExpectations: [Int: XCTestExpectation], deletionExpectations: [Int: XCTestExpectation]) {
                 self.insertionExpectations = insertionExpectations
                 self.deletionExpectations = deletionExpectations
-                super.init(frame: CGRect.zero, style: UITableViewStyle.plain)
+                super.init(frame: CGRect.zero, style: UITableView.Style.plain)
             }
 
             required init?(coder aDecoder: NSCoder) {
                 fatalError("not implemented")
             }
 
-            override func insertRows(at indexPaths: [IndexPath], with animation: UITableViewRowAnimation) {
-                XCTAssertEqual(animation, UITableViewRowAnimation.left, "incorrect insertion animation")
+            override func insertRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
+                XCTAssertEqual(animation, UITableView.RowAnimation.left, "incorrect insertion animation")
                 for indexPath in indexPaths {
                     self.insertionExpectations[(indexPath as NSIndexPath).row]!.fulfill()
                 }
             }
 
-            override func deleteRows(at indexPaths: [IndexPath], with animation: UITableViewRowAnimation) {
-                XCTAssertEqual(animation, UITableViewRowAnimation.right, "incorrect insertion animation")
+            override func deleteRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
+                XCTAssertEqual(animation, UITableView.RowAnimation.right, "incorrect insertion animation")
                 for indexPath in indexPaths {
                     self.deletionExpectations[(indexPath as NSIndexPath).row]!.fulfill()
                 }
