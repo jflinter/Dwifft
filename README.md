@@ -18,6 +18,8 @@ The second thing (found in `Dwifft+UIKit.swift`) is a series of diff calculators
 
 When you wire up a `TableViewDiffCalculator` to your `UITableView` (or a `CollectionViewDiffCalculator` to your `UICollectionView`, it'll _automatically_ calculate diffs and trigger the necessary animations on it whenever you change its `sectionedValues` property. Neat, right? Notably, as of Dwifft 0.6, Dwifft will also figure out _section_ insertions and deletions, as well as how to efficiently insert and delete rows across different sections, which is just so massively useful if you have a multi-section table. If you're currently using a <0.6 version of Dwifft and want to do this, read the [0.6 release notes](https://github.com/jflinter/Dwifft/releases/tag/0.6).
 
+test
+
 Even longer version
 ---
 Learn more about the history of Dwifft, and how it works, in this [exciting video of a talk](https://vimeo.com/211194798) recorded at the Brooklyn Swift meetup in March 2017.
