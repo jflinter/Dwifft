@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Dwifft'
-  s.version = '0.7'
+  s.version = '0.8'
   s.license = 'MIT'
   s.summary = 'Swift Diff'
   s.homepage = 'https://github.com/jflinter/Dwifft'
@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.author = 'Jack Flintermann'
   s.source = { git: 'https://github.com/jflinter/Dwifft.git', tag: s.version }
 
-  s.swift_version = '4.0'
+  s.swift_version = '4.2'
 
   s.ios.deployment_target = '8.0'
   s.tvos.deployment_target = '9.0'
