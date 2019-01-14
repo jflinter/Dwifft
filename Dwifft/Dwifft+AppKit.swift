@@ -50,10 +50,10 @@ public final class TableViewDiffCalculator<Value: Equatable>: AbstractDiffCalcul
     }
     
     override internal func processChanges(newState: SectionedValues<Int, Value>, diff: [SectionedDiffStep<Int, Value>]) {
+        self._sectionedValues = newState
         guard let tableView = self.tableView else { return }
         let updateAction = {
             tableView.beginUpdates()
-            self._sectionedValues = newState
             for result in diff {
                 switch result {
                 case let .delete(_, row, _): tableView.removeRows(at: [row], withAnimation: self.deletionAnimation)
