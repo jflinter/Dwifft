@@ -66,7 +66,7 @@ public final class TableViewDiffCalculator<Value: Equatable>: AbstractDiffCalcul
         if Thread.current.isMainThread {
             updateAction()
         } else {
-            DispatchQueue.main.async {
+            DispatchQueue.main.sync {
                 updateAction()
             }
         }
