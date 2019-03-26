@@ -309,13 +309,13 @@ public extension Array where Element: Equatable {
 
     /// Deprecated in favor of `Dwifft.diff`.
     @available(*, deprecated)
-    public func diff(_ other: [Element]) -> [DiffStep<Element>] {
+    func diff(_ other: [Element]) -> [DiffStep<Element>] {
         return Dwifft.diff(self, other)
     }
 
     /// Deprecated in favor of `Dwifft.apply`.
     @available(*, deprecated)
-    public func apply(_ diff: [DiffStep<Element>]) -> [Element] {
+    func apply(_ diff: [DiffStep<Element>]) -> [Element] {
         return Dwifft.apply(diff: diff, toArray: self)
     }
 
