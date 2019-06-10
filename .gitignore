@@ -4,7 +4,6 @@
 ### Swift ###
 
 ## Build generated
-.build/
 build/
 DerivedData
 
@@ -28,5 +27,10 @@ xcuserdata
 ## Obj-C/Swift specific
 *.hmap
 *.ipa
+
+# Swift Package Manager
+.build
+.swiftpm
+Package.resolved
 
 Carthage/
