@@ -74,13 +74,7 @@ public class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
             let oldSectionedValues = sectionedValues
             let newSectionedValues = newValue
             let diff = Dwifft.diff(lhs: oldSectionedValues, rhs: newSectionedValues)
-            if (diff.count > 0) {
-                self.processChanges(newState: newSectionedValues, diff: diff)
-            } else {
-                //There might be rows that need to be reloaded but we don't want to display a .insert animation for them.
-                //Update the internal _sectionedValues so that when we access the rows property, we get the updated rows
-                self._sectionedValues = newSectionedValues
-            }
+            self.processChanges(newState: newSectionedValues, diff: diff)
         }
     }
     
