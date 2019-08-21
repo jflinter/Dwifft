@@ -52,7 +52,7 @@ public final class TableViewDiffCalculator<Value: Equatable>: AbstractDiffCalcul
     override internal func processChanges(newState: SectionedValues<Int, Value>, diff: [SectionedDiffStep<Int, Value>]) {
         self._sectionedValues = newState
         guard let tableView = self.tableView else { return }
-        let updateAction = {
+        var updateAction = {
             tableView.beginUpdates()
             for result in diff {
                 switch result {
@@ -62,6 +62,11 @@ public final class TableViewDiffCalculator<Value: Equatable>: AbstractDiffCalcul
                 }
             }
             tableView.endUpdates()
+        }
+        if diff.count == 0 {
+            //There might be rows that need to be reloaded but we don't want to display a .insert animation for them.
+            //Update the internal _sectionedValues so that when we access the rows property, we get the updated rows
+            updateAction = { tableView.reloadData() }
         }
         if Thread.current.isMainThread {
             updateAction()
