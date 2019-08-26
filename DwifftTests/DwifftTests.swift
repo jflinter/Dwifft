@@ -25,8 +25,44 @@ struct SectionedValuesWrapper: Arbitrary {
     }
 }
 
+
+// Generator that makes arrays from 0-20 elements long where each element has the value 0...9
+let smallishArrayGen = Gen<Int>.fromElements(in: 0...20).flatMap(Gen<Int>.fromElements(in: 0...9).proliferate(withSize:))
+
+struct smallishArrayWrapper: Arbitrary {
+    let getArray: [Int]
+    
+    static var arbitrary: Gen<smallishArrayWrapper> {
+        return smallishArrayGen.map {smallishArrayWrapper(getArray:$0)}
+    }
+    
+    public static func shrink(_ x: smallishArrayWrapper) -> [smallishArrayWrapper] {
+        return Array<Int>.shrink(x.getArray).map {smallishArrayWrapper(getArray:$0)}
+    }
+}
+
 class DwifftSwiftCheckTests: XCTestCase {
 
+    func testMatchingEndsInfo() {
+        property("Confirming matching ends info is self consistent", arguments: CheckerArguments(maxAllowableSuccessfulTests: 5000)) <- forAll { (lhs : smallishArrayWrapper, rhs : smallishArrayWrapper) in
+            let lhs = lhs.getArray, rhs = rhs.getArray
+            
+            let (matchingHeadCount, lhsInner, rhsInner) = Dwifft.matchingEndsInfo(lhs, rhs)
+            
+            // Generate slices for the head and tail based on the results from matchingEndsInfo
+            let matchingHead = matchingHeadCount > 0 ? lhs[0..<matchingHeadCount] : ArraySlice<Int>()
+            let matchingTailCount = lhs.count - matchingHeadCount + lhsInner.count
+            let matchingTail = matchingTailCount > 0 ? lhs[(matchingHeadCount + lhsInner.count)...] : ArraySlice<Int>()
+            
+            // Now reconstruct the input arrays using the matching head, innards, and tail
+            let reconstructedLhs = Array(matchingHead + lhsInner + matchingTail)
+            let reconstructedRhs = Array(matchingHead + rhsInner + matchingTail)
+
+            return (reconstructedLhs == lhs) <?> "Left identity"
+                ^&&^
+                (reconstructedRhs == rhs) <?> "Right identity"
+        }
+    }
     func testDiff() {
         property("Diffing two arrays, then applying the diff to the first, yields the second") <- forAll { (a1 : ArrayOf<Int>, a2 : ArrayOf<Int>) in
             let diff = Dwifft.diff(a1.getArray, a2.getArray)
@@ -115,6 +151,7 @@ class DwifftTests: XCTestCase {
             TestCase("1234", "1224533324", "+2@2+4@3+5@4+3@6+3@7+2@8"),
             TestCase("thisisatest", "testing123testing", "-a@6-s@5-i@2-h@1+e@1+t@3+n@5+g@6+1@7+2@8+3@9+i@14+n@15+g@16"),
             TestCase("HUMAN", "CHIMPANZEE", "-U@1+C@0+I@2+P@4+Z@7+E@8+E@9"),
+            TestCase("1211", "11", "-1@2-2@1"), // Needed to verify matchingEndsInfo bug where tail match size was overstated
             ]
 
         for test in tests {
@@ -126,6 +163,17 @@ class DwifftTests: XCTestCase {
 
     }
 
+    func testMatchingEndsInfoBenchmark() {
+        let lhs = Gen<Int>.fromElements(in: 0...9).proliferate(withSize:1000).generate
+        let rhs = lhs + [666] + lhs
+        
+        measure {
+            for _ in 0...10000 {
+                let _ = Dwifft.matchingEndsInfo(lhs, rhs)
+            }
+        }
+    }
+    
     func testDiffBenchmark() {
         let a: [Int] = (0...1000).map({ _ in Int(arc4random_uniform(100)) }).filter({ _ in arc4random_uniform(2) == 0})
         let b: [Int] = (0...1000).map({ _ in Int(arc4random_uniform(100)) }).filter({ _ in arc4random_uniform(2) == 0})

@@ -75,9 +75,34 @@ public enum SectionedDiffStep<Section, Value>: CustomDebugStringConvertible {
     }
 }
 
+// Need to be able to count a sequence without materializing as an array in order to keep matchingEndsInfo below as fase as possible
+private extension Sequence {
+    func count() -> Int {
+        var i = 0
+        for _ in self {
+            i += 1
+        }
+        return i
+    }
+}
+
 /// Namespace for the `diff` and `apply` functions.
 public enum Dwifft {
 
+    internal static func matchingEndsInfo<Value: Equatable>(_ lhs: [Value], _ rhs: [Value]) -> (Int, ArraySlice<Value>, ArraySlice<Value>) {
+        let minTotalCount = min(lhs.count, rhs.count)
+        let matchingHeadCount = zip(lhs, rhs).lazy.prefix() { $0.0 == $0.1 }.count()
+        let matchingTailCount = matchingHeadCount == minTotalCount
+            ? 0 // if the matching head consumed all of either of the arrays, there's no tail
+            : zip(lhs.reversed(), rhs.reversed()).prefix(minTotalCount - matchingHeadCount).lazy.prefix() { $0.0 == $0.1 }.count()
+
+        let matchingEndsCount = matchingHeadCount + matchingTailCount
+        let lhsMiddle = matchingEndsCount < lhs.count ? lhs[matchingHeadCount..<lhs.count - matchingTailCount] : []
+        let rhsMiddle = matchingEndsCount < rhs.count ? rhs[matchingHeadCount..<rhs.count - matchingTailCount] : []
+
+        return (matchingHeadCount, lhsMiddle, rhsMiddle)
+    }
+    
     /// Returns the sequence of `DiffStep`s required to transform one array into another.
     ///
     /// - Parameters:
@@ -85,10 +110,12 @@ public enum Dwifft {
     ///   - rhs: another, uh, array
     /// - Returns: the series of transformations that, when applied to `lhs`, will yield `rhs`.
     public static func diff<Value: Equatable>(_ lhs: [Value], _ rhs: [Value]) -> [DiffStep<Value>] {
+        let (matchingHeadCount, lhs, rhs) = matchingEndsInfo(lhs, rhs)
+
         if lhs.isEmpty {
-            return rhs.enumerated().map(DiffStep.insert)
+            return rhs.enumerated().map { DiffStep.insert($0 + matchingHeadCount, $1) }
         } else if rhs.isEmpty {
-            return lhs.enumerated().map(DiffStep.delete).reversed()
+            return lhs.enumerated().map { DiffStep.delete($0 + matchingHeadCount, $1) }.reversed()
         }
 
         let table = MemoizedSequenceComparison.buildTable(lhs, rhs)
@@ -241,8 +268,8 @@ public enum Dwifft {
 
     private static func diffInternal<Value: Equatable>(
         _ table: [[Int]],
-        _ x: [Value],
-        _ y: [Value],
+        _ x: ArraySlice<Value>,
+        _ y: ArraySlice<Value>,
         _ i: Int,
         _ j: Int,
         _ currentResults: ([DiffStep<Value>], [DiffStep<Value>])
@@ -252,18 +279,19 @@ public enum Dwifft {
         }
         else {
             return .call {
+                let prefixCount = x.startIndex
                 var nextResults = currentResults
                 if i == 0 {
-                    nextResults.0 = [DiffStep.insert(j-1, y[j-1])] + nextResults.0
+                    nextResults.0 = [DiffStep.insert(j-1+prefixCount, y[j-1+prefixCount])] + nextResults.0
                     return diffInternal(table, x, y, i, j-1, nextResults)
                 } else if j == 0 {
-                    nextResults.1 = nextResults.1 + [DiffStep.delete(i-1, x[i-1])]
+                    nextResults.1 = nextResults.1 + [DiffStep.delete(i-1+prefixCount, x[i-1+prefixCount])]
                     return diffInternal(table, x, y, i - 1, j, nextResults)
                 } else if table[i][j] == table[i][j-1] {
-                    nextResults.0 = [DiffStep.insert(j-1, y[j-1])] + nextResults.0
+                    nextResults.0 = [DiffStep.insert(j-1+prefixCount, y[j-1+prefixCount])] + nextResults.0
                     return diffInternal(table, x, y, i, j-1, nextResults)
                 } else if table[i][j] == table[i-1][j] {
-                    nextResults.1 = nextResults.1 + [DiffStep.delete(i-1, x[i-1])]
+                    nextResults.1 = nextResults.1 + [DiffStep.delete(i-1+prefixCount, x[i-1+prefixCount])]
                     return diffInternal(table, x, y, i - 1, j, nextResults)
                 } else {
                     return diffInternal(table, x, y, i-1, j-1, nextResults)
@@ -279,7 +307,7 @@ fileprivate enum Result<T>{
 }
 
 fileprivate struct MemoizedSequenceComparison<T: Equatable> {
-    static func buildTable(_ x: [T], _ y: [T]) -> [[Int]] {
+    static func buildTable(_ x: ArraySlice<T>, _ y: ArraySlice<T>) -> [[Int]] {
         let n = x.count, m = y.count
         var table = Array(repeating: Array(repeating: 0, count: m + 1), count: n + 1)
         // using unsafe pointers lets us avoid swift array bounds-checking, which results in a considerable speed boost.
