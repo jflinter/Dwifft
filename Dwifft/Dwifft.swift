@@ -36,10 +36,10 @@ public enum DiffStep<Value> : CustomDebugStringConvertible {
     /// The value to be inserted or deleted.
     public var value: Value {
         switch(self) {
-        case let .insert(j):
-            return j.1
-        case let .delete(j):
-            return j.1
+        case let .insert(_, value):
+            return value
+        case let .delete(_, value):
+            return value
         }
     }
 }
