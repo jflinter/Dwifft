@@ -7,7 +7,9 @@
 //
 
 import Foundation
-
+#if canImport(UIKit)
+import UIKit
+#endif
 /// A parent class for all diff calculators. Don't use it directly.
 public class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
     
@@ -57,7 +59,7 @@ public class AbstractDiffCalculator<Section: Equatable, Value: Equatable> {
         #if os(iOS) || os(tvOS)
             let row = indexPath.row
         #endif
-        #if os(macOS)
+        #if os(macOS)  || os(watchOS)
             let row = indexPath.item
         #endif
         return self.sectionedValues[indexPath.section].1[row]

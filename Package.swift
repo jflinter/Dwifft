@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.2
 //
 
 import PackageDescription
@@ -6,8 +6,6 @@ import PackageDescription
 let package = Package(
     name: "Dwifft",
     platforms: [
-        .iOS(.v8),
-        .tvOS(.v9),
         .macOS(.v10_11)
     ],
     products: [
