@@ -36,10 +36,10 @@ public enum DiffStep<Value> : CustomDebugStringConvertible {
     /// The value to be inserted or deleted.
     public var value: Value {
         switch(self) {
-        case let .insert(j):
-            return j.1
-        case let .delete(j):
-            return j.1
+        case let .insert(_, k):
+            return k
+        case let .delete(_, k):
+            return k
         }
     }
 }
@@ -309,13 +309,13 @@ public extension Array where Element: Equatable {
 
     /// Deprecated in favor of `Dwifft.diff`.
     @available(*, deprecated)
-    public func diff(_ other: [Element]) -> [DiffStep<Element>] {
+    func diff(_ other: [Element]) -> [DiffStep<Element>] {
         return Dwifft.diff(self, other)
     }
 
     /// Deprecated in favor of `Dwifft.apply`.
     @available(*, deprecated)
-    public func apply(_ diff: [DiffStep<Element>]) -> [Element] {
+    func apply(_ diff: [DiffStep<Element>]) -> [Element] {
         return Dwifft.apply(diff: diff, toArray: self)
     }
 

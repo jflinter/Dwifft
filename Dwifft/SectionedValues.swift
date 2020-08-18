@@ -72,7 +72,7 @@ public extension SectionedValues where Section: Hashable {
     ///     should be sorted before the second. Used to sort the sections in the returned `SectionedValues`.
     ///   - sortValues: A function that compares two values, and returns true if the first
     ///     should be sorted before the second. Used to sort the values in each section of the returned `SectionedValues`.
-    public init(
+    init(
         values: [Value],
         valueToSection: ((Value) -> Section),
         sortSections: ((Section, Section) -> Bool),
