@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Dwifft'
-  s.version = '0.9'
+  s.version = '0.9.1'
   s.license = 'MIT'
   s.summary = 'Swift Diff'
   s.homepage = 'https://github.com/jflinter/Dwifft'
